@@ -1,0 +1,73 @@
+@startuml
+title UC-01 — Account identity and composed capabilities
+top to bottom direction
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam legendFontSize 20
+skinparam noteFontSize 20
+skinparam titleFontSize 24
+skinparam shadowing false
+skinparam dpi 180
+skinparam classAttributeIconSize 0
+skinparam classBackgroundColor #F4F7FB
+skinparam classBorderColor #334155
+class AccountView <<boundary>> {
+  pending: boolean
+  fieldErrors: ValidationErrors
+  +submitRegistration(): AuthResult
+  +submitLogin(): AuthResult
+  +submitLogout(): void
+}
+class AuthService <<domain>> {
+  +register(input): AuthResult
+  +login(input): ActorContext
+  +logout(actor): void
+  +requestReset(email: string): void
+}
+class AuthorizationService <<domain>> {
+  +requireActive(actor): void
+  +requireCapability(role: Role): void
+}
+class AuthProvider <<adapter>> {
+  +signUp(input): IdentityId
+  +signIn(input): VerifiedIdentity
+  +signOut(): void
+}
+class ProfileProvisioningService <<domain>> {
+  +ensureProfile(id): UserProfile
+  +grantInitialCapability(role): void
+}
+class UserProfile <<entity>> {
+  id: UUID
+  displayName: string
+  timezone: IanaZone
+  status: active | inactive
+  adultAttested: boolean
+  adultAttestedAt: UTCInstant?
+}
+class RoleGrant <<value object>> {
+  userId: UUID
+  role: Role
+  grantedBy: UUID?
+  createdAt: UTCInstant
+}
+class ActorContext <<request authority>> {
+  userId: UUID
+  emailVerified: boolean
+  accountActive: boolean
+  capabilities: Set<Role>
+}
+AccountView ..> AuthService : server operation
+AuthService ..> AuthProvider
+AuthService ..> ProfileProvisioningService
+AuthService ..> AuthorizationService
+ProfileProvisioningService ..> UserProfile
+AuthorizationService ..> ActorContext : authorizes
+UserProfile "1" *-right- "0..3" RoleGrant
+legend bottom
+  Role = student | tutor | administrator; no inheritance.
+  profiles owns user_roles; auth.users owns managed identity.
+  Zero roles: provisioning only. Auth / provisioning atomicity not assumed.
+endlegend
+@enduml

@@ -1,0 +1,51 @@
+@startuml
+title UC-01 — Identity and capabilities (SQL group)
+top to bottom direction
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam legendFontSize 20
+skinparam titleFontSize 24
+skinparam shadowing false
+skinparam dpi 180
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam entityBackgroundColor #F4F7FB
+entity "auth.users\n(provider-owned)" as identities {
+  * id : uuid <<PK>>
+}
+entity "profiles" as profiles {
+  * id : uuid <<PK, FK>>
+  --
+  * display_name : text
+  * timezone : text
+  * status : text
+  * adult_attested : boolean
+  adult_attested_at : timestamptz
+}
+entity "user_roles" as roles {
+  * user_id : uuid <<PK, FK>>
+  * role : text <<PK>>
+  --
+  granted_by : uuid <<FK>>
+}
+entity "audit_logs" as audits {
+  * id : uuid <<PK>>
+  --
+  actor_id : uuid <<FK>>
+  * action : text
+  * entity_type : text
+  entity_id : uuid
+}
+identities ||--o| profiles : provisions
+profiles ||--o{ roles : user_id
+profiles |o--o{ roles : granted_by
+profiles |o--o{ audits : actor_id
+legend bottom
+  Required fields marked *; omitted descriptive / timestamp fields
+  remain in the full database dictionary and migration.
+  user_roles key = (user_id, role); capabilities may coexist.
+  Optional profile during provisioning; exactly one on success.
+  entity_id is typed audit metadata, not a general foreign key.
+endlegend
+@enduml

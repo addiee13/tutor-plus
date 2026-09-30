@@ -1,0 +1,84 @@
+@startuml
+title UC-04 — Availability and booking (SQL group)
+top to bottom direction
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam legendFontSize 20
+skinparam titleFontSize 24
+skinparam shadowing false
+skinparam dpi 180
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam entityBackgroundColor #F4F7FB
+entity "tutor_profiles\n(UC-02 reference)" as tutors {
+  * id : uuid <<PK>>
+}
+entity "availability_rules" as rules {
+  * id : uuid <<PK>>
+  --
+  * tutor_id : uuid <<FK>>
+  * weekday : smallint
+  * local_start : time
+  * local_end : time
+  * timezone : text
+}
+entity "availability_exceptions" as exceptions {
+  * id : uuid <<PK>>
+  --
+  * tutor_id : uuid <<FK>>
+  * local_date : date
+  * exception_type : text
+}
+entity "profiles\n(UC-01 reference)" as students {
+  * id : uuid <<PK>>
+}
+entity "subjects\n(UC-02 reference)" as subjects {
+  * id : uuid <<PK>>
+}
+entity "bookings" as bookings {
+  * id : uuid <<PK>>
+  --
+  * student_id : uuid <<FK>>
+  * tutor_id : uuid <<FK>>
+  * subject_id : uuid <<FK>>
+  * starts_at : timestamptz
+  * ends_at : timestamptz
+  * blocking_range : tstzrange <<generated>>
+  * request_key : text
+  * status : text
+  * version : integer
+}
+entity "booking_private_details" as details {
+  * booking_id : uuid <<PK, FK>>
+  --
+  meeting_url : text
+  meeting_place : text
+}
+entity "booking_events" as events {
+  * id : uuid <<PK>>
+  --
+  * booking_id : uuid <<FK>>
+  actor_id : uuid <<FK>>
+  * booking_version : integer
+  * to_state : text
+}
+tutors ||--o{ rules : tutor_id
+tutors ||--o{ exceptions : tutor_id
+tutors ||--o{ bookings : tutor_id
+students ||--o{ bookings : student_id
+subjects ||--o{ bookings : subject_id
+bookings ||--o| details : booking_id
+bookings ||--o{ events : booking_id
+students |o--o{ events : actor_id
+rules -[hidden]down- exceptions
+exceptions -[hidden]down- details
+legend bottom
+  GiST excludes active tutor AND student overlaps.
+  blocking_range derives from blocking_starts_at / blocking_ends_at.
+  UQ (student_id, request_key); FK (tutor_id, subject_id) -> tutor_subjects.
+  UQ (booking_id, booking_version) protects transition history.
+  Private booking_policy config has no FK; copied to policy_snapshot.
+  Meeting details: participants only. Key fields shown; full SQL governs.
+endlegend
+@enduml

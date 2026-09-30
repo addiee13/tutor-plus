@@ -1,0 +1,60 @@
+@startuml
+title UC-02 — Profiles and teaching subjects (SQL group)
+top to bottom direction
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam legendFontSize 20
+skinparam titleFontSize 24
+skinparam shadowing false
+skinparam dpi 180
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam entityBackgroundColor #F4F7FB
+entity "profiles\n(UC-01 reference)" as profiles {
+  * id : uuid <<PK>>
+}
+entity "tutor_profiles" as tutors {
+  * id : uuid <<PK>>
+  --
+  * user_id : uuid <<FK, UQ>>
+  * hourly_rate_minor : bigint
+  * currency : char(3)
+  * publication_state : text
+  * version : integer
+}
+entity "subjects" as subjects {
+  * id : uuid <<PK>>
+  --
+  parent_id : uuid <<FK>>
+  * name : text
+  * slug : text <<UQ>>
+  * active : boolean
+}
+entity "tutor_subjects" as links {
+  * tutor_id : uuid <<PK, FK>>
+  * subject_id : uuid <<PK, FK>>
+  --
+  expertise : text
+  rate_override_minor : bigint
+}
+entity "public_tutor_snapshots" as snapshots {
+  * id : uuid <<PK, FK>>
+  --
+  * public_display_name : text
+  * headline : text
+  * hourly_rate_minor : bigint
+}
+profiles ||--o| tutors : user_id
+tutors ||--o{ links : tutor_id
+subjects ||--o{ links : subject_id
+subjects |o--o{ subjects : parent_id
+tutors ||--o| snapshots : id
+legend bottom
+  Student preferences stay in profiles; no student_profiles table.
+  Snapshot is a trigger-maintained safe projection, not identity.
+  Public reads still require publication / readiness policy.
+  Availability readiness is a dependency on the UC-04 group.
+  Key fields shown; full columns remain in SQL / dictionary.
+endlegend
+@enduml

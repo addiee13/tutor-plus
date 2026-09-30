@@ -1,0 +1,70 @@
+@startuml
+title UC-06 — Payments, events and refunds (SQL group)
+top to bottom direction
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam legendFontSize 20
+skinparam titleFontSize 24
+skinparam shadowing false
+skinparam dpi 180
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+skinparam entityBackgroundColor #F4F7FB
+entity "bookings\n(UC-04 reference)" as bookings {
+  * id : uuid <<PK>>
+}
+entity "payments" as payments {
+  * id : uuid <<PK>>
+  --
+  * booking_id : uuid <<FK, UQ>>
+  provider_payment_id : text <<UQ>>
+  * idempotency_key : text <<UQ>>
+  * amount_minor : bigint
+  * currency : char(3)
+  * state : text
+  last_provider_event_at : timestamptz
+}
+entity "payment_events" as events {
+  * id : uuid <<PK>>
+  --
+  * payment_id : uuid <<FK>>
+  * provider_event_id : text <<UQ>>
+  * event_type : text
+  * provider_occurred_at : timestamptz
+  processed_at : timestamptz
+}
+entity "refunds" as refunds {
+  * id : uuid <<PK>>
+  --
+  * payment_id : uuid <<FK>>
+  provider_refund_id : text <<UQ>>
+  * idempotency_key : text <<UQ>>
+  * amount_minor : bigint
+  * state : text
+  requested_by : uuid <<FK>>
+}
+entity "payout_refs" as payouts {
+  * id : uuid <<PK>>
+  --
+  * payment_id : uuid <<FK>>
+  * connected_account_id : text
+  provider_transfer_id : text <<UQ>>
+  * state : text
+}
+entity "profiles\n(UC-01 reference)" as profiles {
+  * id : uuid <<PK>>
+}
+bookings ||--o| payments : booking_id
+payments ||--o{ events : payment_id
+payments ||--o{ refunds : payment_id
+payments ||--o{ payouts : payment_id
+profiles |o--o{ refunds : requested_by
+events -[hidden]down- payouts
+legend bottom
+  One canonical payment per booking; retries use event history.
+  Money: integer minor units; provider events: verified server writes.
+  Refund totals bounded transactionally by captured amount.
+  No card data or provider secrets. Key fields shown.
+endlegend
+@enduml

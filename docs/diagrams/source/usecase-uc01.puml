@@ -1,0 +1,51 @@
+@startuml
+title UC-01 — User Management
+top to bottom direction
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam legendFontSize 20
+skinparam titleFontSize 24
+skinparam shadowing false
+skinparam dpi 180
+skinparam packageStyle rectangle
+skinparam usecaseBackgroundColor #F4F7FB
+skinparam usecaseBorderColor #334155
+actor Student
+actor Tutor
+actor "Admin" as Admin
+actor "Supabase Auth" as Auth <<system>>
+actor "Email Service" as Email <<system>>
+rectangle "Tutor Plus System" {
+  usecase "Register adult\naccount" as Register
+  usecase "Validate age /\nrole intent" as Validate
+  usecase "Log in" as Login
+  usecase "Resolve active\ncapabilities" as Resolve
+  usecase "Recover account\naccess" as Recover
+  usecase "Log out" as Logout
+  usecase "Manage roles /\nstatus" as Manage
+  usecase "Authorize / audit\nadmin action" as Audit
+  Register .right.> Validate : <<include>>
+  Login .right.> Resolve : <<include>>
+  Recover .up.> Login : <<extend>>\n[recovery\nrequested]
+  Manage .right.> Audit : <<include>>
+  Register -[hidden]down- Login
+  Recover -[hidden]down- Logout
+  Logout -[hidden]down- Manage
+}
+Student -down- Register
+Student -- Login
+Student -- Logout
+Tutor -down- Register
+Tutor -- Login
+Tutor -- Logout
+Admin -up- Manage
+Auth -up- Register
+Auth -- Login
+Email -up- Recover
+legend bottom
+  Student / Tutor capabilities may coexist on one account.
+  Admin authority requires controlled bootstrap.
+  Login extension point: recovery requested.
+endlegend
+@enduml

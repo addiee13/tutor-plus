@@ -1,0 +1,35 @@
+@startuml
+title UC-03 — Search and Discover Tutors
+top to bottom direction
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam legendFontSize 20
+skinparam titleFontSize 24
+skinparam shadowing false
+skinparam dpi 180
+skinparam usecaseBackgroundColor #F4F7FB
+skinparam usecaseBorderColor #334155
+actor Student
+actor "Geocoding Service" as Geo <<system>>
+rectangle "Tutor Plus System" {
+  usecase "Search published\ntutors" as Search
+  usecase "Apply subject, mode,\nprice and time filters" as Filter
+  usecase "Return paginated\npublic tutor results" as Results
+  usecase "Filter by approximate\ndistance" as Distance
+  usecase "Geocode city / state / ZIP" as Geocode
+  usecase "View public tutor profile" as View
+  Search ..> Filter : <<include>>
+  Search ..> Results : <<include>>
+  Distance ..> Search : <<extend>>\n[in-person distance\nrequested]
+  Distance ..> Geocode : <<include>>
+}
+Student -- Search
+Student -- View
+Geo -- Geocode
+legend bottom
+  Browser location is optional and permission-based.
+  Manual location remains available; no public exact address.
+  Search extension point: location filter.
+endlegend
+@enduml

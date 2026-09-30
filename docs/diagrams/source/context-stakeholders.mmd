@@ -1,0 +1,27 @@
+---
+title: Tutor Plus — stakeholder context (companion)
+---
+flowchart TB
+    student(["Student<br/>human actor"])
+    tutor(["Tutor<br/>human actor"])
+    admin(["Admin<br/>human actor"])
+    core["&lt;&lt;Tutor&nbsp;Plus&nbsp;System&gt;&gt;<br/>Tutor Plus"]
+    stripe["&lt;&lt;system&gt;&gt;<br/>Stripe Connect"]
+    ai["&lt;&lt;system&gt;&gt;<br/>OpenAI API"]
+    email["&lt;&lt;system&gt;&gt;<br/>Email Service"]
+    geo["&lt;&lt;system&gt;&gt;<br/>Geocoding Service"]
+    supabase["&lt;&lt;system&gt;&gt;<br/>Supabase Platform"]
+    student ---|"find, book, learn"| core
+    tutor ---|"offer, schedule, teach"| core
+    admin ---|"accounts, moderation"| core
+    core --- stripe
+    core --- ai
+    core --- email
+    core --- geo
+    core --- supabase
+    classDef human fill:#fff9ed,stroke:#475569,stroke-width:2px,color:#172033;
+    classDef external fill:#ffffff,stroke:#475569,stroke-width:2px,color:#172033;
+    classDef central fill:#edf3fa,stroke:#253b58,stroke-width:4px,color:#172033;
+    class student,tutor,admin human;
+    class stripe,ai,email,geo,supabase external;
+    class core central;

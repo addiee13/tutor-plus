@@ -1,0 +1,47 @@
+@startuml
+title UC-06 — Payments and Refunds
+top to bottom direction
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam legendFontSize 20
+skinparam titleFontSize 24
+skinparam shadowing false
+skinparam dpi 180
+skinparam usecaseBackgroundColor #F4F7FB
+skinparam usecaseBorderColor #334155
+actor Student
+actor Tutor
+actor "Admin" as Admin
+actor "Stripe Connect" as Stripe <<system>>
+rectangle "Tutor Plus System" {
+  usecase "Arrange payment" as Pay
+  usecase "Compute amount;\ncreate idempotent\npayment" as Create
+  usecase "Retry payment" as Retry
+  usecase "Reconcile provider\nevent" as Reconcile
+  usecase "Verify signature and\ndeduplicate event" as Verify
+  usecase "Request eligible\nrefund" as Refund
+  usecase "Authorize refund;\nenforce policy /\ncaptured-amount limit" as Eligibility
+  usecase "View verified\npayout status" as Payout
+  Pay .right.> Create : <<include>>
+  Retry ..> Pay : <<extend>>\n[failed attempt\nand valid hold]
+  Reconcile .right.> Verify : <<include>>
+  Refund .right.> Eligibility : <<include>>
+  Create -[hidden]down- Eligibility
+  Eligibility -[hidden]down- Verify
+  Reconcile -[hidden]down- Payout
+}
+Student -down- Pay
+Student -- Refund
+Tutor -up- Payout
+Admin -up- Refund
+Stripe -up- Reconcile
+Stripe -- Pay
+Stripe -- Refund
+Stripe -- Payout
+legend bottom
+  Webhook reconciliation is asynchronous, not a UI include.
+  No raw card storage; Stripe is payment / payout authority.
+  Payment extension point: failed attempt.
+endlegend
+@enduml

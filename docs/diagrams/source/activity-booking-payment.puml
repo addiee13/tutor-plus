@@ -1,0 +1,46 @@
+@startuml
+title Booking, payment and session — planned successful scenario
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 22
+skinparam legendFontSize 22
+skinparam titleFontSize 24
+skinparam ArrowColor #334155
+skinparam activityBackgroundColor #F4F7FB
+skinparam activityBorderColor #334155
+skinparam activityDiamondBackgroundColor #FFF8E7
+skinparam activityDiamondBorderColor #334155
+skinparam swimlaneTitleFontSize 22
+skinparam shadowing false
+skinparam dpi 180
+|Student|
+start
+repeat
+  :Select tutor,\nsubject and slot;
+  |Tutor Plus System|
+  :Authorize; recheck;\nreserve hold atomically;
+repeat while (Reservation result?) is ([unavailable]) not ([available])
+:Create canonical payment\nwith idempotency key;
+repeat
+  |Student|
+  :Choose payment attempt;\nuse Stripe payment UI;
+  |Stripe Payment|
+  :Authorize; emit\nsigned provider event;
+  |Tutor Plus System|
+  :Verify; deduplicate;\npersist and show result;
+repeat while (Verified payment result?) is ([declined]) not ([approved])
+:Confirm booking;\nnotify participants;
+|Tutor|
+:Prepare private\nmeeting details;
+|Student|
+:Attend scheduled session;
+|Tutor|
+:Conduct scheduled\ntutoring session;
+|Tutor Plus System|
+:Record authorized\ncompletion;
+stop
+legend bottom
+  Only verified provider success permits [approved], not a redirect.
+  Retry requires valid hold; expiry / cancellation leave this scenario.
+endlegend
+@enduml

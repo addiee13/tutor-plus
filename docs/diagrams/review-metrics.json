@@ -1,0 +1,197 @@
+[
+  {
+    "figure": "context-systems",
+    "page": 1,
+    "orientation": "portrait",
+    "print_width_inches": 6.5,
+    "print_height_inches": 5.624,
+    "minimum_text_points": 14.32,
+    "png_dimensions": [
+      4800,
+      4154
+    ],
+    "source_sha256": "3309aa4fc26f13628372c542b82b442ace93c74f0f69b52e392b083702a99c9f",
+    "png_sha256": "d380f6c240218eb48456e572142128d3d68077fd1341e6c0168dd4ab8687120a",
+    "svg_sha256": "8c38898f2bed960d2f8239f552481d8543a1982ef59dba426b48e7016a72f860"
+  },
+  {
+    "figure": "context-stakeholders",
+    "page": 2,
+    "orientation": "portrait",
+    "print_width_inches": 6.5,
+    "print_height_inches": 4.182,
+    "minimum_text_points": 8.45,
+    "png_dimensions": [
+      4800,
+      3088
+    ],
+    "source_sha256": "38a51e7d0d76a02571aa3dd6b18c98136d1faee7ce4b99d3abf8661852823497",
+    "png_sha256": "95a34429c7793a35836007352c3a574a0c5788dce44c56f2f2b7ec3e3761b1fa",
+    "svg_sha256": "c4d195b3a7af7afecaf5de6c0cd4864648d0789087fd0fd637df2babf28a8efb"
+  },
+  {
+    "figure": "activity-booking-payment",
+    "page": 3,
+    "orientation": "portrait",
+    "print_width_inches": 5.992,
+    "print_height_inches": 7.5,
+    "minimum_text_points": 8.11,
+    "png_dimensions": [
+      2192,
+      2743
+    ],
+    "source_sha256": "3b56b78aec0f245f3db2e26eb9ebff2ad4c48d59d5729b7ee7a4987e04952883",
+    "png_sha256": "84b13aa0f86620e23a2fbf442ce557307ac4defadff014e8e18718b624975098",
+    "svg_sha256": "66ccb460ed3e3b58fbed01861e6b1da2ab9e51ec36fae911b407b230b3a6b90c"
+  },
+  {
+    "figure": "usecase-uc01",
+    "page": 4,
+    "orientation": "portrait",
+    "print_width_inches": 6.5,
+    "print_height_inches": 8.329,
+    "minimum_text_points": 10.06,
+    "png_dimensions": [
+      1743,
+      2235
+    ],
+    "source_sha256": "a7e362d2f2c06467f3f8c8e26c1b73843801b8b1beeae8027aabd32c7bc03358",
+    "png_sha256": "441f3ae20b5399596d6b2c90fdb827202591e5fc22b8289c01bec1e4ac0ea171",
+    "svg_sha256": "d36642d59353bfc8a1c4fd308db12f29da53dbbed6d91cb461755a210360ad88"
+  },
+  {
+    "figure": "usecase-uc03",
+    "page": 5,
+    "orientation": "portrait",
+    "print_width_inches": 6.5,
+    "print_height_inches": 6.14,
+    "minimum_text_points": 11.16,
+    "png_dimensions": [
+      1572,
+      1485
+    ],
+    "source_sha256": "e697cadb97f6f2dd11feb3137819650232d05ecbca1109b85da4719eed332645",
+    "png_sha256": "4b3f30504b2db0c61e7dd67a550d1cbf2144d0f397bd1261f6ec97e1f76bc3b1",
+    "svg_sha256": "f3ede4892b87bd9b4ff84fb8b3a95786d6588962ffd4b4a0a380e8f6f0be5e6c"
+  },
+  {
+    "figure": "usecase-uc04",
+    "page": 6,
+    "orientation": "portrait",
+    "print_width_inches": 6.5,
+    "print_height_inches": 7.371,
+    "minimum_text_points": 11.14,
+    "png_dimensions": [
+      1574,
+      1785
+    ],
+    "source_sha256": "f9f8d84983d94ac2704601c5dfb6ad51f31b067e88b25d32c001773bbe6ecbba",
+    "png_sha256": "cd33fb04782a057cac094536cdb4ffd26d2acf9d51230ba903a70c1a7fc84bd8",
+    "svg_sha256": "f643001f5f6296cf009648f9c2889880c1d06dfa949b4d41f02fe630ca8629e4"
+  },
+  {
+    "figure": "usecase-uc06",
+    "page": 7,
+    "orientation": "portrait",
+    "print_width_inches": 6.5,
+    "print_height_inches": 8.138,
+    "minimum_text_points": 10.73,
+    "png_dimensions": [
+      1634,
+      2045
+    ],
+    "source_sha256": "0f8d2e7d9b782e0d098b4384b4ef08e1b8bb251687c0f64cb1046f512e65b427",
+    "png_sha256": "9d0e9198db7d3de07f982cfcfc63c85622da168495b22f3d19858fd662d2085f",
+    "svg_sha256": "0dcef5e14dbea9728905442adce24f13c7247faae3bff59077db43d4a98aaecf"
+  },
+  {
+    "figure": "class-uc01",
+    "page": 8,
+    "orientation": "landscape",
+    "print_width_inches": 7.723,
+    "print_height_inches": 7.0,
+    "minimum_text_points": 9.13,
+    "png_dimensions": [
+      2284,
+      2071
+    ],
+    "source_sha256": "0cb0f64c49ff67f35abd6ba82632e069bde8254a1f8c05a6375a90dc4da42825",
+    "png_sha256": "9d72a9d1e9a393f7a782d4fff4a7b416ffe71cea1cd2e1a42d95944ce999b2b3",
+    "svg_sha256": "b4ccf0e7f7d3f7f9e41457946f5a91a7cc6eebfb4f8f5539225af07c6cce0561"
+  },
+  {
+    "figure": "class-uc04",
+    "page": 9,
+    "orientation": "landscape",
+    "print_width_inches": 6.471,
+    "print_height_inches": 7.0,
+    "minimum_text_points": 8.76,
+    "png_dimensions": [
+      1993,
+      2157
+    ],
+    "source_sha256": "230c8a1985aca08da460815d9862dd88c0160d7fc59b37a506678445c889fcaa",
+    "png_sha256": "c8c9a5d08881436ba4e35d7031271284f5f2fb11a5d368975c42f2b88806a1c0",
+    "svg_sha256": "5e9f343704ddf51d67f21c0df7804e13c6ae606a71ef83a1ecced14b7c5eddd2"
+  },
+  {
+    "figure": "erd-uc01",
+    "page": 10,
+    "orientation": "portrait",
+    "print_width_inches": 6.5,
+    "print_height_inches": 8.549,
+    "minimum_text_points": 15.63,
+    "png_dimensions": [
+      1121,
+      1476
+    ],
+    "source_sha256": "ab61eab54f4ee33feebf2736bcaf4726ee0b7becdb8f16bcda94ef65793cd034",
+    "png_sha256": "07129275f573289b68ea617b665fd434db7a40021109981a684e5ac08fd3d285",
+    "svg_sha256": "66634c675f1f07fe2c7c03d37f1b6101b937ef3bc30b4d8871e12dce6768975a"
+  },
+  {
+    "figure": "erd-uc02",
+    "page": 11,
+    "orientation": "portrait",
+    "print_width_inches": 6.5,
+    "print_height_inches": 7.672,
+    "minimum_text_points": 14.44,
+    "png_dimensions": [
+      1213,
+      1433
+    ],
+    "source_sha256": "cb454e0491c89af01dedfb2471f0de7445d732f3d8ddbd41fda451eb4d4d95e6",
+    "png_sha256": "6e245cf026b4a8cbb88c7bf6cd768701ecb04f8d7c48f4db6594fa43b0eb4630",
+    "svg_sha256": "a296f6ac0cbf934abb7c18c585e12247019ea69b86940000b2322874a0a778b8"
+  },
+  {
+    "figure": "erd-uc04",
+    "page": 12,
+    "orientation": "portrait",
+    "print_width_inches": 6.5,
+    "print_height_inches": 8.38,
+    "minimum_text_points": 11.16,
+    "png_dimensions": [
+      1572,
+      2027
+    ],
+    "source_sha256": "723a1c653926532acf3178583f8ac1bf1fb6723e372670f0dabe66dcc2fb7b02",
+    "png_sha256": "fddedb08bbdebbb4bdfea9d8966a8067dfa92d9c4f17475391ec96ef2fd5bb00",
+    "svg_sha256": "afe7e259299e4046a8808898aee600dbc7b701ce2d9485a4a7dccd32e267ddd1"
+  },
+  {
+    "figure": "erd-uc06",
+    "page": 13,
+    "orientation": "portrait",
+    "print_width_inches": 6.5,
+    "print_height_inches": 8.788,
+    "minimum_text_points": 11.7,
+    "png_dimensions": [
+      1498,
+      2027
+    ],
+    "source_sha256": "7939f3c51941f8927d3ad20cdecbaa358d39c14a0e598170dbeda50eab144d5a",
+    "png_sha256": "1fbcf489a62d3ebad74b3846bee0cfbb2e4441193f80de0239d03fd19c25ce31",
+    "svg_sha256": "0c730e3c05e6d38753de6450ac4ab0fd9113cfe4a9afabbc7cc0f6a94d212dc3"
+  }
+]

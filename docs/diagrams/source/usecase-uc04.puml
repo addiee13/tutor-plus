@@ -1,0 +1,44 @@
+@startuml
+title UC-04 — Availability and Booking
+top to bottom direction
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam legendFontSize 20
+skinparam titleFontSize 24
+skinparam shadowing false
+skinparam dpi 180
+skinparam usecaseBackgroundColor #F4F7FB
+skinparam usecaseBorderColor #334155
+actor Student
+actor Tutor
+actor "Stripe Connect" as Stripe <<system>>
+rectangle "Tutor Plus System" {
+  usecase "Manage\navailability" as Availability
+  usecase "Validate recurrence /\ntime zone" as Rules
+  usecase "Book a tutoring\nsession" as Book
+  usecase "Authorize / reserve\nslot atomically" as Reserve
+  usecase "UC-06: Arrange\npayment" as Payment
+  usecase "Choose replacement\nslot" as Replace
+  usecase "Cancel / reschedule" as Change
+  usecase "Enforce policy and\ntransactional state\ntransition" as Policy
+  Availability .right.> Rules : <<include>>
+  Book .right.> Reserve : <<include>>
+  Book .down.> Payment : <<include>>
+  Replace .up.> Book : <<extend>>\n[conflict and\nretry chosen]
+  Change .right.> Policy : <<include>>
+  Availability -[hidden]down- Book
+  Payment -[hidden]down- Change
+  Reserve -[hidden]down- Replace
+}
+Student -- Book
+Student -- Change
+Tutor -- Availability
+Tutor -- Change
+Stripe -- Payment
+legend bottom
+  Paid-booking path; transactional availability check.
+  Confirm only from authoritative provider state.
+  Booking extension point: slot conflict.
+endlegend
+@enduml

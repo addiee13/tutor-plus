@@ -1,0 +1,75 @@
+@startuml
+title UC-04 — Booking persistence and concurrency boundary
+top to bottom direction
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 20
+skinparam legendFontSize 20
+skinparam noteFontSize 20
+skinparam titleFontSize 24
+skinparam shadowing false
+skinparam dpi 180
+skinparam classAttributeIconSize 0
+skinparam classBackgroundColor #F4F7FB
+skinparam classBorderColor #334155
+class BookingView <<boundary>> {
+  selectedSlot: Slot
+  expectedVersion: integer
+  +submitReservation(): BookingResult
+}
+class BookingService <<domain>> {
+  +reserve(actor, slot): Booking
+  +reschedule(actor, version): Booking
+  +cancel(actor, version): Booking
+}
+class AvailabilityPolicy <<domain>> {
+  +calculateSlots(inputs): Slot[]
+  +requireValidWindow(slot): void
+}
+class BookingRepository <<persistence>> {
+  +reserveInTransaction(slot): Booking
+  +updateIfVersionMatches(version): Booking
+  +appendEvent(event): void
+}
+class PostgreSQL <<database>> {
+  blockingRange: half-open UTC range
+  +excludeActiveOverlaps(): void
+  +enforceKeysAndChecks(): void
+}
+class Booking <<entity>> {
+  id: UUID
+  studentId: UUID
+  tutorId: UUID
+  subjectId: UUID
+  startsAt: UTCInstant
+  endsAt: UTCInstant
+  status: BookingStatus
+  requestKey: string
+  version: integer
+}
+class BookingEvent <<entity>> {
+  bookingId: UUID
+  bookingVersion: integer
+  eventType: string
+  fromState: string?
+  toState: string
+}
+class PaymentReconciler <<domain>> {
+  +applyVerifiedEvent(eventId: string): void
+  +confirmOnlyPaidValidHold(): void
+}
+BookingView ..> BookingService : server operation
+BookingService ..> AvailabilityPolicy
+BookingService ..> BookingRepository : authorized\ntransaction
+BookingRepository ..> PostgreSQL
+BookingRepository ..> Booking : persists
+Booking "1" -- "0..*" BookingEvent
+PaymentReconciler ..> BookingRepository : idempotent\ntransition
+PostgreSQL -[hidden]right- Booking
+Booking -[hidden]right- BookingEvent
+legend bottom
+  Planned responsibilities, not an implemented booking UI.
+  GiST excludes tutor AND student overlap; versions reject stale writes.
+  (student_id, request_key) deduplicates; authorize in service + RLS.
+endlegend
+@enduml
