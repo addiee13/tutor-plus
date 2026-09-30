@@ -1,0 +1,78 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  margin-block: 1.5rem;
+  align-items: start;
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.card {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr);
+  gap: .6rem 1rem;
+  margin-block: 1rem;
+}
+
+.facts dt {
+  font-weight: 600;
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.summary {
+  padding-left: 1.25rem;
+}
+
+.summary li {
+  margin-block: .5rem;
+}
+
+.card details summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding-block: .75rem;
+}
+
+.card textarea {
+  width: 100%;
+  max-width: 100%;
+  font: inherit;
+  padding: .75rem;
+  border: 1px solid var(--line, #ddd);
+  border-radius: .5rem;
+  resize: vertical;
+}
+
+@media (max-width: 800px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: .3rem;
+  }
+
+  .facts dd {
+    margin-bottom: .7rem;
+  }
+}
