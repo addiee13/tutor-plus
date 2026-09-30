@@ -435,7 +435,7 @@ def assemble():
         ("usecase-uc04.png", "UCD-03. Availability and Booking"),
         ("usecase-uc06.png", "UCD-04. Payments, Platform Fees, and Refunds"),
     ]:
-        heading(title, 3, True)
+        heading(title, 3, filename != "usecase-uc01.png")
         figure(filename, title, 8.0)
     heading("3.0 DATABASE TABLES", 1, True)
     body("Target DBMS: PostgreSQL 15, managed through Supabase, with PostGIS and btree_gist. Local execution results identify the actual engine version. Four database groups implement UC-01, UC-02, UC-04, and UC-06; a group can contain many supporting tables. Managed auth.users is not re-created in application DDL. The canonical versioned migrations are mirrored by sql/sprint2_tables.sql for standalone review and replay.")
@@ -516,10 +516,9 @@ def assemble():
     ]:
         body(text)
     heading("Appendix A Requirement Traceability", 1, True)
-    markdown("docs/planning/TRACEABILITY.md", base_level=2)
-    heading("Appendix B Deliverable and Submission Gates", 1, True)
-    body("This checklist distinguishes generated artifacts from the human and external evidence still required. An internal evaluator's review estimate is not an instructor-issued grade. Every member submits a correctly named PDF; the coordinator prints a copy before class on October 5, 2026. Actual submission and printing must be confirmed after they occur.")
-    markdown("docs/sprint2/REPORT_CHECKLIST.md", base_level=2)
+    body("Specification coverage for the ten detailed Sprint 2 use cases and the five use cases reserved for the next sprint. Client candidates are not confirmed approvals.")
+    markdown("docs/planning/TRACEABILITY.md", base_level=2, only_section="## Source-to-use-case-to-requirement coverage")
+    markdown("docs/planning/TRACEABILITY.md", base_level=2, only_section="## Next-sprint backlog and client candidates")
     destination = OUT / "Adam_Dalwai_Group11_Sprint2.docx"
     DOC.save(destination)
     (OUT / "headings.json").write_text(json.dumps(HEADINGS))

@@ -2,11 +2,11 @@
 
 ## Repository
 
-The Sprint 2 source is in the public repository `https://github.com/addiee13/tutor-plus-sprint2`. It holds the Next.js application, the versioned Supabase migrations, the standalone DDL (`sql/sprint2_tables.sql`), the terminal build script, and the report tooling. The original course documents and lecture files are kept out of the public repository.
+The Sprint 2 source is in the public repository `https://github.com/addiee13/tutor-plus-sprint2`. It holds the Next.js application, the versioned Supabase migrations, the standalone DDL (`sql/sprint2_tables.sql`), the terminal build script, and the report tooling. The GitHub Actions workflow (install, typecheck, lint, production build) completed successfully for commit `f21c128`. The original course documents and lecture files are kept out of the public repository.
 
 ## Project board
 
-Title: **Tutor Plus Group 11 Sprint 2**, Board layout with the columns **To Do**, **In Progress** and **Done**. The status of each card reflects the work actually finished at the time of writing.
+Board: `https://github.com/users/addiee13/projects/1`. Title: **Tutor Plus Group 11 Sprint 2**, Board layout with the columns **To Do**, **In Progress** and **Done**. The status of each card reflects the work actually finished at the time of writing.
 
 | Card | Scope | Status | Completion evidence |
 | --- | --- | --- | --- |
