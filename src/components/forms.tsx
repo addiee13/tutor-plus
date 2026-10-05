@@ -2,11 +2,12 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { signupAction, loginAction, logoutAction, profileAction, roleAction, statusAction, resetAction, resendAction, passwordAction } from "@/app/actions";
+import { signupAction, loginAction, logoutAction, profileAction, roleAction, statusAction, resetAction, resendAction, passwordAction, oauthAction, codeRequestAction, codeVerifyAction, onboardingAction } from "@/app/actions";
 import type { ActionState } from "@/domains/shared/errors";
+import type { OAuthProvider } from "@/domains/auth/validation";
 
 const initial: ActionState = { message: "" };
-type FieldProps = { label: string; name: string; error?: string; type?: string; autoComplete?: string; defaultValue?: string; hint?: string; minLength?: number; maxLength?: number };
+type FieldProps = { label: string; name: string; error?: string; type?: string; autoComplete?: string; defaultValue?: string; hint?: string; minLength?: number; maxLength?: number; inputMode?: "numeric" | "email" | "text"; pattern?: string };
 
 function Field({ label, name, error, hint, ...props }: FieldProps) {
   return <div className="field"><label htmlFor={name}>{label}</label><input id={name} name={name} required aria-invalid={!!error} aria-describedby={error || hint ? `${name}-help` : undefined} {...props} />{(error || hint) && <span id={`${name}-help`} className={error ? "field-error" : "hint"}>{error || hint}</span>}</div>;
@@ -28,6 +29,27 @@ export function SignupForm({ configured }: { configured: boolean }) {
 export function LoginForm({ configured }: { configured: boolean }) {
   const [state, action, pending] = useActionState(loginAction, initial);
   return <form action={action} className="form"><fieldset disabled={!configured || pending} className="form-fields"><Field label="Email address" name="email" type="email" autoComplete="email" error={state.fields?.email} /><Field label="Password" name="password" type="password" autoComplete="current-password" maxLength={128} error={state.fields?.password} /><Link className="small-link" href="/reset-password">Forgot your password?</Link><Submit pending={pending}>Sign in</Submit></fieldset><Result state={state} /><p className="form-footer">New to Tutor Plus? <Link href="/signup">Create an account</Link></p><p className="hint">Still waiting for verification? <Link href="/check-email">Request a new link</Link></p></form>;
+}
+
+const providerNames: Record<OAuthProvider, string> = { github: "GitHub", google: "Google" };
+
+export function AltSignIn({ configured, providers, showCode = true }: { configured: boolean; providers: readonly OAuthProvider[]; showCode?: boolean }) {
+  const [state, action, pending] = useActionState(oauthAction, initial);
+  if (!providers.length && !showCode) return null;
+  return <div className="alt-signin"><p className="divider"><span>or</span></p><form action={action} className="form"><fieldset disabled={!configured || pending} className="form-fields alt-buttons">{providers.map((provider) => <button key={provider} className="button secondary" type="submit" name="provider" value={provider}>Continue with {providerNames[provider]}</button>)}{showCode && <Link className="button secondary" href="/login?method=code">Email me a code</Link>}</fieldset><Result state={state} /></form></div>;
+}
+
+export function CodeSignInForm({ configured }: { configured: boolean }) {
+  const [sent, request, requesting] = useActionState(codeRequestAction, initial);
+  const [verified, verify, verifying] = useActionState(codeVerifyAction, initial);
+  const email = sent.values?.email ?? "";
+  if (!sent.success) return <form action={request} className="form"><fieldset disabled={!configured || requesting} className="form-fields"><Field label="Email address" name="email" type="email" autoComplete="email" defaultValue={email} hint="We’ll email a one-time code to an existing Tutor Plus account." error={sent.fields?.email} /><Submit pending={requesting}>Email me a code</Submit></fieldset><Result state={sent} /><p className="form-footer"><Link href="/login">Sign in with a password instead</Link></p><p className="hint">New to Tutor Plus? <Link href="/signup">Create an account</Link></p></form>;
+  return <form action={verify} className="form"><Result state={sent} /><input type="hidden" name="email" value={email} /><fieldset disabled={!configured || verifying} className="form-fields"><Field label="Sign-in code" name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6,8}" minLength={6} maxLength={8} hint={`Enter the code sent to ${email}. It expires in one hour; the link in the same email also works in this browser.`} error={verified.fields?.code} /><Submit pending={verifying}>Verify and sign in</Submit></fieldset><Result state={verified} /><p className="form-footer"><a href="/login?method=code">Use a different email</a></p></form>;
+}
+
+export function OnboardingForm({ suggestedName }: { suggestedName: string }) {
+  const [state, action, pending] = useActionState(onboardingAction, initial);
+  return <form action={action} className="form"><fieldset disabled={pending} className="form-fields"><Field label="Display name" name="display_name" autoComplete="name" minLength={2} maxLength={80} defaultValue={state.values?.display_name ?? suggestedName} error={state.fields?.display_name} /><div className="field"><label htmlFor="role_intent">I’m here to</label><select id="role_intent" name="role_intent" defaultValue={state.values?.role_intent || "student"}><option value="student">Learn as a student</option><option value="tutor">Teach as a tutor</option></select>{state.fields?.role_intent && <span className="field-error">{state.fields.role_intent}</span>}</div><Field label="Time zone" name="timezone" defaultValue={state.values?.timezone ?? "America/New_York"} hint="IANA format, for example America/New_York or Europe/London." error={state.fields?.timezone} /><label className="checkbox"><input type="checkbox" name="adult_attested" required /><span>I confirm that I am at least 18 years old.</span></label>{state.fields?.adult_attested && <span className="field-error">{state.fields.adult_attested}</span>}<Submit pending={pending}>Finish setting up</Submit></fieldset><Result state={state} /></form>;
 }
 
 export function EmailForm({ kind, configured }: { kind: "reset" | "resend"; configured: boolean }) {

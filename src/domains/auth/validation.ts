@@ -40,10 +40,34 @@ export function parseSignup(form: FormData) {
   const profile = parseProfile(form);
   const email = parseEmail(form);
   const password = parsePassword(form);
+  return { ...profile, ...parseIntent(form), email, password, adult_attested: true };
+}
+
+function parseIntent(form: FormData) {
   const roleIntent = text(form, "role_intent");
   if (roleIntent !== "student" && roleIntent !== "tutor") throw new InputError({ role_intent: "Choose Student or Tutor." });
   if (form.get("adult_attested") !== "on") throw new InputError({ adult_attested: "You must confirm you are at least 18 years old." });
-  return { ...profile, email, password, role_intent: roleIntent, adult_attested: true };
+  return { role_intent: roleIntent };
+}
+
+export function parseOnboarding(form: FormData) {
+  const profile = parseProfile(form);
+  return { chosen_name: profile.display_name, chosen_timezone: profile.timezone, requested_role: parseIntent(form).role_intent };
+}
+
+export function parseOtp(form: FormData): string {
+  const token = text(form, "code").replace(/\s+/g, "");
+  if (!/^\d{6,8}$/.test(token)) throw new InputError({ code: "Enter the code from your email." });
+  return token;
+}
+
+export const oauthProviders = ["github", "google"] as const;
+export type OAuthProvider = typeof oauthProviders[number];
+
+export function parseProvider(form: FormData): OAuthProvider {
+  const provider = text(form, "provider");
+  if (!oauthProviders.includes(provider as OAuthProvider)) throw new DomainError("validation");
+  return provider as OAuthProvider;
 }
 
 export function parseRoleChange(form: FormData) {

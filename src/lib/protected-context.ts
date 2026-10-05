@@ -10,6 +10,7 @@ export const protectedContext = cache(async () => {
   try { return { client, actor: await getActor(client) }; } catch (error) {
     if (error instanceof DomainError) {
       if (error.code === "unverified") redirect("/check-email");
+      if (error.code === "onboarding") redirect("/welcome");
       if (error.code === "unauthenticated") redirect("/login");
       if (error.code === "expired") redirect("/login?notice=expired");
     }
