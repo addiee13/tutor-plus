@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { publicConfig } from "@/lib/supabase/config";
 import { protectedContext } from "@/lib/protected-context";
 import { safeMessage } from "@/domains/shared/errors";
@@ -20,6 +21,8 @@ export const dynamic = "force-dynamic";
 
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const SUMMARY_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+/** Bookings whose UC-09 planner, recap or reflection can be opened. */
+const WORKSPACE_STATUSES: readonly Booking["status"][] = ["confirmed", "in_progress", "completed"];
 
 export default async function BookingsPage() {
   if (!publicConfig()) return null;
@@ -257,6 +260,13 @@ function BookingCard({ booking, tutor, subject, now }: BookingCardProps) {
       {booking.status === "payment_pending" && (
         <p className="hint">
           Payment pending is not a confirmed session. This request did not charge you, and this UI has no checkout.
+        </p>
+      )}
+      {WORKSPACE_STATUSES.includes(booking.status) && (
+        <p>
+          <Link className="button secondary compact" href={`/sessions/${booking.id}`}>
+            Open session workspace <span aria-hidden="true">↗</span>
+          </Link>
         </p>
       )}
       {canCancel && (

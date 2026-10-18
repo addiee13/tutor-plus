@@ -2,12 +2,20 @@ import Link from "next/link";
 import { publicConfig } from "@/lib/supabase/config";
 import { protectedContext } from "@/lib/protected-context";
 import { readOwnProfile } from "@/domains/profiles/service";
-import { canBook } from "@/domains/auth/policy";
+import { canBook, hasRole } from "@/domains/auth/policy";
+import { describeRating } from "@/domains/reviews/policy";
+import { getTutorRatingSummary } from "@/domains/reviews/service";
+import type { TutorReputation } from "@/domains/reviews/types";
 
 export default async function Dashboard() {
   if (!publicConfig()) return null;
   const { actor, client } = await protectedContext();
   const profile = await readOwnProfile(client);
+  let reputation: TutorReputation[] | null = null;
+  if (hasRole(actor, "tutor")) {
+    // The rating card is optional; a failed read hides it rather than showing an invented rating.
+    reputation = await getTutorRatingSummary(client).catch(() => null);
+  }
   return (
     <>
       <section className="page-heading">
@@ -54,10 +62,19 @@ export default async function Dashboard() {
           )}
           <ul className="future-list">
             <li>
-              Provider checkout <span>Planned</span>
+              Session planner and recap <span>Open from a confirmed booking</span>
             </li>
             <li>
-              Learning goals <span>Planned</span>
+              {canBook(actor) ? <Link href="/reviews">Reviews and ratings</Link> : "Reviews and ratings"}{" "}
+              <span>Completed sessions</span>
+            </li>
+            {reputation?.map((entry) => (
+              <li key={entry.tutorId} data-testid="dashboard-rating">
+                Your rating · {entry.tutorName} <span>{describeRating(entry.summary)}</span>
+              </li>
+            ))}
+            <li>
+              Provider checkout <span>Planned</span>
             </li>
           </ul>
         </section>

@@ -42,6 +42,8 @@ export const config = {
     "/profile/:path*",
     "/admin/:path*",
     "/bookings/:path*",
+    "/sessions/:path*",
+    "/reviews/:path*",
     "/auth/:path*",
     "/login",
     "/signup",

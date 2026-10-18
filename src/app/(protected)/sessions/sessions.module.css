@@ -1,0 +1,131 @@
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
+  margin: 0;
+}
+
+.summary div {
+  min-width: 0;
+}
+
+.summary dt {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.summary dd {
+  margin: 0.25rem 0 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  margin-block: 1.5rem;
+  align-items: start;
+}
+
+.card {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.card h2 {
+  margin-top: 0.75rem;
+}
+
+.textarea {
+  width: 100%;
+  max-width: 100%;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 10px 12px;
+  border: 1px solid #cbd6cd;
+  border-radius: 6px;
+  background: white;
+  color: var(--ink);
+  resize: vertical;
+}
+
+.textarea[aria-invalid="true"] {
+  border-color: #a75331;
+}
+
+.textarea:focus-visible {
+  outline: 3px solid #997236;
+  outline-offset: 4px;
+}
+
+.readout {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: #f7f8f3;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 0 0 0.5rem;
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 1rem 0 0.4rem;
+}
+
+.meta {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.status {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--mint);
+  color: var(--accent);
+}
+
+.private {
+  background: #f3efe6;
+  border-color: #e3d9c3;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.meta a {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

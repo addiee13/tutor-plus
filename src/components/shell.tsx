@@ -112,6 +112,11 @@ export function AppShell({ actor, children }: { actor: Actor; children: ReactNod
               Bookings
             </Link>
           )}
+          {canBook(actor) && (
+            <Link className="nav-link" href="/reviews">
+              Reviews
+            </Link>
+          )}
           {hasRole(actor, "administrator") && (
             <Link className="nav-link" href="/admin">
               Admin
