@@ -283,7 +283,7 @@ UI images: 1440×900 viewport at device scale 2 (2880 px wide, full page), light
 | db-02-sprint3-reviews-ratings.png | Linked-DB rows: the walkthrough review, tutor_rating_summaries (5.00, 3 reviews), row counts, and all four applied Sprint 3 migrations. |
 | db-03-sprint3-schema-security.png | Catalog inventory of the 12 Sprint 3 tables: RLS enabled, policy/constraint/trigger counts. |
 | github-01-repo-sprint3-branch.png | Public repository on the `sprint3` branch with the Sprint 3 README. |
-| github-02-pull-request.png | PR #1 sprint3 → main with its current commits and passing CI. |
+| github-02-pull-request.png | PR #1 sprint3 → main at head `d39de09` with passing CI (the later screenshot-only commit is not shown). |
 | github-03-project-board.png | Project board "Sprint 3 board" view (Board layout grouped by Status, filtered to S3 cards): To Do / In Progress / Done columns. |
 
 Logs in `docs/evidence/sprint3/`: `db-isolated-regression.log`, `db-push.log`, `db-push-004.log`, `migration-list.log`, `table-stats.log`, `build-sh.log`.
@@ -302,7 +302,7 @@ Logs in `docs/evidence/sprint3/`: `db-isolated-regression.log`, `db-push.log`, `
 | `npm test` | 6 files, 110 tests passed |
 | `./scripts/build.sh` | exit 0 (`docs/evidence/sprint3/build-sh.log`) |
 | `vercel deploy --prod --yes` | Ready: `tutorplus-68p9ca0kj-adams-projects-c67ba2f3.vercel.app`, aliased to https://tutorplus-one.vercel.app |
-| GitHub Actions `quality` on PR #1 | see §10 |
+| GitHub Actions `quality` on PR #1 | pass (both runs) at head `d39de09`; PR mergeable, not merged |
 
 SQL regressions ran against a disposable local database, not production. Production was verified through the hosted UI flow and read-only queries.
 
