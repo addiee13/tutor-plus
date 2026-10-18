@@ -51,9 +51,10 @@ select '54000000-0000-4000-8000-000000000001', weekday, '00:00', '23:59', 'UTC',
 update public.tutor_profiles set publication_state = 'published';
 
 -- Upcoming booking through the real student RPC; ended booking inserted by the privileged fixture owner.
+-- Both are anchored to midday UTC so the buffered blocking window never crosses the 23:59-00:00 availability gap.
 select pg_temp.act_as(1);
 select public.create_booking('54000000-0000-4000-8000-000000000001', '53000000-0000-4000-8000-000000000001',
-  date_trunc('hour', now()) + interval '1 day 2 hours', date_trunc('hour', now()) + interval '1 day 3 hours', 'virtual', 's3-upcoming');
+  date_trunc('day', now()) + interval '2 days 12 hours', date_trunc('day', now()) + interval '2 days 13 hours', 'virtual', 's3-upcoming');
 reset role;
 create temporary table fixture_ids as select
   (select id from public.bookings where request_key = 's3-upcoming') as upcoming,
@@ -62,8 +63,8 @@ grant select on fixture_ids to authenticated, service_role;
 insert into public.bookings(id, student_id, tutor_id, subject_id, starts_at, ends_at, blocking_starts_at, blocking_ends_at,
   mode, price_minor, platform_fee_minor, currency, status, hold_expires_at, policy_snapshot, request_key)
 values ('55000000-0000-4000-8000-000000000001', '51000000-0000-4000-8000-000000000001', '54000000-0000-4000-8000-000000000001',
-  '53000000-0000-4000-8000-000000000001', date_trunc('hour', now()) - interval '1 day', date_trunc('hour', now()) - interval '23 hours',
-  date_trunc('hour', now()) - interval '1 day 10 minutes', date_trunc('hour', now()) - interval '22 hours 50 minutes',
+  '53000000-0000-4000-8000-000000000001', date_trunc('day', now()) - interval '1 day 12 hours', date_trunc('day', now()) - interval '1 day 11 hours',
+  date_trunc('day', now()) - interval '1 day 12 hours 10 minutes', date_trunc('day', now()) - interval '1 day 10 hours 50 minutes',
   'virtual', 4000, 0, 'USD', 'payment_pending', now() + interval '15 minutes', '{"fixture":true}', 's3-ended');
 insert into public.booking_private_details(booking_id, meeting_url) values ('55000000-0000-4000-8000-000000000001', 'https://meet.example.invalid/s3');
 set local role service_role;
