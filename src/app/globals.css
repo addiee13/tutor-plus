@@ -824,14 +824,20 @@ p {
 }
 .skip-link {
   position: fixed;
-  top: -100px;
+  top: 10px;
   left: 20px;
   background: white;
   padding: 10px;
   z-index: 100;
 }
-.skip-link:focus-visible {
-  top: 10px;
+/* Visually hidden (not just moved off-screen) until reached by keyboard, so it can never overlap content. */
+.skip-link:not(:focus-visible) {
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
 }
 @media (max-width: 900px) {
   .container {
