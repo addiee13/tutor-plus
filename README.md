@@ -71,6 +71,8 @@ output/doc/                Generated DOCX/PDF and local visual QA
 
 Use Node.js 22 or newer and npm. Run `npm ci`, copy `.env.example` to the ignored `.env.local`, and configure a disposable intended Supabase project. Never put privileged keys or account passwords in command arguments or Git. The local CLI configuration keeps email confirmations enabled and uses a local capture mailbox, not external inbox delivery.
 
+Run `npm run check` before committing; it runs the typecheck, ESLint, the Prettier format check and the unit tests. `npm run format` applies formatting, and `npm run test:integration` / `npm run test:e2e` run the suites that need a live Supabase stack.
+
 Run `supabase start --exclude realtime,storage-api,imgproxy,postgres-meta,studio,edge-runtime,logflare,vector,supavisor` and `supabase migration up --local` for this repository's local stack. Use `./scripts/build.sh` and `npm start -- --hostname 127.0.0.1 --port 3000` for a non-IDE production run. Integration/browser checks may require disposable test identities; skipped checks do not prove behavior. See the runbook for actual executed results and exact configuration.
 
 Three Group 8 client confirmations, GitHub project authorization, individual submission receipts, and the coordinator's printed copy are external/human gates until evidence is recorded. Generated review estimates are not instructor grades.

@@ -1,0 +1,167 @@
+[
+ {
+  "path": "docs/evidence/screenshots/github-repository.png",
+  "view": "desktop",
+  "description": "GitHub repository page for addiee13/tutor-plus-sprint2 with the pushed Sprint 2 source"
+ },
+ {
+  "path": "docs/evidence/screenshots/github-board.png",
+  "view": "desktop",
+  "description": "GitHub Project board with To Do, In Progress and Done columns"
+ },
+ {
+  "path": "docs/evidence/screenshots/github-actions.png",
+  "view": "desktop",
+  "description": "GitHub Actions page: both Tutor Plus quality workflow runs passed"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-01-landing.png",
+  "view": "desktop",
+  "description": "Desktop: public landing page with navigation"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-02-signup.png",
+  "view": "desktop",
+  "description": "Desktop: UC-01 registration form completed before submission"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-03-check-email.png",
+  "view": "desktop",
+  "description": "Desktop: UC-01 registration accepted; email verification required"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-04-login-unverified.png",
+  "view": "desktop",
+  "description": "Desktop: UC-01 unverified account is refused at sign-in"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-05-dashboard.png",
+  "view": "desktop",
+  "description": "Desktop: UC-01 verified account lands on the protected dashboard showing its database role"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-06-profile-saved.png",
+  "view": "desktop",
+  "description": "Desktop: UC-02 own profile edited and saved"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-07-profile-reloaded.png",
+  "view": "desktop",
+  "description": "Desktop: UC-02 saved values persist after a full page reload (database round trip)"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-08-logout.png",
+  "view": "desktop",
+  "description": "Desktop: UC-01 sign out ends the session and returns to sign-in"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-09-protected-redirect.png",
+  "view": "desktop",
+  "description": "Desktop: UC-01 protected route redirects the signed-out visitor to sign-in"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-10-admin-denied.png",
+  "view": "desktop",
+  "description": "Desktop: UC-01 role enforcement: a non-administrator is denied the administration page"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-11-booking-form.png",
+  "view": "desktop",
+  "description": "Desktop: UC-04 reservation request form (no payment is collected)"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-12-booking-pending.png",
+  "view": "desktop",
+  "description": "Desktop: UC-04 reservation persisted as payment_pending after reload"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-13-booking-cancelled.png",
+  "view": "desktop",
+  "description": "Desktop: UC-04 cancellation persisted; the time slot is released"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-14-admin-form.png",
+  "view": "desktop",
+  "description": "Desktop: UC-01 administrator grants the Tutor capability (administrator account)"
+ },
+ {
+  "path": "docs/evidence/screenshots/desktop-15-admin-result.png",
+  "view": "desktop",
+  "description": "Desktop: UC-01 audited role change accepted by the database"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-01-landing.png",
+  "view": "phone",
+  "description": "Phone: public landing page with navigation"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-02-signup.png",
+  "view": "phone",
+  "description": "Phone: UC-01 registration form completed before submission"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-03-check-email.png",
+  "view": "phone",
+  "description": "Phone: UC-01 registration accepted; email verification required"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-04-login-unverified.png",
+  "view": "phone",
+  "description": "Phone: UC-01 unverified account is refused at sign-in"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-05-dashboard.png",
+  "view": "phone",
+  "description": "Phone: UC-01 verified account lands on the protected dashboard showing its database role"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-06-profile-saved.png",
+  "view": "phone",
+  "description": "Phone: UC-02 own profile edited and saved"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-07-profile-reloaded.png",
+  "view": "phone",
+  "description": "Phone: UC-02 saved values persist after a full page reload (database round trip)"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-08-logout.png",
+  "view": "phone",
+  "description": "Phone: UC-01 sign out ends the session and returns to sign-in"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-09-protected-redirect.png",
+  "view": "phone",
+  "description": "Phone: UC-01 protected route redirects the signed-out visitor to sign-in"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-10-admin-denied.png",
+  "view": "phone",
+  "description": "Phone: UC-01 role enforcement: a non-administrator is denied the administration page"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-11-booking-form.png",
+  "view": "phone",
+  "description": "Phone: UC-04 reservation request form (no payment is collected)"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-12-booking-pending.png",
+  "view": "phone",
+  "description": "Phone: UC-04 reservation persisted as payment_pending after reload"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-13-booking-cancelled.png",
+  "view": "phone",
+  "description": "Phone: UC-04 cancellation persisted; the time slot is released"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-14-admin-form.png",
+  "view": "phone",
+  "description": "Phone: UC-01 administrator grants the Tutor capability (administrator account)"
+ },
+ {
+  "path": "docs/evidence/screenshots/phone-15-admin-result.png",
+  "view": "phone",
+  "description": "Phone: UC-01 audited role change accepted by the database"
+ }
+]

@@ -1,0 +1,17 @@
+# Generated, vendored, or historical material that must not be rewritten.
+.next/
+node_modules/
+output/
+coverage/
+playwright-report/
+test-results/
+docs/
+lec/
+sql/
+supabase/
+.github/
+.serena/
+.claude/
+*.md
+package-lock.json
+next-env.d.ts

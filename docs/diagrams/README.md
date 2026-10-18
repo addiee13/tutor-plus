@@ -9,10 +9,10 @@ Editable Mermaid (`.mmd`) and PlantUML (`.puml`) sources are in `source/`; every
 | CTX-01 | `context-systems` | 1.5.1 primary context | Portrait, at most 6.5 inches wide / 7.3 inches high |
 | CTX-02 | `context-stakeholders` | 1.5.1 companion context | Portrait, at most 6.5 inches wide / 7.3 inches high |
 | ACT-01 | `activity-booking-payment` | 1.5.2; reference in 5.0 | Portrait, at most 6.5 inches wide / 7.5 inches high |
-| UCD-01 | `usecase-uc01` | 2.3 | Portrait, 6.5 inches wide |
-| UCD-02 | `usecase-uc03` | 2.3 | Portrait, 6.5 inches wide |
-| UCD-03 | `usecase-uc04` | 2.3 | Portrait, 6.5 inches wide |
-| UCD-04 | `usecase-uc06` | 2.3 | Portrait, 6.5 inches wide |
+| UCD-01 | `usecase-uc01-sprint2` (draw.io) | 2.3 | Portrait, 6.5 inches wide |
+| UCD-02 | `usecase-uc03-sprint2` (draw.io) | 2.3 | Portrait, 6.5 inches wide |
+| UCD-03 | `usecase-uc04-sprint2` (draw.io) | 2.3 | Portrait, 6.5 inches wide |
+| UCD-04 | `usecase-uc06-sprint2` (draw.io) | 2.3 | Portrait, 6.5 inches wide |
 | CLASS-01 | `class-uc01` | 4.1; reference in 4.3 | Landscape, at most 9 inches wide / 7 inches high |
 | CLASS-02 | `class-uc04` | 4.2 | Landscape, at most 9 inches wide / 7 inches high |
 | ERD-01, sheet 1 | `erd-uc01` | 3.1 | Portrait, 6.5 inches wide |
@@ -45,6 +45,12 @@ sh docs/diagrams/render.sh
 .venv/bin/python docs/diagrams/print-proof.py
 .venv/bin/python docs/diagrams/verify.py
 pdftoppm -r 120 -png docs/diagrams/print-proof.pdf /private/tmp/tutorplus-print-proof
+```
+
+The four Sprint 2 use-case diagrams (UCD-01 to UCD-04) are draw.io files `source/usecase-uc0{1,3,4,6}-sprint2.drawio` drawn in the Group 9 Sprint 5 reference style: a titled boundary, stick actors, straight solid associations and straight dashed `<<include>>`/`<<extend>>` arrows. External actors appear only where the original model has them. The earlier PlantUML versions stay in place as history. Edit the diagrams in diagrams.net, then re-render them with:
+
+```sh
+node docs/diagrams/render-drawio.mjs source/usecase-uc01-sprint2.drawio source/usecase-uc03-sprint2.drawio source/usecase-uc04-sprint2.drawio source/usecase-uc06-sprint2.drawio
 ```
 
 `MERMAID_CLI` may override the local CLI path; edit `source/puppeteer-config.json` if the browser path differs. This installed Mermaid CLI uses `--size`, not legacy `-w`/`-H` options. `PLANTUML_LIMIT_SIZE=16000` prevents silent export cropping. `print-proof.pdf` and `review-metrics.json` record report-scale placements and artifact hashes; independently inspect all thirteen proof pages after a change. The final assembled report still requires its own complete visual review.

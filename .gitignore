@@ -22,3 +22,4 @@ output/doc/rendered/
 output/doc/code-*.png
 output/doc/toc.json
 output/doc/headings.json
+.vercel

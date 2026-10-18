@@ -1,4 +1,13 @@
-export type ErrorCode = "configuration" | "validation" | "unauthenticated" | "unverified" | "expired" | "forbidden" | "unavailable" | "credentials";
+export type ErrorCode =
+  | "configuration"
+  | "validation"
+  | "unauthenticated"
+  | "unverified"
+  | "expired"
+  | "forbidden"
+  | "unavailable"
+  | "credentials"
+  | "onboarding";
 
 const messages: Record<ErrorCode, string> = {
   configuration: "Account services are not connected yet. Please try again after setup is complete.",
@@ -8,15 +17,39 @@ const messages: Record<ErrorCode, string> = {
   expired: "Your session has ended. Please sign in again.",
   forbidden: "This action is not available for your account.",
   unavailable: "We couldn’t complete that right now. Please try again shortly.",
-  credentials: "We couldn’t sign you in. Check your details and verify your email."
+  credentials: "We couldn’t sign you in. Check your details and verify your email.",
+  onboarding: "Please finish setting up your account to continue.",
 };
 
 export class DomainError extends Error {
-  constructor(public readonly code: ErrorCode) { super(messages[code]); }
+  constructor(public readonly code: ErrorCode) {
+    super(messages[code]);
+    this.name = "DomainError";
+  }
 }
 
-export type ActionState = { message: string; success?: boolean; fields?: Record<string, string>; values?: Record<string, string> };
+export type FieldErrors = Record<string, string>;
 
+/** A validation failure that carries a user-facing message for each offending form field. */
+export class InputError extends DomainError {
+  constructor(public readonly fields: FieldErrors) {
+    super("validation");
+    this.name = "InputError";
+  }
+}
+
+export function isDomainError(error: unknown, code?: ErrorCode): error is DomainError {
+  return error instanceof DomainError && (code === undefined || error.code === code);
+}
+
+export type ActionState = {
+  message: string;
+  success?: boolean;
+  fields?: FieldErrors;
+  values?: Record<string, string>;
+};
+
+/** Never leaks unexpected error details to the browser. */
 export function safeMessage(error: unknown): string {
   return error instanceof DomainError ? error.message : messages.unavailable;
 }

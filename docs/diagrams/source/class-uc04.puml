@@ -68,7 +68,7 @@ PaymentReconciler ..> BookingRepository : idempotent\ntransition
 PostgreSQL -[hidden]right- Booking
 Booking -[hidden]right- BookingEvent
 legend bottom
-  Planned responsibilities, not an implemented booking UI.
+  Reservation is implemented in Sprint 2. Payment classes are planned.
   GiST excludes tutor AND student overlap; versions reject stale writes.
   (student_id, request_key) deduplicates; authorize in service + RLS.
 endlegend
