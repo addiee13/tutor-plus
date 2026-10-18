@@ -5,7 +5,7 @@ const out = process.env.OUT_DIR ?? "docs/evidence/screenshots/sprint3";
 const pages = [
   ["github-01-repo-sprint3-branch", "https://github.com/addiee13/tutor-plus/tree/sprint3"],
   ["github-02-pull-request", "https://github.com/addiee13/tutor-plus/pull/1"],
-  ["github-03-project-board", "https://github.com/users/addiee13/projects/1?filterQuery=S3-"],
+  ["github-03-project-board", "https://github.com/users/addiee13/projects/1/views/2"],
 ];
 const browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL ?? "chrome" });
 const context = await browser.newContext({

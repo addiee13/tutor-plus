@@ -38,8 +38,8 @@ export function ReviewForm({ bookingId }: { bookingId: string }) {
               </label>
             ))}
           </div>
-          <span id={`${id}-rating-help`} className={ratingError ? "field-error" : "hint"}>
-            {ratingError ?? "Choose 1 to 5 stars. Each completed session can be reviewed once."}
+          <span id={`${id}-rating-help`} className="hint">
+            Choose 1 to 5 stars. Each completed session can be reviewed once.
           </span>
         </fieldset>
         <div className="field">
@@ -63,7 +63,8 @@ export function ReviewForm({ bookingId }: { bookingId: string }) {
           <span aria-hidden="true">→</span>
         </button>
       </fieldset>
-      <FormResult state={state.fields?.rating && !state.success ? { ...state, message: state.fields.rating } : state} />
+      {/* A rating problem (invalid, duplicate, ineligible) is announced once, here, with its specific reason. */}
+      <FormResult state={ratingError && !state.success ? { ...state, message: ratingError } : state} />
     </form>
   );
 }

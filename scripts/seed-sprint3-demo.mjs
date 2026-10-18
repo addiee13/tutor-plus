@@ -4,8 +4,12 @@
 // functions a verified webhook would use, and the already-ended booking is inserted by the database owner because
 // the public booking RPC (correctly) refuses past start times. Everything else uses the real user-scoped RPCs.
 //
-// Usage (never commit the env file; the password is supplied at run time and never printed):
-//   SEED_DEMO_CONFIRM=sprint3-demo SPRINT3_DEMO_PASSWORD='…' node --env-file=.env.cloud scripts/seed-sprint3-demo.mjs
+// Usage (never commit the env file):
+//   SEED_DEMO_CONFIRM=sprint3-demo node --env-file=.env.cloud scripts/seed-sprint3-demo.mjs
+// The three demo-only accounts always get the documented demo password below (override with SPRINT3_DEMO_PASSWORD),
+// so rerunning the script keeps the credentials printed in the Sprint 3 report valid. They hold no admin role.
+// Each run reuses an upcoming booking whose planner is still empty and a completed booking that is not yet reviewed,
+// creating fresh ones when the previous demo used them up.
 // Optional: SEED_DB_URL=postgresql://… to target a local stack instead of the linked project (`supabase db query`).
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, writeFileSync } from "node:fs";
@@ -16,12 +20,14 @@ import { createClient } from "@supabase/supabase-js";
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const publishable = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const password = process.env.SPRINT3_DEMO_PASSWORD;
+/** Documented, demo-only credential for the class walkthrough (Sprint 3 report §9). Not used by any real account. */
+const DEFAULT_DEMO_PASSWORD = "TutorPlus-Demo-S3-2026!";
+const password = process.env.SPRINT3_DEMO_PASSWORD || DEFAULT_DEMO_PASSWORD;
 if (process.env.SEED_DEMO_CONFIRM !== "sprint3-demo") {
   throw new Error("Set SEED_DEMO_CONFIRM=sprint3-demo to create Sprint 3 demo fixture data.");
 }
 if (!url || !publishable || !serviceKey) throw new Error("Supabase URL, publishable key and service key are required.");
-if (!password || password.length < 12) throw new Error("SPRINT3_DEMO_PASSWORD (12+ characters) is required.");
+if (password.length < 12) throw new Error("SPRINT3_DEMO_PASSWORD must be at least 12 characters.");
 
 const options = { auth: { persistSession: false, autoRefreshToken: false } };
 const admin = createClient(url, serviceKey, options);
@@ -198,12 +204,22 @@ const studentBookings = checked(
   "read student bookings",
 );
 
-// 1. Upcoming confirmed session for the planner, requested through the real student RPC.
+// 1. Upcoming confirmed session for the planner, requested through the real student RPC. Reuse one only while its
+// planner is still empty, so every demo starts from a clean "before save" state.
+const planned = checked(await studentClient.from("session_plans").select("booking_id"), "read plans").map(
+  (plan) => plan.booking_id,
+);
 let upcoming = studentBookings.find(
-  (b) => ["confirmed", "payment_pending"].includes(b.status) && Date.parse(b.starts_at) > Date.now() + HOUR,
+  (b) =>
+    ["confirmed", "payment_pending"].includes(b.status) &&
+    Date.parse(b.starts_at) > Date.now() + HOUR &&
+    !planned.includes(b.id),
 );
 if (!upcoming) {
-  const slot = utcSlot(2, 15);
+  const busy = new Set(studentBookings.filter((b) => b.status !== "cancelled").map((b) => b.starts_at.slice(0, 10)));
+  let offset = 2;
+  while (busy.has(utcSlot(offset, 15).starts.toISOString().slice(0, 10)) && offset < 30) offset += 1;
+  const slot = utcSlot(offset, 15);
   const id = checked(
     await studentClient.rpc("create_booking", {
       tutor: tutor.id,

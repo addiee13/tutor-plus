@@ -830,7 +830,7 @@ p {
   padding: 10px;
   z-index: 100;
 }
-.skip-link:focus {
+.skip-link:focus-visible {
   top: 10px;
 }
 @media (max-width: 900px) {

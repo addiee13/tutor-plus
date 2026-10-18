@@ -14,6 +14,8 @@ export async function submitReviewAction(_previous: ReviewActionState, form: For
     return {
       success: true,
       reviewId: review.id,
+      // Echo the saved values so the disabled form keeps showing the submitted rating and comment.
+      values: { rating: String(review.rating), comment: review.comment ?? "" },
       message: `Thank you — your ${review.rating}-star review was saved. The tutor’s rating has been recalculated.`,
     };
   } catch (error) {

@@ -93,30 +93,36 @@ async function listTutorSubjects(client: SupabaseClient, tutor: string) {
  */
 async function readTutorSchedules(client: SupabaseClient, tutorIds: string[], now: number): Promise<TutorSchedules> {
   if (!tutorIds.length) return EMPTY_SCHEDULES;
-  const [schedule, overrides, subjectResults] = await Promise.all([
-    client
-      .from("availability_rules")
-      .select("tutor_id,weekday,local_start,local_end,timezone,valid_from,valid_until")
-      .in("tutor_id", tutorIds)
-      .eq("active", true)
-      .order("weekday")
-      .limit(1000),
-    client
-      .from("availability_exceptions")
-      .select("tutor_id,local_date,local_start,local_end,timezone,exception_type")
-      .in("tutor_id", tutorIds)
-      .gte("local_date", isoDate(now - DAY_MS))
-      .lte("local_date", isoDate(now + SCHEDULE_WINDOW_DAYS * DAY_MS))
-      .order("local_date")
-      .limit(1000),
+  const from_date = isoDate(now - DAY_MS);
+  const to_date = isoDate(now + SCHEDULE_WINDOW_DAYS * DAY_MS);
+  // Availability tables are owner-only under RLS; published tutors' schedules come from public DTO functions.
+  const [schedules, overrides, subjectResults] = await Promise.all([
+    Promise.all(
+      tutorIds.map(async (tutor) => {
+        const { data, error } = await client.rpc("list_public_tutor_availability", { tutor });
+        return {
+          error,
+          rows: ((data ?? []) as Omit<AvailabilityRule, "tutor_id">[]).map((row) => ({ ...row, tutor_id: tutor })),
+        };
+      }),
+    ),
+    Promise.all(
+      tutorIds.map(async (tutor) => {
+        const { data, error } = await client.rpc("list_public_tutor_exceptions", { tutor, from_date, to_date });
+        return {
+          error,
+          rows: ((data ?? []) as Omit<AvailabilityException, "tutor_id">[]).map((row) => ({ ...row, tutor_id: tutor })),
+        };
+      }),
+    ),
     Promise.all(tutorIds.map((tutor) => listTutorSubjects(client, tutor))),
   ]);
 
-  const scheduleReadFailed = Boolean(schedule.error || overrides.error);
+  const scheduleReadFailed = [...schedules, ...overrides].some((result) => Boolean(result.error));
   const readable = subjectResults.filter((result) => !result.error && Array.isArray(result.data));
   return {
-    rules: scheduleReadFailed ? [] : ((schedule.data ?? []) as AvailabilityRule[]),
-    exceptions: scheduleReadFailed ? [] : ((overrides.data ?? []) as AvailabilityException[]),
+    rules: scheduleReadFailed ? [] : schedules.flatMap((result) => result.rows),
+    exceptions: scheduleReadFailed ? [] : overrides.flatMap((result) => result.rows),
     links: readable.flatMap(({ tutor, data }) =>
       (data ?? []).map(({ subject_id, name, hourly_rate_minor, currency }) => ({
         tutor_id: tutor,

@@ -4,11 +4,15 @@ Responsive tutoring marketplace and evidence-based learning-support platform for
 
 ## Current state
 
-**Sprint 2 implementation authorized September 30, 2026.** The current mission designates **Adam Dalwai** as coordinator, replacing Shadmaan Akhand. The documentation-only scaffold has been extended with Next.js/TypeScript source, Supabase PostgreSQL 15 migrations, security checks, editable diagrams, and a reproducible report builder. Actual test and report results are recorded under `docs/evidence/`; source presence alone is not completion evidence.
+**Sprint 3 (October 2026).** Coordinator: **Edu M. Okpok** (Sprint 1 Shadmaan Akhand, Sprint 2 Adam Dalwai). Sprint 3 adds:
 
-The approved new public repository is `addiee13/tutor-plus-sprint2`. GitHub Projects needs additional OAuth scopes; its creation is not inferred from repository creation. The original course PDFs/DOCX and lectures remain unchanged and local, excluded from public Git history. Historical planning/design notes describe the scaffold; `docs/planning/SPRINT2_EXECUTION.md` and `docs/architecture/SPRINT2_DATABASE.md` supersede their coordinator, authorization, and implementation-state assumptions.
+- Database support for four more use cases — **UC-05 Diagnostic Assessment, UC-07 Reviews and Ratings, UC-08 Practice Tasks and Assignment Management, UC-09 Session Planner and Recap** — as versioned migrations `202610180001`–`202610180004` (12 tables plus public availability DTOs) with trigger-enforced invariants, RLS and least-privilege grants. Standalone replay: `sql/sprint2_tables.sql` then `sql/sprint3_tables.sql`.
+- Working frontend and logic for **UC-09** (`/sessions/[bookingId]`: student goals, tutor agenda, delivery, recap, private reflection) and **UC-07** (`/reviews`: one review per completed session, database-computed tutor rating).
+- Hosted at **https://tutorplus-one.vercel.app**. Demo-only accounts and fixture bookings come from `scripts/seed-sprint3-demo.mjs`; payments are still not implemented, so demo confirmations are labelled fixture events, not charges.
 
-Sprint 2 is due **Monday, October 5, 2026, before class**. The assignment permits a 24-hour late submission with a 10% deduction; the plan targets completion on October 4, not the late window. The exact class start time must be confirmed.
+Implementation facts (tables, functions, routes, evidence, commands and limits) are in [`docs/sprint3/IMPLEMENTATION_HANDOFF.md`](docs/sprint3/IMPLEMENTATION_HANDOFF.md). Earlier Sprint 2 records under `docs/sprint2/` and `docs/planning/` are kept as history.
+
+The public repository is **`addiee13/tutor-plus`** (renamed from `addiee13/tutor-plus-sprint2`; the old URL redirects). Project board: https://github.com/users/addiee13/projects/1. The original course PDFs/DOCX and lectures remain local and excluded from public Git history.
 
 ## Start here
 

@@ -27,18 +27,22 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
   } catch (error) {
     const denied = isDomainError(error, "forbidden");
     return (
-      <section className="panel" aria-labelledby="denied-heading">
-        <span className="eyebrow">UC-09 · SESSION PLANNER</span>
-        <h1 id="denied-heading">{denied ? "This workspace isn’t available." : "Session workspace."}</h1>
-        <div className="notice warning" role="alert">
-          {denied
-            ? "Only the student and tutor on this booking can open its session workspace. No session details were shown."
-            : safeMessage(error)}
-        </div>
-        <Link className="button secondary" href="/bookings">
-          Back to bookings
-        </Link>
-      </section>
+      <>
+        <section className="page-heading">
+          <span className="eyebrow">UC-09 · SESSION PLANNER AND RECAP</span>
+          <h1 id="denied-heading">{denied ? "This workspace isn’t available." : "Session workspace."}</h1>
+        </section>
+        <section className="panel" aria-labelledby="denied-heading">
+          <div className="notice warning" role="alert">
+            {denied
+              ? "Only the student and tutor on this booking can open its session workspace. No session details were shown."
+              : safeMessage(error)}
+          </div>
+          <Link className="button secondary" href="/bookings">
+            Back to bookings
+          </Link>
+        </section>
+      </>
     );
   }
 

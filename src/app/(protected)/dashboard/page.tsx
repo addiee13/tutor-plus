@@ -11,6 +11,7 @@ export default async function Dashboard() {
   if (!publicConfig()) return null;
   const { actor, client } = await protectedContext();
   const profile = await readOwnProfile(client);
+  const isStudent = hasRole(actor, "student");
   let reputation: TutorReputation[] | null = null;
   if (hasRole(actor, "tutor")) {
     // The rating card is optional; a failed read hides it rather than showing an invented rating.
@@ -49,11 +50,12 @@ export default async function Dashboard() {
           </Link>
         </section>
         <section className="panel next-panel">
-          <span className="eyebrow">A REAL RESERVATION</span>
-          <h2>Plan your next session.</h2>
+          <span className="eyebrow">{isStudent ? "YOUR SESSIONS" : "YOUR TEACHING"}</span>
+          <h2>{isStudent ? "Plan your next session." : "Prepare for your sessions."}</h2>
           <p>
-            Students can request an available time and read their saved reservation. The database protects competing
-            time slots. Reservations remain payment-pending: checkout and charges are not connected.
+            {isStudent
+              ? "Request an available time with a published tutor. Once a session is confirmed, open its workspace to share goals, then read the recap and leave a review afterwards. Online checkout is not connected yet."
+              : "See the sessions students have booked with you, add an agenda before each one, mark it delivered afterwards and publish a recap. Ratings come only from students’ reviews of completed sessions."}
           </p>
           {canBook(actor) && (
             <Link href="/bookings" className="button secondary">

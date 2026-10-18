@@ -22,6 +22,8 @@ export const dynamic = "force-dynamic";
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const SUMMARY_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 /** Bookings whose UC-09 planner, recap or reflection can be opened. */
+/** A payment hold is only meaningful before confirmation. */
+const HOLD_STATUSES: readonly Booking["status"][] = ["draft", "payment_pending"];
 const WORKSPACE_STATUSES: readonly Booking["status"][] = ["confirmed", "in_progress", "completed"];
 
 export default async function BookingsPage() {
@@ -245,11 +247,15 @@ function BookingCard({ booking, tutor, subject, now }: BookingCardProps) {
         </dd>
         <dt>Saved platform fee</dt>
         <dd>{formatMoney(booking.platform_fee_minor, booking.currency)}</dd>
-        <dt>Hold expires (UTC)</dt>
-        <dd>
-          {booking.hold_expires_at ? formatUtc(booking.hold_expires_at) : "No hold recorded"}
-          {expiredHold ? " · Expired as of page load; saved status is unchanged until database cleanup." : ""}
-        </dd>
+        {HOLD_STATUSES.includes(booking.status) && (
+          <>
+            <dt>Hold expires (UTC)</dt>
+            <dd>
+              {booking.hold_expires_at ? formatUtc(booking.hold_expires_at) : "No hold recorded"}
+              {expiredHold ? " · Expired as of page load; saved status is unchanged until database cleanup." : ""}
+            </dd>
+          </>
+        )}
         {booking.cancellation_reason && (
           <>
             <dt>Cancellation reason</dt>
