@@ -1,0 +1,23 @@
+{
+  "title": "Tutor Plus Group 11 Sprint 2",
+  "layout": "BOARD",
+  "group_by": "Status",
+  "status_options": ["To Do", "In Progress", "Done"],
+  "remote_state": "blocked_pending_project_oauth_scopes",
+  "coordinator": "Adam Dalwai",
+  "deadline": "2026-10-05 before class",
+  "required_fields": ["Task ID", "Owner", "Email", "UC references", "REQ references", "Dependencies", "Due date", "Evidence", "Status"],
+  "cards": [
+    {"id": "S2-01", "title": "Client and coordinator evidence", "status": "In Progress"},
+    {"id": "S2-02", "title": "Problem and ten use cases", "status": "In Progress"},
+    {"id": "S2-03", "title": "System models", "status": "Done", "evidence": "docs/diagrams/REVIEW.md"},
+    {"id": "S2-04", "title": "Ten requirements and four use-case figures", "status": "Done", "evidence": "docs/sprint2/REQUIREMENTS.md"},
+    {"id": "S2-05", "title": "Database groups and invariants", "status": "In Progress"},
+    {"id": "S2-06", "title": "User management", "status": "In Progress"},
+    {"id": "S2-07", "title": "Profile and reservation demonstration", "status": "In Progress"},
+    {"id": "S2-08", "title": "Quality and security checks", "status": "In Progress"},
+    {"id": "S2-09", "title": "Non-IDE build and page evidence", "status": "In Progress"},
+    {"id": "S2-10", "title": "Final PDF review", "status": "In Progress"},
+    {"id": "S2-11", "title": "Individual submissions and coordinator print", "status": "To Do"}
+  ]
+}

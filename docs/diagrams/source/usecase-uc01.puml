@@ -11,9 +11,10 @@ skinparam dpi 180
 skinparam packageStyle rectangle
 skinparam usecaseBackgroundColor #F4F7FB
 skinparam usecaseBorderColor #334155
+actor Visitor
 actor Student
 actor Tutor
-actor "Admin" as Admin
+actor Administrator as Admin
 actor "Supabase Auth" as Auth <<system>>
 actor "Email Service" as Email <<system>>
 rectangle "Tutor Plus System" {
@@ -33,6 +34,7 @@ rectangle "Tutor Plus System" {
   Recover -[hidden]down- Logout
   Logout -[hidden]down- Manage
 }
+Visitor -down- Register
 Student -down- Register
 Student -- Login
 Student -- Logout

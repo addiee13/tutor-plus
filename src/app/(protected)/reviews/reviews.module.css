@@ -1,0 +1,183 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  margin-block: 1.5rem;
+  align-items: start;
+}
+
+.stack {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.card {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.card h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 24px;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+  padding: 0;
+  list-style: none;
+}
+
+.stars {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.stars legend {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 7px;
+  padding: 0;
+}
+
+.starRow {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  gap: 4px;
+}
+
+.star {
+  position: relative;
+  cursor: pointer;
+  font-size: 30px;
+  line-height: 1;
+  color: #c9d2c8;
+}
+
+.star input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.star:has(input:checked),
+.star:has(input:checked) ~ .star {
+  color: #b5852f;
+}
+
+.starRow:hover .star {
+  color: #c9d2c8;
+}
+
+.starRow:hover .star:hover,
+.starRow:hover .star:hover ~ .star {
+  color: #b5852f;
+}
+
+.star:has(input:focus-visible) {
+  outline: 3px solid #997236;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 10px 12px;
+  border: 1px solid #cbd6cd;
+  border-radius: 6px;
+  background: white;
+  color: var(--ink);
+  resize: vertical;
+}
+
+.textarea:focus-visible {
+  outline: 3px solid #997236;
+  outline-offset: 4px;
+}
+
+.given {
+  font-size: 22px;
+  color: #b5852f;
+  letter-spacing: 2px;
+}
+
+.given span {
+  color: #c9d2c8;
+}
+
+.quote {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: #f7f8f3;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 0.5rem 0;
+}
+
+.score {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0.5rem 0 1rem;
+}
+
+.score strong {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 54px;
+  line-height: 1;
+}
+
+.meta {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.reviewList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reviewList li {
+  border-top: 1px solid #e2e8df;
+  padding: 0.9rem 0;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.meta a {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

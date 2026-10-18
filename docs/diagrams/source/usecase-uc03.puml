@@ -10,6 +10,7 @@ skinparam shadowing false
 skinparam dpi 180
 skinparam usecaseBackgroundColor #F4F7FB
 skinparam usecaseBorderColor #334155
+actor Visitor
 actor Student
 actor "Geocoding Service" as Geo <<system>>
 rectangle "Tutor Plus System" {
@@ -24,6 +25,8 @@ rectangle "Tutor Plus System" {
   Distance ..> Search : <<extend>>\n[in-person distance\nrequested]
   Distance ..> Geocode : <<include>>
 }
+Visitor -- Search
+Visitor -- View
 Student -- Search
 Student -- View
 Geo -- Geocode

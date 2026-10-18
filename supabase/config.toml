@@ -242,6 +242,21 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
+# Token-hash links verify on the server, so they work from any browser or device
+# (the default PKCE link needs the cookie from the browser that signed up).
+[auth.email.template.confirmation]
+subject = "Confirm your Tutor Plus account"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Reset your Tutor Plus password"
+content_path = "./supabase/templates/recovery.html"
+
+# Email-code sign-in (signInWithOtp). The hosted project's default sender keeps its stock link-only template.
+[auth.email.template.magic_link]
+subject = "Your Tutor Plus sign-in code"
+content_path = "./supabase/templates/magic_link.html"
+
 # Uncomment to customize email template
 # [auth.email.template.invite]
 # subject = "You have been invited"
@@ -332,6 +347,22 @@ url = ""
 skip_nonce_check = false
 # If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
 email_optional = false
+
+# Social sign-in used by the cloud project (configured there via the Management API). To try it locally,
+# register an OAuth app whose callback is http://127.0.0.1:54321/auth/v1/callback, export the variables
+# below (for example from the gitignored .env.local), uncomment, and restart `npx supabase start`.
+# [auth.external.github]
+# enabled = true
+# client_id = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID)"
+# secret = "env(SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET)"
+# redirect_uri = ""
+#
+# [auth.external.google]
+# enabled = true
+# client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+# secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+# redirect_uri = ""
+# skip_nonce_check = false
 
 # Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.
 # You can configure "web3" rate limit in the [auth.rate_limit] section and set up [auth.captcha] if self-hosting.

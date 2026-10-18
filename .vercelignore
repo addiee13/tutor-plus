@@ -1,0 +1,13 @@
+.env*
+!.env.example
+tests/
+test-results/
+supabase/tests/
+docs/
+lec/
+output/
+scripts/
+sql/
+*.docx
+.serena/
+.ruff_cache/

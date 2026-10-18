@@ -12,7 +12,7 @@ skinparam usecaseBackgroundColor #F4F7FB
 skinparam usecaseBorderColor #334155
 actor Student
 actor Tutor
-actor "Admin" as Admin
+actor Administrator as Admin
 actor "Stripe Connect" as Stripe <<system>>
 rectangle "Tutor Plus System" {
   usecase "Arrange payment" as Pay

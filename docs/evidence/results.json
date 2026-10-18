@@ -1,0 +1,44 @@
+{
+  "checks": [
+    [
+      "Fresh install and build (`bash scripts/build.sh --fresh`: npm ci, typecheck, lint, unit, integration, production build)",
+      "PASS, exit 0; 13 routes compiled with Next.js 16.3.8",
+      "Terminal run, September 30, 2026"
+    ],
+    [
+      "Unit tests (Vitest)",
+      "87 passed, 0 failed",
+      "`npm test`"
+    ],
+    [
+      "Live integration tests (local Supabase)",
+      "12 passed, 0 failed, including audited administrator grant/revoke and 24-hour session boundary",
+      "`npm run test:integration` with local mutation flags enabled"
+    ],
+    [
+      "Browser tests against the production server, desktop and phone (Chrome)",
+      "12 passed, 4 skipped, 0 failed: Tutor signup with mailbox verification, login/profile save/reload/logout, non-administrator denied, UC-04 reserve/reload/cancel",
+      "`npm run test:e2e`; skips are the session-expiry and missing-configuration cases that need special setup"
+    ],
+    [
+      "Database regression (local PostgreSQL 15.8)",
+      "67 assertions passed",
+      "docs/evidence/database-regression.log"
+    ],
+    [
+      "Standalone DDL replay on a scratch database and two-client race",
+      "68 assertions passed; competing reservation rejected with SQLSTATE 23P01, exactly one committed",
+      "docs/evidence/database-isolated.log"
+    ],
+    [
+      "Application screenshots",
+      "30 captured (15 desktop, 15 phone) from a verified real session",
+      "docs/evidence/screenshots.json"
+    ],
+    [
+      "Not verified",
+      "Stripe payments, AI, geocoding and real outbound email are not implemented; GitHub Projects board, client confirmations, submission and printing remain external steps",
+      "See Section 9 and Appendix B"
+    ]
+  ]
+}

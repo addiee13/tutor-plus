@@ -24,7 +24,7 @@
 .facts {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr);
-  gap: .6rem 1rem;
+  gap: 0.6rem 1rem;
   margin-block: 1rem;
 }
 
@@ -41,22 +41,22 @@
 }
 
 .summary li {
-  margin-block: .5rem;
+  margin-block: 0.5rem;
 }
 
 .card details summary {
   cursor: pointer;
   font-weight: 600;
-  padding-block: .75rem;
+  padding-block: 0.75rem;
 }
 
 .card textarea {
   width: 100%;
   max-width: 100%;
   font: inherit;
-  padding: .75rem;
+  padding: 0.75rem;
   border: 1px solid var(--line, #ddd);
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   resize: vertical;
 }
 
@@ -69,10 +69,10 @@
 @media (max-width: 420px) {
   .facts {
     grid-template-columns: minmax(0, 1fr);
-    gap: .3rem;
+    gap: 0.3rem;
   }
 
   .facts dd {
-    margin-bottom: .7rem;
+    margin-bottom: 0.7rem;
   }
 }
