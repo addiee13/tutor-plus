@@ -121,6 +121,8 @@ set local role anon;
 select pg_temp.check_true((select rating_count = 1 and rating_avg = 5.00 from public.tutor_rating_summaries where tutor_id = '54000000-0000-4000-8000-000000000001'), 'public aggregate derived server-side');
 select pg_temp.check_true((select count(*) = 1 from public.list_public_tutor_reviews('54000000-0000-4000-8000-000000000001')), 'public review DTO lists visible review');
 select pg_temp.expect_error('select * from public.reviews', '42501', 'anonymous cannot read review rows');
+select pg_temp.check_true((select count(*) = 7 from public.list_public_tutor_availability('54000000-0000-4000-8000-000000000001')), 'published weekly availability readable through public DTO');
+select pg_temp.check_true((select count(*) = 0 from public.list_public_tutor_exceptions('54000000-0000-4000-8000-000000000001', current_date, current_date + 400)), 'exception DTO refuses windows over 31 days');
 set local role authenticated;
 select pg_temp.act_as(2);
 select pg_temp.check_true((select count(*) = 1 from public.reviews), 'tutor reads visible review about them');
