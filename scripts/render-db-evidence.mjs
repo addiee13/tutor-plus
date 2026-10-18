@@ -41,20 +41,24 @@ const id = (column) => `left(${column}::text, 8) || '…' as ${column.split(".")
 const when = (column) =>
   `to_char(${column} at time zone 'UTC', 'YYYY-MM-DD HH24:MI') || ' UTC' as ${column.split(".").pop()}`;
 
+// The walkthrough's two bookings (upcoming planner + completed recap/review), passed as EVIDENCE_BOOKINGS=id1,id2.
+const focus = (process.env.EVIDENCE_BOOKINGS ?? "").split(",").filter((id) => /^[0-9a-f-]{36}$/i.test(id));
+if (focus.length !== 2) throw new Error("Set EVIDENCE_BOOKINGS to the upcoming and completed walkthrough booking IDs.");
+const inFocus = `(${focus.map((id) => `'${id}'`).join(",")})`;
 const observed = query("select to_char(now() at time zone 'UTC', 'YYYY-MM-DD HH24:MI:SS') || ' UTC' as at")[0].at;
 const rows = {
   bookings:
     query(`select ${id("b.id")}, b.status, ${when("b.starts_at")}, ${when("b.ends_at")}, p.display_name as student,
     t.public_display_name as tutor from public.bookings b join public.profiles p on p.id = b.student_id
-    join public.tutor_profiles t on t.id = b.tutor_id where p.display_name = 'Maya Chen' order by b.starts_at`),
+    join public.tutor_profiles t on t.id = b.tutor_id where b.id in ${inFocus} order by b.starts_at`),
   plans: query(`select ${id("booking_id")}, ${short("student_goals", 48)}, ${short("student_questions", 40)},
-    ${short("tutor_agenda", 40)}, ${when("student_updated_at")}, ${when("tutor_updated_at")} from public.session_plans order by updated_at`),
+    ${short("tutor_agenda", 40)}, ${when("student_updated_at")}, ${when("tutor_updated_at")} from public.session_plans where booking_id in ${inFocus} order by updated_at`),
   recaps: query(`select ${id("booking_id")}, ${id("tutor_id")}, ${short("summary", 50)}, ${short("mastery_notes", 40)},
-    ${short("next_steps", 36)}, revision, ${when("published_at")} from public.session_recaps`),
+    ${short("next_steps", 36)}, revision, ${when("published_at")} from public.session_recaps where booking_id in ${inFocus}`),
   reflections: query(`select ${id("booking_id")}, ${id("student_id")}, ${short("reflection", 70)}, ${when("updated_at")}
-    from public.session_reflections`),
+    from public.session_reflections where booking_id in ${inFocus}`),
   reviews: query(`select ${id("id")}, ${id("booking_id")}, ${id("student_id")}, ${id("tutor_id")}, rating,
-    ${short("comment", 50)}, status, ${when("created_at")} from public.reviews`),
+    ${short("comment", 50)}, status, ${when("created_at")} from public.reviews where booking_id in ${inFocus}`),
   summaries:
     query(`select ${id("s.tutor_id")}, t.public_display_name, s.rating_count, s.rating_sum, s.rating_avg, ${when("s.updated_at")}
     from public.tutor_rating_summaries s join public.tutor_profiles t on t.id = s.tutor_id`),
@@ -102,9 +106,9 @@ function page(title, subtitle, body) {
 const pages = {
   "db-01-sprint3-session-records": page(
     "UC-09 records written by the application",
-    "Rows written by the save_session_goals, save_session_agenda, publish_session_recap and save_session_reflection RPCs: the 23f6a1c8 plan, the recap and the reflection through the web UI; the 4920dfaf plan by the demo seed script before that session was completed.",
+    "Rows written through the web UI by save_session_goals and save_session_agenda (upcoming booking, before its start) and by publish_session_recap and save_session_reflection (completed booking), for the two walkthrough bookings only.",
     table(
-      "bookings (demo student)",
+      "bookings (walkthrough)",
       "Upcoming confirmed session and completed session used in the walkthrough. Confirmations come from demo-fixture provider events, not real payments.",
       rows.bookings,
     ) +

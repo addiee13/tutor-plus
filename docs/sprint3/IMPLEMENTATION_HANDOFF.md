@@ -1,12 +1,12 @@
 # Sprint 3 implementation handoff
 
-Prepared by the implementor agent on 2026-10-18 for the document editor and validator. Everything below was run or captured on 2026-10-18; nothing is projected. Unknown or human-only items are marked **[confirm]**.
+Prepared by the implementor agent on 2026-10-18 for the document editor and validator; revised the same day after the validator review (§12). Everything below was run or captured on 2026-10-18; nothing is projected. Unknown or human-only items are marked **[confirm]**.
 
 ## 1. Scope delivered
 
 | Item | State |
 | --- | --- |
-| Database tables for UC-05, UC-07, UC-08, UC-09 (12 tables) | Implemented as versioned migrations, applied to the linked Supabase project `lpuvrkmpfzoxtweagdcl` |
+| Database tables for UC-05, UC-07, UC-08, UC-09 (12 tables) | Implemented as four versioned Sprint 3 migrations (13 migrations in total), all applied to the linked Supabase project `lpuvrkmpfzoxtweagdcl` |
 | Standalone reproducible SQL (dev/test/prod) | `sql/sprint3_tables.sql` (apply after `sql/sprint2_tables.sql`) |
 | Frontend + logic: UC-09 Session Planner and Recap | Implemented, deployed, evidenced |
 | Frontend + logic: UC-07 Reviews and Ratings | Implemented, deployed, evidenced |
@@ -18,10 +18,11 @@ Prepared by the implementor agent on 2026-10-18 for the document editor and vali
 | File | Purpose |
 | --- | --- |
 | `supabase/migrations/202610180001_session_planner_reviews.sql` | UC-09 and UC-07 tables, triggers, RPCs, RLS, grants |
-| `supabase/migrations/202610180003_learning_record_boundaries.sql` | End-time planner boundary and subjective-score limit correction |
 | `supabase/migrations/202610180002_assessments_assignments.sql` | UC-05 and UC-08 tables, triggers, RPCs, RLS, grants |
-| `sql/sprint3_tables.sql` | Concatenation of the three Sprint 3 migrations with a header. Apply with `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f sql/sprint2_tables.sql -f sql/sprint3_tables.sql` |
-| `supabase/tests/003_sprint3_learning_records.sql` | 61-check SQL regression (runs in one transaction, then rolls back) |
+| `supabase/migrations/202610180003_learning_record_boundaries.sql` | Planner RPCs refuse edits once the session's end time has passed; tutor assessment points bounded by short-answer points |
+| `supabase/migrations/202610180004_public_tutor_availability.sql` | Read-only DTOs `list_public_tutor_availability` / `list_public_tutor_exceptions` for published tutors (source tables stay owner-only) |
+| `sql/sprint3_tables.sql` | Concatenation of the four Sprint 3 migrations with a header. Apply with `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f sql/sprint2_tables.sql -f sql/sprint3_tables.sql` |
+| `supabase/tests/003_sprint3_learning_records.sql` | 65-check SQL regression (fixtures pinned to midday UTC) (runs in one transaction, then rolls back) |
 | `supabase/tests/run-isolated.sh` | Now replays `sql/sprint3_tables.sql` and runs test 003 after the Sprint 2 suite |
 | `scripts/seed-sprint3-demo.mjs` | Demo fixture: demo-only accounts, tutor listing, bookings (see §6) |
 | `scripts/capture-sprint3.mjs` | Playwright capture of the UI evidence from a running deployment |
@@ -175,8 +176,8 @@ RLS: tutor owner full access to own assessments/questions/keys/assignments; stud
 
 | Function | Returns | Rule |
 | --- | --- | --- |
-| `save_session_goals(booking uuid, goals text, questions text)` | timestamptz | booked student; booking confirmed/in_progress |
-| `save_session_agenda(booking uuid, agenda text)` | timestamptz | booked tutor; booking confirmed/in_progress |
+| `save_session_goals(booking uuid, goals text, questions text)` | timestamptz | booked student; booking confirmed/in_progress **and before ends_at** (migration 003) |
+| `save_session_agenda(booking uuid, agenda text)` | timestamptz | booked tutor; booking confirmed/in_progress **and before ends_at** (migration 003) |
 | `mark_session_completed(booking uuid)` | text ('completed') | booked tutor; confirmed/in_progress and past ends_at; idempotent; confirmed→in_progress→completed |
 | `publish_session_recap(booking uuid, summary text, mastery_notes text, next_steps text)` | timestamptz | booked tutor; session ended; upsert (edit increments revision) |
 | `save_session_reflection(booking uuid, reflection text)` | timestamptz | booked student; session ended |
@@ -184,7 +185,9 @@ RLS: tutor owner full access to own assessments/questions/keys/assignments; stud
 | `moderate_review(review uuid, requested_status text, reason text)` | void | administrator; audited in audit_logs |
 | `list_public_tutor_reviews(tutor uuid)` | table(rating, comment, created_at) | `anon` + `authenticated`; visible reviews of public tutors |
 | `submit_assessment_attempt(assessment uuid, answers jsonb, finalize boolean)` | uuid | assigned student; open and not past due; objective score from private keys |
-| `score_assessment_attempt(attempt uuid, tutor_points integer, feedback text)` | void | owning tutor; bounded by max_score |
+| `score_assessment_attempt(attempt uuid, tutor_points integer, feedback text)` | void | owning tutor; points ≤ total short-answer points and auto_score + points ≤ max_score (migration 003) |
+| `list_public_tutor_availability(tutor uuid)` | table(weekday, local_start, local_end, timezone, valid_from, valid_until) | `anon` + `authenticated`; active, unexpired rules of published tutors (migration 004) |
+| `list_public_tutor_exceptions(tutor uuid, from_date date, to_date date)` | table(local_date, local_start, local_end, timezone, exception_type) | `anon` + `authenticated`; window ≤ 31 days; published tutors only (migration 004) |
 | `submit_assignment(assignment uuid, body text, link_url text)` | uuid | assignee; trigger enforces due date and state |
 | `give_assignment_feedback(submission uuid, feedback text, score integer, outcome text)` | uuid | owning tutor; latest submission |
 
@@ -227,73 +230,81 @@ Each service module exports functions plus a named object used as the class-diag
 
 ## 5. Hosted deployment and demo credentials
 
-- Production URL: **https://tutorplus-one.vercel.app** (Vercel deployment `tutorplus-pwmz0rvtq-adams-projects-c67ba2f3.vercel.app`, status Ready, deployed 2026-10-18 with `vercel deploy --prod`). Production env vars `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL` exist (values not printed); the hosted login → planner → review flow worked against the cloud database (all 18 UI screenshots were captured from this URL).
-- Demo-only accounts (created by `scripts/seed-sprint3-demo.mjs`; no real people; credentials provided privately for the class demo):
+- Production URL: **https://tutorplus-one.vercel.app** — alias of deployment `https://tutorplus-68p9ca0kj-adams-projects-c67ba2f3.vercel.app` (status Ready; deployed 2026-10-18 from branch `sprint3` at commit `6741ff7` with `vercel deploy --prod`; second alias `tutorplus-adams-projects-c67ba2f3.vercel.app`). Production env vars `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL` exist (values not printed); all 18 UI screenshots were captured from this URL against the cloud database.
+- Demo-only accounts (no real people, no administrator role). The password is a fixed, documented demo credential set by `scripts/seed-sprint3-demo.mjs` (constant `DEFAULT_DEMO_PASSWORD`); rerunning the seed keeps it unchanged:
 
 | Role | Email | Password |
 | --- | --- | --- |
-| Student (Maya Chen) | sprint3.student@example.com | Supplied privately at demo time |
-| Tutor (Daniel Brooks) | sprint3.tutor@example.com | Supplied privately at demo time |
-| Unrelated student (Riley Park) — for the access-denied demo | sprint3.other@example.com | Supplied privately at demo time |
+| Student (Maya Chen) | sprint3.student@example.com | `TutorPlus-Demo-S3-2026!` |
+| Tutor (Daniel Brooks) | sprint3.tutor@example.com | `TutorPlus-Demo-S3-2026!` |
+| Unrelated student (Riley Park) — access-denied demo | sprint3.other@example.com | `TutorPlus-Demo-S3-2026!` |
 
-- Demo bookings: upcoming confirmed `23f6a1c8-67a7-4394-b484-e15190fae7de` (2026-10-20 15:00–16:00 UTC); completed `4920dfaf-40b2-4bd2-9208-d59b1b0915db` (2026-10-16 15:00–16:00 UTC). The completed booking is now reviewed (5★); to demo a fresh review live, rerun the seed script, which adds a new unreviewed completed booking.
+- Live-demo state after the final seed run (2026-10-18 22:4x UTC): upcoming confirmed booking `0fe315b6-31db-44d5-a966-7738afd07c47` with an **empty planner**, and completed booking `8d9ad56f-ccb3-46c7-b239-35902329dce5` that is **not yet reviewed** (no recap yet). Tutor rating: 5.0 from 3 visible reviews. Rerun the seed before a later demo to get fresh ones.
+- Walkthrough bookings used for the screenshots: upcoming `b4a98a8b-85bd-4ffd-9a34-90d590f4b0be` (2026-10-22 15:00–16:00 UTC), completed `15471c85-e81d-4e0f-a974-b7a07327fe7b` (2026-10-13 15:00–16:00 UTC).
 
 ## 6. Demo fixture honesty note
 
-Payments are not implemented, so a booking cannot legitimately become `confirmed`/`completed` through the UI. The seed script therefore: creates the upcoming booking through the real student RPC `create_booking`; inserts the already-ended booking directly as the database owner (the public RPC correctly refuses past start times); confirms both by calling the server-only provider-boundary functions `prepare_booking_payment` + `apply_verified_payment_event` with events named `demo-fixture-evt-…` (**no money moved, no Stripe**); adds a placeholder meeting link; leaves historical preparation empty because planner writes close at session end; and marks it delivered via the tutor's real `mark_session_completed` RPC. Report text must call these "demo fixture data", not payments.
+Payments are not implemented, so a booking cannot legitimately become `confirmed`/`completed` through the UI. The seed script therefore:
+
+1. creates upcoming bookings through the real student RPC `create_booking` (it reuses one only while its planner is empty);
+2. inserts each already-ended booking directly as the database owner (the public RPC correctly refuses past start times);
+3. confirms both by calling the server-only provider-boundary functions `prepare_booking_payment` + `apply_verified_payment_event` with events named `demo-fixture-evt-…` (**no money moved, no Stripe**) and adds a placeholder meeting link;
+4. leaves the ended booking's planner empty (planner writes close at the end time) and marks it delivered with the tutor's real `mark_session_completed` RPC.
+
+Report text must call these "demo fixture data", not payments.
+
+Data clean-up on 2026-10-18: the validator's test rows (tagged `VAL-…-223200`) remain as history. Its visible 3★ review `71af0c1e…` was hidden (status `hidden`, moderation reason recorded) with a matching `review.moderated` row in `audit_logs`; nothing was deleted. Because the cloud project has **no administrator account**, this was done as the database owner, mirroring `moderate_review` (the audit row's metadata says so). The tutor aggregate returned to 5.0. The student's own Reviews page still lists that review as "Hidden by moderation" (visible in s3-09…s3-12, s3-m2) — that is the correct student view.
 
 ## 7. Evidence (all in `docs/evidence/screenshots/sprint3/`)
 
-UI images: 1440×900 viewport at device scale 2 (2880 px wide, full page), light theme, captured from https://tutorplus-one.vercel.app by `scripts/capture-sprint3.mjs`; phone images 390×844 at scale 3.
+UI images: 1440×900 viewport at device scale 2 (2880 px wide, full page), light theme, captured from https://tutorplus-one.vercel.app (deployment `tutorplus-68p9ca0kj`) by `scripts/capture-sprint3.mjs` on 2026-10-18 ~22:43 UTC; phone images 390×844 at scale 3. All 18 were recaptured after the fixes.
 
 | File | Caption |
 | --- | --- |
 | s3-01-planner-before-save.png | Student opens the UC-09 workspace of a confirmed upcoming booking (nothing saved yet). |
-| s3-02-planner-goals-saved.png | Goals and questions saved through save_session_goals; success message and save time shown. |
+| s3-02-planner-goals-saved.png | Goals and questions saved through save_session_goals before the session; success message and save time shown. |
 | s3-03-planner-persisted-after-reload.png | After a full reload the goals are read back from session_plans in PostgreSQL. |
 | s3-04-tutor-reads-goals-saves-agenda.png | Tutor sees the student's saved goals (read-only) and saves the agenda. |
 | s3-05-student-sees-agenda.png | Student reloads and reads the tutor's agenda; the student cannot edit it. |
-| s3-06-tutor-recap-published.png | Tutor publishes the recap after the session is completed (publish_session_recap). |
+| s3-06-tutor-recap-published.png | Tutor publishes the recap for a completed session (publish_session_recap); its planner was never filled, which the page states. |
 | s3-07-student-recap-and-private-reflection.png | Student reads the published recap and saves a private reflection. |
 | s3-08-tutor-view-reflection-hidden.png | Tutor's view of the same completed booking: the student's reflection is not shown. |
-| s3-09-reviews-eligible.png | Reviews page lists the student's completed session; the tutor has no reviews yet. |
-| s3-10-review-submitted.png | Review submitted through submit_review; the server confirms the saved rating. |
-| s3-11-review-persisted-rating-updated.png | After reload the review is read from the reviews table and the tutor's aggregate is 5.0 (1 review). |
-| s3-12-duplicate-review-refused.png | A second submission for the same booking (from a stale tab) is refused: one review per completed session. |
-| s3-13-tutor-rating-updated.png | Tutor sees the database-computed rating (tutor_rating_summaries) and the new review. |
-| s3-14-tutor-dashboard-rating.png | Tutor dashboard shows the updated rating summary. |
+| s3-09-reviews-eligible.png | Reviews page lists the student's completed sessions; the newest is ready for review. |
+| s3-10-review-submitted.png | Review submitted through submit_review; the chosen 5 stars and comment stay displayed with the server receipt. |
+| s3-11-review-persisted-rating-updated.png | After reload the review is read from the reviews table and the tutor's aggregate shows 5.0 (3 reviews). |
+| s3-12-duplicate-review-refused.png | A second submission for the same booking from a stale tab is refused, with the reason shown once. |
+| s3-13-tutor-rating-updated.png | Tutor sees the database-computed rating (tutor_rating_summaries) and the reviews. |
+| s3-14-tutor-dashboard-rating.png | Tutor dashboard with tutor-specific copy and the rating summary. |
 | s3-15-unauthorized-workspace-denied.png | A different signed-in student opening the booking URL is denied; no session data is shown. |
-| s3-16-bookings-workspace-link.png | Bookings list links each confirmed or completed booking to its session workspace. |
+| s3-16-bookings-workspace-link.png | Bookings page: native UTC date-time pickers, published weekly availability, and workspace links on confirmed/completed bookings (no hold row once confirmed). |
 | s3-m1-planner-phone.png | Session workspace on a 390 px phone viewport. |
-| s3-m2-reviews-phone.png | Reviews page on a 390 px phone viewport with the submitted review. |
-| db-01-sprint3-session-records.png | Linked-DB rows: demo bookings, session_plans, session_recaps, session_reflections (light HTML table). |
-| db-02-sprint3-reviews-ratings.png | Linked-DB rows: reviews, tutor_rating_summaries (5.00, 1), row counts, applied Sprint 3 migrations. |
+| s3-m2-reviews-phone.png | Reviews page on a 390 px phone viewport. |
+| db-01-sprint3-session-records.png | Linked-DB rows for the two walkthrough bookings: bookings, session_plans (saved before the start), session_recaps, session_reflections. |
+| db-02-sprint3-reviews-ratings.png | Linked-DB rows: the walkthrough review, tutor_rating_summaries (5.00, 3 reviews), row counts, and all four applied Sprint 3 migrations. |
 | db-03-sprint3-schema-security.png | Catalog inventory of the 12 Sprint 3 tables: RLS enabled, policy/constraint/trigger counts. |
-| github-01-repo-sprint3-branch.png | Public repository on the `sprint3` branch. |
-| github-02-pull-request.png | PR #1 sprint3 → main (open, CI passing). |
-| github-03-project-board.png | Project board filtered to Sprint 3 cards (S3-01…S3-11) with To Do / In Progress / Done status (table view). |
+| github-01-repo-sprint3-branch.png | Public repository on the `sprint3` branch with the Sprint 3 README. |
+| github-02-pull-request.png | PR #1 sprint3 → main with its current commits and passing CI. |
+| github-03-project-board.png | Project board "Sprint 3 board" view (Board layout grouped by Status, filtered to S3 cards): To Do / In Progress / Done columns. |
 
-Logs in `docs/evidence/sprint3/`: `db-isolated-regression.log`, `db-push.log`, `migration-list.log`, `table-stats.log`, `build-sh.log`.
+Logs in `docs/evidence/sprint3/`: `db-isolated-regression.log`, `db-push.log`, `db-push-004.log`, `migration-list.log`, `table-stats.log`, `build-sh.log`.
 
-## 8. Commands run and results (2026-10-18)
+## 8. Commands run and results (2026-10-18, after the fixes)
 
 | Command | Result |
 | --- | --- |
-| `supabase db push --linked --yes` | Applied 202610180001 and 202610180002 |
-| `supabase migration list --linked` | Local = remote for all 11 migrations (202609300001–009, 202610180001–002) |
-| `supabase inspect db table-stats --linked` | Lists the new tables (e.g. reviews 1 row, assessments 0) — `docs/evidence/sprint3/table-stats.log` |
-| `psql … < supabase/tests/001_regression.sql` (isolated local PG 17 stack) | 68 PASS, 0 FAIL |
-| `psql … < supabase/tests/003_sprint3_learning_records.sql` (same) | 61 PASS, 0 FAIL |
-| `TUTORPLUS_TEST_CONTAINER=… sh supabase/tests/run-isolated.sh` | exit 0: Sprint 2 + Sprint 3 DDL replay, both regressions, concurrency test (expected 23P01 loser) |
+| `supabase db push --linked --yes` | Applied 202610180001, 202610180002 (earlier), 202610180004 (this round; 003 was applied by the release fix) |
+| `supabase migration list --linked` | Local = remote for all 13 migrations (202609300001–009, 202610180001–004) |
+| `supabase inspect db table-stats --linked` | `docs/evidence/sprint3/table-stats.log` |
+| `sh supabase/tests/run-isolated.sh` (local stack, PG 15.8, fresh throw-away database) | exit 0: Sprint 2 + Sprint 3 DDL replay; `001_regression` 68 PASS; `003_sprint3_learning_records` 65 PASS (63 + 2 availability DTO checks); concurrency test (expected 23P01 loser) |
 | `npm run typecheck` | pass |
-| `npm run lint` | pass (no findings) |
+| `npm run lint` | pass |
 | `npm run format:check` | pass |
-| `npm test` | 5 files, 106 tests passed (19 new in `tests/unit/sessions-reviews.test.ts`) |
-| `./scripts/build.sh` | exit 0 (typecheck, lint, `next build`; routes include `/reviews`, `/sessions/[bookingId]`) |
-| `vercel deploy --prod --yes` | Ready; aliased to https://tutorplus-one.vercel.app |
-| GitHub Actions `quality` on PR #1 | pass (2 runs) |
+| `npm test` | 6 files, 110 tests passed |
+| `./scripts/build.sh` | exit 0 (`docs/evidence/sprint3/build-sh.log`) |
+| `vercel deploy --prod --yes` | Ready: `tutorplus-68p9ca0kj-adams-projects-c67ba2f3.vercel.app`, aliased to https://tutorplus-one.vercel.app |
+| GitHub Actions `quality` on PR #1 | see §10 |
 
-The SQL regressions ran against a disposable local Supabase stack (PG 17, copied config in a scratch directory), not against production. Production was verified through the hosted UI flow and read-only queries.
+SQL regressions ran against a disposable local database, not production. Production was verified through the hosted UI flow and read-only queries.
 
 ## 9. Build and run without an IDE
 
@@ -306,31 +317,32 @@ cp .env.example .env.local      # set NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPA
 npm start -- --hostname 127.0.0.1 --port 3000
 ```
 
-Database for a new environment: `supabase link --project-ref <ref>` then `supabase db push`, or run `sql/sprint2_tables.sql`, `supabase/migrations/202609300009_onboarding.sql` and `sql/sprint3_tables.sql` with psql. Demo data: `SEED_DEMO_CONFIRM=sprint3-demo SPRINT3_DEMO_PASSWORD='…' node --env-file=.env.cloud scripts/seed-sprint3-demo.mjs`. Or skip all of this and use the hosted link and obtain demo credentials privately.
+Database for a new environment: `supabase link --project-ref <ref>` then `supabase db push`, or run `sql/sprint2_tables.sql`, `supabase/migrations/202609300009_onboarding.sql` and `sql/sprint3_tables.sql` with psql. Demo data: `SEED_DEMO_CONFIRM=sprint3-demo node --env-file=.env.cloud scripts/seed-sprint3-demo.mjs` (needs the service-role key in the env file). Or use the hosted link with the credentials in §5.
 
 ## 10. GitHub
 
-- Repository: https://github.com/addiee13/tutor-plus (public; renamed from `tutor-plus-sprint2`, old URL redirects)
+- Repository: https://github.com/addiee13/tutor-plus (public; renamed from `tutor-plus-sprint2`, old URL redirects; local `origin` updated)
 - Branch: https://github.com/addiee13/tutor-plus/tree/sprint3
-- Pull request (open, not merged): https://github.com/addiee13/tutor-plus/pull/1
-- Project board: https://github.com/users/addiee13/projects/1 (renamed to "Tutor Plus Group 11 Sprints 2-3"; Sprint 3 cards: S3-01…S3-07 and S3-10 In Progress, S3-08 and S3-09 Done, S3-11 To Do)
-- Commits on `sprint3`: `06fd136` post–Sprint 2 working-tree changes; `dde8b1e` DB schema; `bd6e307` UC-09/UC-07 app; `efe7f38` seed/capture scripts; `062f628` evidence; plus a final docs commit with this file.
+- Pull request (open, **not merged**): https://github.com/addiee13/tutor-plus/pull/1
+- Relationship to `main`: `main` holds the squashed release commit `aac1a13` (pushed directly; includes local-only `e93fcfc`). `main` was not rewritten. `origin/main` was merged into `sprint3` (merge `43d6d48`), so PR #1 contains all Sprint 3 work and its diff against `main` is only the post-release fixes: `d9ec4f1` (midday-UTC SQL fixtures), `e8b0aca` (migration 004 + checks), `2819c9c` (validator UI/seed/README fixes), `6741ff7` (skip link), and the evidence/handoff commit.
+- Project board: https://github.com/users/addiee13/projects/1 — renamed "Tutor Plus Group 11 Sprints 2-3"; new view **"Sprint 3 board"** (https://github.com/users/addiee13/projects/1/views/2) created with `gh api graphql` (`createProjectV2View`, layout BOARD_LAYOUT, grouped by Status, filter `S3-`). Cards: S3-08 and S3-09 Done; S3-01…S3-07 and S3-10 In Progress; S3-11 To Do.
 
-## 11. Blocked, not verified, or for the team
+## 11. Remaining limitations
 
-- Board statuses for report items (S3-01…S3-07, S3-10) are set to In Progress by the implementor; update them as the document editor finishes **[confirm]**.
-- The project board has only a table view ("View 1"); the GitHub CLI cannot create a Board-layout view. If the report needs columns, switch the view layout to Board in the web UI and recapture **[confirm]**.
-- UC-05 and UC-08 have no UI; file uploads for submissions are not wired to storage.
+- Board statuses for report items (S3-01…S3-07, S3-10) were set by the implementor; update them as the report is finished **[confirm]**.
+- UC-05 and UC-08 have no UI; submission file uploads are not wired to storage.
 - Payments/Stripe remain unimplemented; demo confirmations are fixtures (§6).
-- The end-time planner/database rule difference was corrected in migration `202610180003`; direct RPC calls and UI permissions now agree.
+- No administrator account exists in the cloud project, so the UI moderation path (`moderate_review`) is untested end to end there; it is covered by the SQL regression.
+- The validator's `VAL-…-223200` plan, recap and reflection rows remain in the database as history (on bookings not used by the walkthrough).
 - HawkScan DAST was not run: `HAWK_API_KEY` is not set.
-- Demo identities have no admin role. Their previously published passwords have been rotated and sessions invalidated; supply new credentials privately only when needed.
+- The demo password is published on purpose for grading. It belongs only to the three demo-only accounts, which have no admin role.
 
+## 12. Validator review fixes (2026-10-18)
 
-## Release review corrections (October 18, 2026)
-
-- Added `202610180003_learning_record_boundaries.sql` and appended the same changes to the standalone Sprint 3 SQL. Planner RPCs now refuse edits after the scheduled end time and lock the booking while checking it. Tutor assessment scores are bounded by short-answer points, preserving objective results.
-- Applied this corrective migration to the linked hosted database and recorded version `202610180003` as applied. Ran the complete `003_sprint3_learning_records.sql` inside its rollback-only transaction through `supabase db query --linked` after removing its psql-only `\set` directive; all assertions passed.
-- Rotated passwords for the three named demo identities and invalidated their sessions. Credentials previously included here are obsolete. Credentials must be provided privately at demo time; do not put them in report source or committed documents.
-- Ported the pending email rate-limit handling into the current auth services. Provider rate limits now produce an actionable safe message for signup, email-code requests, password reset, and verification resend. Provider-error, service, and session/review unit suites passed (30 tests).
-- The separate untracked Sprint 3 report builder and its generated PDF remain draft artifacts: its `HANDOFF` fields and generated placeholder manifest are incomplete. They are not validated submission evidence and are excluded from this release.
+- Skip link: visually hidden (clipped) unless `:focus-visible`, so it can never overlap content after a submit or reload.
+- Denied workspace: uses the standard serif page heading.
+- Reviews: duplicate/ineligible errors appear once; a successful review keeps its stars and comment displayed.
+- Dashboard: role-appropriate copy (student vs tutor); no "payment-pending" wording for tutors.
+- Bookings: "Hold expires" only on draft/payment-pending bookings; published weekly availability now shows via migration 004 (previously RLS hid it and the card said "No scheduling details are readable").
+- Seed: fixed documented demo password; fresh upcoming/completed bookings per run.
+- Earlier release note (main `aac1a13`) said demo passwords were rotated and must be supplied privately. That is **superseded by the coordinator's later instruction**: one stable, documented demo-only password (§5), set on 2026-10-18 by the seed run.
