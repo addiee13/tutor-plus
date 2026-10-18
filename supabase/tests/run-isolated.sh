@@ -29,12 +29,19 @@ docker exec "$container" psql -X -U postgres -d "$database" -v ON_ERROR_STOP=1 -
 docker exec -i "$container" psql -X -U postgres -d "$database" -v ON_ERROR_STOP=1 < sql/sprint2_tables.sql > "$temporary/ddl-replay.log" 2>&1 || {
   cat "$temporary/ddl-replay.log"; exit 1;
 }
+docker exec -i "$container" psql -X -U postgres -d "$database" -v ON_ERROR_STOP=1 < sql/sprint3_tables.sql > "$temporary/ddl-sprint3.log" 2>&1 || {
+  cat "$temporary/ddl-sprint3.log"; exit 1;
+}
 printf '%s\n' 'PASS: standalone DDL replay against an empty application schema with copied managed Auth schema'
 docker exec "$container" psql -X -U postgres -d "$database" -Atc "select extensions.postgis_full_version(); select count(*) from pg_tables where schemaname = 'public';"
 docker exec -i "$container" psql -X -U postgres -d "$database" -v ON_ERROR_STOP=1 < supabase/tests/001_regression.sql > "$temporary/regression.log" 2>&1 || {
   cat "$temporary/regression.log"; exit 1;
 }
 cat "$temporary/regression.log"
+docker exec -i "$container" psql -X -U postgres -d "$database" -v ON_ERROR_STOP=1 < supabase/tests/003_sprint3_learning_records.sql > "$temporary/sprint3.log" 2>&1 || {
+  cat "$temporary/sprint3.log"; exit 1;
+}
+grep -E 'PASS|SKIP' "$temporary/sprint3.log"
 docker exec -i "$container" psql -X -U postgres -d "$database" -v ON_ERROR_STOP=1 < supabase/tests/concurrency_fixture.sql
 
 docker exec -i "$container" psql -X -U postgres -d "$database" -v ON_ERROR_STOP=1 \
