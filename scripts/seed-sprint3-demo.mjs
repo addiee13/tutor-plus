@@ -245,22 +245,7 @@ if (!past) {
 }
 if (past.status === "payment_pending") await confirmWithDemoPaymentEvent(past.id);
 if (past.status !== "completed") {
-  // Preparation saved through the real planner RPCs while the ended session is still confirmed.
-  checked(
-    await studentClient.rpc("save_session_goals", {
-      booking: past.id,
-      goals: "Get comfortable factoring quadratics with a leading coefficient.",
-      questions: "How do I decide between factoring and the quadratic formula?",
-    }),
-    "save past goals",
-  );
-  checked(
-    await tutorClient.rpc("save_session_agenda", {
-      booking: past.id,
-      agenda: "1. Warm-up: GCF factoring\n2. AC method walkthrough\n3. Choosing a method\n4. Five practice problems",
-    }),
-    "save past agenda",
-  );
+  // Historical fixture has no preparation: planner RPCs correctly refuse writes after its end time.
   checked(await tutorClient.rpc("mark_session_completed", { booking: past.id }), "mark session delivered");
 }
 

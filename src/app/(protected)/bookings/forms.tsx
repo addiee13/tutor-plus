@@ -4,6 +4,7 @@ import { useActionState, useId, useState } from "react";
 import type { BookingActionState, PublicSubject, PublicTutor, TutorSubject } from "@/domains/bookings/types";
 import { formatMoney } from "@/domains/bookings/presentation";
 import { FormResult } from "@/components/form-controls";
+import { DateTimeField } from "@/components/date-time-field";
 import { cancelBookingAction, requestBookingAction } from "./actions";
 
 const initial: BookingActionState = { message: "" };
@@ -133,46 +134,18 @@ function RequestForm({
             hint="Only modes on the public listing are offered. Meeting details are not created by this reservation."
           />
         </div>
-        <div className="field">
-          <label htmlFor="starts_at">Start time (ISO UTC)</label>
-          <input
-            id="starts_at"
-            name="starts_at"
-            type="text"
-            placeholder="2026-10-02T14:00:00Z"
-            required
-            maxLength={24}
-            spellCheck={false}
-            autoComplete="off"
-            aria-invalid={!!state.fields?.starts_at}
-            aria-describedby="starts_at-help"
-          />
-          <Help
-            name="starts_at"
-            state={state}
-            hint="Use UTC, ending in Z. This is not your browser or profile time zone. Enter a future time within the tutor’s shared availability."
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="ends_at">End time (ISO UTC)</label>
-          <input
-            id="ends_at"
-            name="ends_at"
-            type="text"
-            placeholder="2026-10-02T15:00:00Z"
-            required
-            maxLength={24}
-            spellCheck={false}
-            autoComplete="off"
-            aria-invalid={!!state.fields?.ends_at}
-            aria-describedby="ends_at-help"
-          />
-          <Help
-            name="ends_at"
-            state={state}
-            hint="Use UTC, ending in Z. This form accepts whole-minute sessions of 15–180 minutes; database policy remains authoritative."
-          />
-        </div>
+        <DateTimeField
+          name="starts_at"
+          label="Start time"
+          error={state.fields?.starts_at}
+          hint="Choose a date and time in UTC within the tutor’s shared availability. UTC may differ from your local time zone."
+        />
+        <DateTimeField
+          name="ends_at"
+          label="End time"
+          error={state.fields?.ends_at}
+          hint="Choose the end date and time in UTC. Sessions must last 15–180 whole minutes."
+        />
         <p className="hint">
           Schedule summaries are not bookable slot guarantees. The database rechecks subject, mode, lead time, buffers
           and competing reservations atomically when you submit.

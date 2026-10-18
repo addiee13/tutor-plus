@@ -7,7 +7,8 @@ export type ErrorCode =
   | "forbidden"
   | "unavailable"
   | "credentials"
-  | "onboarding";
+  | "onboarding"
+  | "rateLimited";
 
 const messages: Record<ErrorCode, string> = {
   configuration: "Account services are not connected yet. Please try again after setup is complete.",
@@ -19,6 +20,7 @@ const messages: Record<ErrorCode, string> = {
   unavailable: "We couldn’t complete that right now. Please try again shortly.",
   credentials: "We couldn’t sign you in. Check your details and verify your email.",
   onboarding: "Please finish setting up your account to continue.",
+  rateLimited: "Too many emails were requested recently. Please wait before trying again.",
 };
 
 export class DomainError extends Error {
@@ -26,6 +28,13 @@ export class DomainError extends Error {
     super(messages[code]);
     this.name = "DomainError";
   }
+}
+
+/** Maps provider failures without logging tokens, email addresses, or provider response bodies. */
+export function providerError(error: { status?: number; code?: string }): DomainError {
+  const rateLimited =
+    error.status === 429 || error.code === "over_email_send_rate_limit" || error.code === "over_request_rate_limit";
+  return new DomainError(rateLimited ? "rateLimited" : "unavailable");
 }
 
 export type FieldErrors = Record<string, string>;

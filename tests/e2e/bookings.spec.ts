@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 
 const enabled = process.env.BOOKING_E2E === "1";
-test.use({ trace: "off" });
+test.use({ trace: "off", timezoneId: "America/New_York" });
 
 test.describe("LIVE UC-04 reservation persistence (explicit disposable fixtures required)", () => {
   test.skip(
@@ -51,8 +51,22 @@ test.describe("LIVE UC-04 reservation persistence (explicit disposable fixtures 
       await page.getByLabel("Published tutor", { exact: true }).selectOption(process.env.BOOKING_E2E_TUTOR_ID!);
       await page.getByLabel("Subject", { exact: true }).selectOption(process.env.BOOKING_E2E_SUBJECT_ID!);
       await page.getByLabel("Session mode").selectOption(mode);
-      await page.getByLabel("Start time (ISO UTC)").fill(process.env.BOOKING_E2E_STARTS_AT!);
-      await page.getByLabel("End time (ISO UTC)").fill(process.env.BOOKING_E2E_ENDS_AT!);
+      await page
+        .getByLabel("Start time (UTC)")
+        .fill(new Date(process.env.BOOKING_E2E_STARTS_AT!).toISOString().slice(0, 16));
+      await page
+        .getByLabel("End time (UTC)")
+        .fill(new Date(process.env.BOOKING_E2E_ENDS_AT!).toISOString().slice(0, 16));
+      await expect(page.getByLabel("Start time (UTC)")).toHaveAttribute("type", "datetime-local");
+      await expect(page.getByLabel("End time (UTC)")).toHaveAttribute("type", "datetime-local");
+      // The UTC-labelled picker must submit the same instant even in a non-UTC browser.
+      await expect(page.locator('input[type="hidden"][name="starts_at"]')).toHaveValue(
+        new Date(process.env.BOOKING_E2E_STARTS_AT!).toISOString().slice(0, 16) + "Z",
+      );
+      await page.getByLabel("Start time (UTC)").scrollIntoViewIfNeeded();
+      await page
+        .getByRole("form", { name: "Request a booking" })
+        .screenshot({ path: testInfo.outputPath("booking-date-time-pickers.png") });
       submittedKey = await page.locator('input[name="request_key"]').inputValue();
       await page.getByRole("button", { name: "Request reservation — no charge" }).click();
       await expect(page.getByRole("status").filter({ hasText: "Reservation saved." })).toBeVisible();

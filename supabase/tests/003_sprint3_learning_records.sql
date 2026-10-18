@@ -77,6 +77,7 @@ select pg_temp.check_true((select count(*) = 2 from public.bookings where tutor_
 set local role authenticated;
 select pg_temp.act_as(1);
 select pg_temp.check_true((select public.save_session_goals(upcoming, 'Factor quadratics', 'When do I complete the square?') is not null from fixture_ids), 'student saves goals');
+select pg_temp.expect_error('select public.save_session_goals(ended, ''Late goals'', null) from fixture_ids', '22023', 'ended confirmed planner refuses student goals');
 select pg_temp.expect_error('select public.save_session_agenda(upcoming, ''Student forging agenda'') from fixture_ids', '42501', 'student cannot write tutor agenda');
 select pg_temp.expect_error('insert into public.session_plans(booking_id, student_goals) select upcoming, ''x'' from fixture_ids', '42501', 'plans are not directly writable');
 select pg_temp.expect_error('select public.save_session_reflection(upcoming, ''too early'') from fixture_ids', '22023', 'reflection refused before the session ends');
@@ -87,6 +88,7 @@ select pg_temp.check_true((select public.save_session_agenda(upcoming, '1. Warm-
 select pg_temp.check_true((select student_goals = 'Factor quadratics' and tutor_agenda like '1. Warm-up%' from public.session_plans, fixture_ids where booking_id = upcoming), 'agenda save preserves student goals');
 select pg_temp.expect_error('select public.publish_session_recap(upcoming, ''Early'', null, null) from fixture_ids', '22023', 'recap refused before the session ends');
 select pg_temp.expect_error('select public.mark_session_completed(upcoming) from fixture_ids', '22023', 'future session cannot be completed');
+select pg_temp.expect_error('select public.save_session_agenda(ended, ''Late agenda'') from fixture_ids', '22023', 'ended confirmed planner refuses tutor agenda');
 select pg_temp.check_true((select public.mark_session_completed(ended) = 'completed' from fixture_ids), 'tutor completes ended session');
 select pg_temp.check_true((select public.mark_session_completed(ended) = 'completed' from fixture_ids), 'completion retry idempotent');
 select pg_temp.check_true((select public.publish_session_recap(ended, 'Covered factoring', 'Confident with GCF', 'Practice set B') is not null from fixture_ids), 'tutor publishes recap after session');
@@ -149,15 +151,15 @@ select pg_temp.act_as(1);
 select pg_temp.check_true((select count(*) = 2 from public.assessment_questions), 'student reads assigned questions');
 select pg_temp.check_true((select count(*) = 0 from public.assessment_answer_keys), 'student cannot read answer keys');
 select public.submit_assessment_attempt('56000000-0000-4000-8000-000000000001',
-  '{"57000000-0000-4000-8000-000000000001":"(x-3)(x+3)","57000000-0000-4000-8000-000000000002":"Halve b, square it"}', true);
-select pg_temp.check_true((select status = 'submitted' and auto_score = 2 and max_score = 5 and score is null from public.assessment_attempts), 'objective score computed server-side; subjective awaits tutor');
+  '{"57000000-0000-4000-8000-000000000001":"(x-9)(x+1)","57000000-0000-4000-8000-000000000002":"Halve b, square it"}', true);
+select pg_temp.check_true((select status = 'submitted' and auto_score = 0 and max_score = 5 and score is null from public.assessment_attempts), 'objective score computed server-side; subjective awaits tutor');
 select pg_temp.expect_error($c$select public.submit_assessment_attempt('56000000-0000-4000-8000-000000000001', '{}', true)$c$, '22023', 'finalized assessment closed to resubmission');
 select pg_temp.act_as(3);
 select pg_temp.check_true((select count(*) = 0 from public.assessments) and (select count(*) = 0 from public.assessment_attempts), 'unrelated student sees no assessment');
 select pg_temp.act_as(2);
-select pg_temp.expect_error('select public.score_assessment_attempt(id, 4, null) from public.assessment_attempts', '22023', 'tutor score bounded by maximum');
+select pg_temp.expect_error('select public.score_assessment_attempt(id, 4, null) from public.assessment_attempts', '22023', 'tutor score cannot replace missed objective points');
 select public.score_assessment_attempt(id, 3, 'Good reasoning') from public.assessment_attempts;
-select pg_temp.check_true((select a.status = 'scored' and t.score = 5 from public.assessments a join public.assessment_attempts t on t.assessment_id = a.id), 'tutor finalizes subjective score');
+select pg_temp.check_true((select a.status = 'scored' and t.score = 3 from public.assessments a join public.assessment_attempts t on t.assessment_id = a.id), 'tutor finalizes subjective score');
 
 -- UC-08 assignments
 insert into public.assignments(id, tutor_id, student_id, booking_id, title, instructions, due_at, status) values

@@ -71,7 +71,7 @@ test("real Tutor signup requires mailbox verification and preserves Tutor intent
     .toBe(true);
   const message = await fetch(`${mailUrl}/api/v1/message/${messageId}`).then((response) => response.json());
   const links: string[] = `${message.HTML || ""} ${message.Text || ""}`.match(/https?:\/\/[^"<>\s]+/g) || [];
-  const link = links.find((value) => value.includes("/auth/v1/verify"));
+  const link = links.find((value) => value.includes("/auth/callback?token_hash=") || value.includes("/auth/v1/verify"));
   expect(link).toBeTruthy();
   await page.goto(link!.replaceAll("&amp;", "&"));
   await expect(page).toHaveURL(/\/dashboard$/);

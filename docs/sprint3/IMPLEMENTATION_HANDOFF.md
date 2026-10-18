@@ -18,8 +18,9 @@ Prepared by the implementor agent on 2026-10-18 for the document editor and vali
 | File | Purpose |
 | --- | --- |
 | `supabase/migrations/202610180001_session_planner_reviews.sql` | UC-09 and UC-07 tables, triggers, RPCs, RLS, grants |
+| `supabase/migrations/202610180003_learning_record_boundaries.sql` | End-time planner boundary and subjective-score limit correction |
 | `supabase/migrations/202610180002_assessments_assignments.sql` | UC-05 and UC-08 tables, triggers, RPCs, RLS, grants |
-| `sql/sprint3_tables.sql` | Concatenation of the two migrations with a header. Apply with `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f sql/sprint2_tables.sql -f sql/sprint3_tables.sql` |
+| `sql/sprint3_tables.sql` | Concatenation of the three Sprint 3 migrations with a header. Apply with `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f sql/sprint2_tables.sql -f sql/sprint3_tables.sql` |
 | `supabase/tests/003_sprint3_learning_records.sql` | 61-check SQL regression (runs in one transaction, then rolls back) |
 | `supabase/tests/run-isolated.sh` | Now replays `sql/sprint3_tables.sql` and runs test 003 after the Sprint 2 suite |
 | `scripts/seed-sprint3-demo.mjs` | Demo fixture: demo-only accounts, tutor listing, bookings (see §6) |
@@ -227,19 +228,19 @@ Each service module exports functions plus a named object used as the class-diag
 ## 5. Hosted deployment and demo credentials
 
 - Production URL: **https://tutorplus-one.vercel.app** (Vercel deployment `tutorplus-pwmz0rvtq-adams-projects-c67ba2f3.vercel.app`, status Ready, deployed 2026-10-18 with `vercel deploy --prod`). Production env vars `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL` exist (values not printed); the hosted login → planner → review flow worked against the cloud database (all 18 UI screenshots were captured from this URL).
-- Demo-only accounts (created by `scripts/seed-sprint3-demo.mjs`; no real people; password shared for the class demo):
+- Demo-only accounts (created by `scripts/seed-sprint3-demo.mjs`; no real people; credentials provided privately for the class demo):
 
 | Role | Email | Password |
 | --- | --- | --- |
-| Student (Maya Chen) | sprint3.student@example.com | `TutorPlus-Demo-2026!` |
-| Tutor (Daniel Brooks) | sprint3.tutor@example.com | `TutorPlus-Demo-2026!` |
-| Unrelated student (Riley Park) — for the access-denied demo | sprint3.other@example.com | `TutorPlus-Demo-2026!` |
+| Student (Maya Chen) | sprint3.student@example.com | Supplied privately at demo time |
+| Tutor (Daniel Brooks) | sprint3.tutor@example.com | Supplied privately at demo time |
+| Unrelated student (Riley Park) — for the access-denied demo | sprint3.other@example.com | Supplied privately at demo time |
 
 - Demo bookings: upcoming confirmed `23f6a1c8-67a7-4394-b484-e15190fae7de` (2026-10-20 15:00–16:00 UTC); completed `4920dfaf-40b2-4bd2-9208-d59b1b0915db` (2026-10-16 15:00–16:00 UTC). The completed booking is now reviewed (5★); to demo a fresh review live, rerun the seed script, which adds a new unreviewed completed booking.
 
 ## 6. Demo fixture honesty note
 
-Payments are not implemented, so a booking cannot legitimately become `confirmed`/`completed` through the UI. The seed script therefore: creates the upcoming booking through the real student RPC `create_booking`; inserts the already-ended booking directly as the database owner (the public RPC correctly refuses past start times); confirms both by calling the server-only provider-boundary functions `prepare_booking_payment` + `apply_verified_payment_event` with events named `demo-fixture-evt-…` (**no money moved, no Stripe**); adds a placeholder meeting link; saves the ended booking's goals/agenda via the real planner RPCs; and marks it delivered via the tutor's real `mark_session_completed` RPC. Report text must call these "demo fixture data", not payments.
+Payments are not implemented, so a booking cannot legitimately become `confirmed`/`completed` through the UI. The seed script therefore: creates the upcoming booking through the real student RPC `create_booking`; inserts the already-ended booking directly as the database owner (the public RPC correctly refuses past start times); confirms both by calling the server-only provider-boundary functions `prepare_booking_payment` + `apply_verified_payment_event` with events named `demo-fixture-evt-…` (**no money moved, no Stripe**); adds a placeholder meeting link; leaves historical preparation empty because planner writes close at session end; and marks it delivered via the tutor's real `mark_session_completed` RPC. Report text must call these "demo fixture data", not payments.
 
 ## 7. Evidence (all in `docs/evidence/screenshots/sprint3/`)
 
@@ -305,7 +306,7 @@ cp .env.example .env.local      # set NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPA
 npm start -- --hostname 127.0.0.1 --port 3000
 ```
 
-Database for a new environment: `supabase link --project-ref <ref>` then `supabase db push`, or run `sql/sprint2_tables.sql`, `supabase/migrations/202609300009_onboarding.sql` and `sql/sprint3_tables.sql` with psql. Demo data: `SEED_DEMO_CONFIRM=sprint3-demo SPRINT3_DEMO_PASSWORD='…' node --env-file=.env.cloud scripts/seed-sprint3-demo.mjs`. Or skip all of this and use the hosted link + credentials in §5.
+Database for a new environment: `supabase link --project-ref <ref>` then `supabase db push`, or run `sql/sprint2_tables.sql`, `supabase/migrations/202609300009_onboarding.sql` and `sql/sprint3_tables.sql` with psql. Demo data: `SEED_DEMO_CONFIRM=sprint3-demo SPRINT3_DEMO_PASSWORD='…' node --env-file=.env.cloud scripts/seed-sprint3-demo.mjs`. Or skip all of this and use the hosted link and obtain demo credentials privately.
 
 ## 10. GitHub
 
@@ -321,6 +322,15 @@ Database for a new environment: `supabase link --project-ref <ref>` then `supaba
 - The project board has only a table view ("View 1"); the GitHub CLI cannot create a Board-layout view. If the report needs columns, switch the view layout to Board in the web UI and recapture **[confirm]**.
 - UC-05 and UC-08 have no UI; file uploads for submissions are not wired to storage.
 - Payments/Stripe remain unimplemented; demo confirmations are fixtures (§6).
-- DB-level rule difference: `save_session_goals`/`save_session_agenda` accept a confirmed booking whose end time has passed (the UI offers editing only before the end time). Tighten in the next migration if the team wants the DB to match.
+- The end-time planner/database rule difference was corrected in migration `202610180003`; direct RPC calls and UI permissions now agree.
 - HawkScan DAST was not run: `HAWK_API_KEY` is not set.
-- Demo credentials are intentionally public for grading; they belong to demo-only accounts with no admin role.
+- Demo identities have no admin role. Their previously published passwords have been rotated and sessions invalidated; supply new credentials privately only when needed.
+
+
+## Release review corrections (October 18, 2026)
+
+- Added `202610180003_learning_record_boundaries.sql` and appended the same changes to the standalone Sprint 3 SQL. Planner RPCs now refuse edits after the scheduled end time and lock the booking while checking it. Tutor assessment scores are bounded by short-answer points, preserving objective results.
+- Applied this corrective migration to the linked hosted database and recorded version `202610180003` as applied. Ran the complete `003_sprint3_learning_records.sql` inside its rollback-only transaction through `supabase db query --linked` after removing its psql-only `\set` directive; all assertions passed.
+- Rotated passwords for the three named demo identities and invalidated their sessions. Credentials previously included here are obsolete. Credentials must be provided privately at demo time; do not put them in report source or committed documents.
+- Ported the pending email rate-limit handling into the current auth services. Provider rate limits now produce an actionable safe message for signup, email-code requests, password reset, and verification resend. Provider-error, service, and session/review unit suites passed (30 tests).
+- The separate untracked Sprint 3 report builder and its generated PDF remain draft artifacts: its `HANDOFF` fields and generated placeholder manifest are incomplete. They are not validated submission evidence and are excluded from this release.

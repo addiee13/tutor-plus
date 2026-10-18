@@ -1,6 +1,6 @@
 import "server-only";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { DomainError } from "../shared/errors";
+import { DomainError, providerError } from "../shared/errors";
 import { PgErrorCode } from "../shared/postgres";
 import { assertSessionAge, requireRole, resolveActor, type Actor } from "./policy";
 import {
@@ -66,7 +66,7 @@ export async function register(client: SupabaseClient, form: FormData, origin: s
     password,
     options: { data: { ...profile, initial_role: role_intent }, emailRedirectTo: callbackUrl(origin) },
   });
-  if (error) throw new DomainError("unavailable");
+  if (error) throw providerError(error);
   // A session here means email confirmation is disabled, which this application does not support.
   if (data.session) {
     await client.auth.signOut({ scope: "local" });
@@ -161,7 +161,7 @@ export async function requestEmailCode(client: SupabaseClient, form: FormData, o
     options: { shouldCreateUser: false, emailRedirectTo: callbackUrl(origin) },
   });
   if (error && error.status !== 422 && !NON_ENUMERATING_OTP_ERRORS.has(error.code ?? "")) {
-    throw new DomainError("unavailable");
+    throw providerError(error);
   }
   return email;
 }
@@ -176,7 +176,7 @@ export async function verifyEmailCode(client: SupabaseClient, form: FormData): P
 export async function requestPasswordReset(client: SupabaseClient, form: FormData, origin: string): Promise<void> {
   const email = parseEmail(form);
   const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: `${origin}/auth/reset-password` });
-  if (error) throw new DomainError("unavailable");
+  if (error) throw providerError(error);
 }
 
 export async function resendVerification(client: SupabaseClient, form: FormData, origin: string): Promise<void> {
@@ -186,5 +186,5 @@ export async function resendVerification(client: SupabaseClient, form: FormData,
     email,
     options: { emailRedirectTo: callbackUrl(origin) },
   });
-  if (error) throw new DomainError("unavailable");
+  if (error) throw providerError(error);
 }
