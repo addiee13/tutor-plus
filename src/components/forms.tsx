@@ -247,7 +247,7 @@ export function ProfileForm({ profile }: { profile: { display_name: string; time
         />
         <TimeZoneField
           defaultValue={profile.timezone}
-          hint="Use an IANA time zone. We store your preference, not your location."
+          hint="We store your preference, not your location."
           error={state.fields?.timezone}
         />
         <SubmitButton pending={pending}>Save profile</SubmitButton>
