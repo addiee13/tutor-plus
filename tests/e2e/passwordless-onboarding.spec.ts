@@ -175,7 +175,7 @@ test("an account without signup metadata must onboard once and cannot choose adm
   await expect(page.getByLabel("I’m here to").locator("option")).toHaveText(["Learn as a student", "Teach as a tutor"]);
 
   await page.getByLabel("Display name").fill("Onboarded Tutor");
-  await page.getByLabel("Time zone").fill("Europe/London");
+  await page.getByLabel("Time zone").selectOption("Europe/London");
   await page.getByLabel("I confirm that I am at least 18 years old.").check();
   await page.getByLabel("I’m here to").evaluate((select: HTMLSelectElement) => {
     select.add(new Option("Administrator", "administrator"));
@@ -197,7 +197,7 @@ test("an account without signup metadata must onboard once and cannot choose adm
   expect(forged.error?.code).toBe("22023");
 
   await page.getByLabel("Display name").fill("Onboarded Tutor");
-  await page.getByLabel("Time zone").fill("Europe/London");
+  await page.getByLabel("Time zone").selectOption("Europe/London");
   await page.getByLabel("I’m here to").selectOption("tutor");
   await page.getByLabel("I confirm that I am at least 18 years old.").check();
   await page.getByRole("button", { name: "Finish setting up" }).click();

@@ -22,7 +22,7 @@ test("real login, own profile save, refresh persistence, and cookie logout", asy
   const originalZone = await page.getByLabel("Time zone").inputValue();
   const name = `Verified ${testInfo.project.name} Learner`;
   await page.getByLabel("Display name").fill(name);
-  await page.getByLabel("Time zone").fill("Europe/London");
+  await page.getByLabel("Time zone").selectOption("Europe/London");
   await page.getByRole("button", { name: "Save profile" }).click();
   await expect(page.getByRole("status")).toContainText("Your profile is saved");
   await page.reload();
@@ -30,7 +30,7 @@ test("real login, own profile save, refresh persistence, and cookie logout", asy
   await expect(page.getByLabel("Time zone")).toHaveValue("Europe/London");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.getByLabel("Display name").fill(originalName);
-  await page.getByLabel("Time zone").fill(originalZone);
+  await page.getByLabel("Time zone").selectOption(originalZone);
   await page.getByRole("button", { name: "Save profile" }).click();
   await expect(page.getByRole("status")).toContainText("Your profile is saved");
   await page.getByRole("button", { name: "Sign out" }).click();

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { ActionState } from "@/domains/shared/errors";
+import { TIME_ZONES } from "@/lib/time-zones";
 
 type FieldProps = {
   label: string;
@@ -74,15 +75,45 @@ export function RoleIntentField({ defaultValue = "student", error }: { defaultVa
   );
 }
 
+const TIME_ZONE_GROUPS = TIME_ZONES.reduce<Map<string, string[]>>((groups, zone) => {
+  const region = zone.includes("/") ? zone.slice(0, zone.indexOf("/")) : "General";
+  groups.set(region, [...(groups.get(region) ?? []), zone]);
+  return groups;
+}, new Map());
+
 export function TimeZoneField({ defaultValue, hint, error }: { defaultValue: string; hint?: string; error?: string }) {
+  const help = error || hint;
+  const helpId = "timezone-help";
+  // Keep a previously saved zone selectable even if this ICU snapshot no longer lists it.
+  const legacy = defaultValue && !TIME_ZONES.includes(defaultValue) ? defaultValue : null;
   return (
-    <Field
-      label="Time zone"
-      name="timezone"
-      defaultValue={defaultValue}
-      hint={hint ?? "IANA format, for example America/New_York or Europe/London."}
-      error={error}
-    />
+    <div className="field">
+      <label htmlFor="timezone">Time zone</label>
+      <select
+        id="timezone"
+        name="timezone"
+        required
+        defaultValue={defaultValue}
+        aria-invalid={!!error}
+        aria-describedby={help ? helpId : undefined}
+      >
+        {legacy && <option value={legacy}>{legacy.replaceAll("_", " ")}</option>}
+        {[...TIME_ZONE_GROUPS].map(([region, zones]) => (
+          <optgroup key={region} label={region}>
+            {zones.map((zone) => (
+              <option key={zone} value={zone}>
+                {zone.replaceAll("_", " ")}
+              </option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
+      {help && (
+        <span id={helpId} className={error ? "field-error" : "hint"}>
+          {help}
+        </span>
+      )}
+    </div>
   );
 }
 
