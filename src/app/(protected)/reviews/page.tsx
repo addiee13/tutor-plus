@@ -33,7 +33,7 @@ export default async function ReviewsPage() {
   return (
     <>
       <section className="page-heading">
-        <span className="eyebrow">UC-07 · REVIEWS AND RATINGS</span>
+        <span className="eyebrow">Reviews &amp; ratings</span>
         <h1>Reviews.</h1>
         <p>
           {isStudent
@@ -77,7 +77,7 @@ function StudentSessions({ sessions }: { sessions: ReviewableBooking[] }) {
       )}
       {sessions.map((entry) => (
         <article key={entry.booking.id} className={`panel ${styles.card}`} data-booking-id={entry.booking.id}>
-          <span className="tag">{entry.review ? "REVIEWED" : "READY FOR REVIEW"}</span>
+          <span className={entry.review ? "tag" : "tag clay"}>{entry.review ? "Reviewed" : "Ready for review"}</span>
           <h3>
             {entry.tutorName} · {entry.subjectName}
           </h3>
@@ -126,7 +126,7 @@ function TutorReputationPanel({ reputation }: { reputation: TutorReputation[] })
   if (!reputation.length) {
     return (
       <section className="panel">
-        <span className="tag">YOUR RATING</span>
+        <span className="tag">Your rating</span>
         <h2>No tutor listing yet.</h2>
         <p>Create and publish a tutor listing to receive reviews from completed sessions.</p>
       </section>
@@ -136,7 +136,7 @@ function TutorReputationPanel({ reputation }: { reputation: TutorReputation[] })
     <div className={styles.stack}>
       {reputation.map((entry) => (
         <section key={entry.tutorId} className={`panel ${styles.card}`} aria-label={`Rating for ${entry.tutorName}`}>
-          <span className="tag">YOUR RATING</span>
+          <span className="tag">Your rating</span>
           <h2>{entry.tutorName}</h2>
           <div className={styles.score} data-testid="tutor-summary">
             <strong>{entry.summary?.rating_avg != null ? Number(entry.summary.rating_avg).toFixed(1) : "—"}</strong>

@@ -12,8 +12,9 @@ export default async function Welcome() {
   if (!publicConfig())
     return (
       <AuthShell
-        eyebrow="ALMOST THERE"
+        eyebrow="Almost there"
         title="Finish setting up."
+        step={3}
         description="Account services are needed for this step."
       >
         <SetupNotice />
@@ -29,7 +30,8 @@ export default async function Welcome() {
   if (status.state === "inactive")
     return (
       <AuthShell
-        eyebrow="ACCOUNT UNAVAILABLE"
+        eyebrow="Account unavailable"
+        story="recover"
         title="We can’t continue."
         description="This account can’t be set up right now. If you think this is a mistake, contact an administrator."
       >
@@ -38,12 +40,16 @@ export default async function Welcome() {
     );
   return (
     <AuthShell
-      eyebrow="ALMOST THERE"
+      eyebrow="Almost there"
       title="Finish setting up."
+      step={3}
       description="Tell us how you’ll use Tutor Plus. You can change your name and time zone later; administrator access is only ever granted by an administrator."
     >
       <OnboardingForm suggestedName={status.suggestedName} />
-      <LogoutForm />
+      <div className="auth-switch">
+        <span>Signed in with the wrong account?</span>
+        <LogoutForm />
+      </div>
     </AuthShell>
   );
 }

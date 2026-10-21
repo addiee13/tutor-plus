@@ -10,12 +10,13 @@ export default async function Admin() {
   return (
     <>
       <section className="page-heading">
-        <span className="eyebrow">ADMINISTRATION</span>
+        <span className="eyebrow">Administration</span>
         <h1>Account capabilities.</h1>
         <p>Narrow, audited account management for authorized administrators.</p>
       </section>
       <div className="profile-grid">
         <section className="panel">
+          <span className="tag">Roles</span>
           <h2>Grant or revoke a role</h2>
           <p className="panel-description">
             The database rechecks your current administrator authority and records the change. A single account can hold
@@ -23,7 +24,8 @@ export default async function Admin() {
           </p>
           <RoleForm />
         </section>
-        <section className="panel quiet-panel">
+        <section className="panel">
+          <span className="tag clay">Status</span>
           <h2>Account status</h2>
           <p className="panel-description">
             Deactivation denies access without deleting profile, financial, or audit records. Both deactivation and

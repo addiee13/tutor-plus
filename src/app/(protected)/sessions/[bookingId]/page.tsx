@@ -17,6 +17,35 @@ const PHASE_LABELS: Record<SessionPhase, string> = {
   unavailable: "Not open for planning",
 };
 
+/** The visible journey of a session; "unavailable" sits outside it, with every step still upcoming. */
+const PHASE_STEPS: readonly (readonly [SessionPhase, string])[] = [
+  ["planning", "Planning"],
+  ["ended", "Session ended"],
+  ["completed", "Completed"],
+];
+
+function PhaseStepper({ phase }: { phase: SessionPhase }) {
+  const index = PHASE_STEPS.findIndex(([key]) => key === phase);
+  return (
+    <ol className={styles.stepper} aria-label="Session progress">
+      {PHASE_STEPS.map(([key, label], step) => {
+        const state = index < 0 || step > index ? "upcoming" : step < index ? "done" : "current";
+        return (
+          <li key={key} className={styles[state]} aria-current={state === "current" ? "step" : undefined}>
+            <span className={styles.stepMark} aria-hidden="true">
+              {state === "done" ? "✓" : step + 1}
+            </span>
+            <span className={styles.stepLabel}>
+              {label}
+              {state === "done" && <span className="visually-hidden"> (done)</span>}
+            </span>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export default async function SessionWorkspacePage({ params }: { params: Promise<{ bookingId: string }> }) {
   if (!publicConfig()) return null;
   const { bookingId } = await params;
@@ -29,7 +58,7 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
     return (
       <>
         <section className="page-heading">
-          <span className="eyebrow">UC-09 · SESSION PLANNER AND RECAP</span>
+          <span className="eyebrow">Session planner &amp; recap</span>
           <h1 id="denied-heading">{denied ? "This workspace isn’t available." : "Session workspace."}</h1>
         </section>
         <section className="panel" aria-labelledby="denied-heading">
@@ -51,7 +80,7 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
   return (
     <>
       <section className="page-heading">
-        <span className="eyebrow">UC-09 · SESSION PLANNER AND RECAP</span>
+        <span className="eyebrow">Session planner &amp; recap</span>
         <h1>Session workspace.</h1>
         <p>
           {role === "student"
@@ -60,7 +89,8 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
         </p>
       </section>
 
-      <section className="panel" aria-label="Booking summary">
+      <section className={`panel ${styles.overview}`} aria-label="Booking summary">
+        <PhaseStepper phase={phase} />
         <dl className={styles.summary}>
           <div>
             <dt>Subject</dt>
@@ -80,7 +110,7 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
           <div>
             <dt>Status</dt>
             <dd>
-              <span className={styles.status} data-testid="session-status">
+              <span className="status-chip" data-status={booking.status} data-testid="session-status">
                 {booking.status.replace("_", " ")}
               </span>{" "}
               <span className={styles.meta}>{PHASE_LABELS[phase]}</span>
@@ -94,14 +124,14 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
       </section>
 
       {phase === "unavailable" ? (
-        <div className="notice warning" role="status" style={{ marginTop: "1.5rem" }}>
+        <div className={`notice warning ${styles.unavailable}`} role="status">
           The planner opens once a booking is confirmed. This booking is <code>{booking.status}</code>, so there is
           nothing to plan yet.
         </div>
       ) : (
         <div className={styles.grid}>
           <section className={`panel ${styles.card}`} aria-labelledby="goals-heading">
-            <span className="tag">STUDENT</span>
+            <span className="tag">Student</span>
             <h2 id="goals-heading">Goals and questions</h2>
             {can.editGoals ? (
               <GoalsForm bookingId={bookingRef} goals={plan?.student_goals} questions={plan?.student_questions} />
@@ -121,7 +151,7 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
           </section>
 
           <section className={`panel ${styles.card}`} aria-labelledby="agenda-heading">
-            <span className="tag">TUTOR</span>
+            <span className="tag clay">Tutor</span>
             <h2 id="agenda-heading">Agenda</h2>
             {can.editAgenda ? (
               <AgendaForm bookingId={bookingRef} agenda={plan?.tutor_agenda} />
@@ -136,7 +166,7 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
           </section>
 
           <section className={`panel ${styles.card}`} aria-labelledby="recap-heading">
-            <span className="tag">RECAP</span>
+            <span className="tag">Recap</span>
             <h2 id="recap-heading">Session recap</h2>
             {can.publishRecap ? (
               <RecapForm
@@ -173,7 +203,7 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
 
           {role === "student" ? (
             <section className={`panel ${styles.card} ${styles.private}`} aria-labelledby="reflection-heading">
-              <span className="tag">PRIVATE TO YOU</span>
+              <span className="tag ink">Private to you</span>
               <h2 id="reflection-heading">Your reflection</h2>
               {can.writeReflection ? (
                 <ReflectionForm bookingId={bookingRef} reflection={reflection?.reflection} />
@@ -184,7 +214,7 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
             </section>
           ) : (
             <section className={`panel ${styles.card} ${styles.private}`} aria-labelledby="privacy-heading">
-              <span className="tag">PRIVACY</span>
+              <span className="tag ink">Privacy</span>
               <h2 id="privacy-heading">Student reflection</h2>
               <p data-testid="reflection-private">
                 Student reflections are private to the student. They are never shown to tutors, and this page does not

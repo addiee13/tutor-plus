@@ -109,7 +109,7 @@ export function AltSignIn({ configured, providers, showCode = true }: AltSignInP
   return (
     <div className="alt-signin">
       <p className="divider">
-        <span>or</span>
+        <span>Or continue with</span>
       </p>
       <form action={action} className="form">
         <fieldset disabled={!configured || pending} className="form-fields alt-buttons">

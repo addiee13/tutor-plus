@@ -1,3 +1,87 @@
+.overview {
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* Planning → ended → completed, with connecting rules between the steps. */
+.stepper {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0 0 1.5rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.stepper li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.stepper li::after {
+  content: "";
+  flex: 1;
+  min-width: 12px;
+  height: 2px;
+  margin-right: 0.75rem;
+  background: var(--line);
+}
+
+.stepper li:last-child::after {
+  display: none;
+}
+
+.stepMark {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  background: var(--field);
+  font-weight: 700;
+}
+
+.stepLabel {
+  min-width: 0;
+}
+
+.done {
+  color: var(--forest);
+}
+
+.done::after {
+  background: var(--forest) !important;
+}
+
+.done .stepMark {
+  border-color: var(--forest);
+  background: var(--forest-tint);
+  color: var(--forest);
+}
+
+.current {
+  color: var(--ink);
+}
+
+.current .stepMark {
+  border-color: var(--forest);
+  background: var(--forest);
+  color: var(--on-dark);
+  box-shadow: 0 0 0 4px var(--forest-tint);
+}
+
+.upcoming .stepMark {
+  border-style: dashed;
+}
+
 .summary {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -10,17 +94,22 @@
 }
 
 .summary dt {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .summary dd {
-  margin: 0.25rem 0 0;
-  font-size: 14px;
+  margin: 0.3rem 0 0;
+  font-size: var(--text-sm);
+  font-weight: 500;
   overflow-wrap: anywhere;
+}
+
+.unavailable {
+  margin-top: 1.5rem;
 }
 
 .grid {
@@ -43,65 +132,44 @@
 .textarea {
   width: 100%;
   max-width: 100%;
-  font: inherit;
-  font-size: 13px;
-  line-height: 1.6;
-  padding: 10px 12px;
-  border: 1px solid #cbd6cd;
-  border-radius: 6px;
-  background: white;
-  color: var(--ink);
-  resize: vertical;
-}
-
-.textarea[aria-invalid="true"] {
-  border-color: #a75331;
-}
-
-.textarea:focus-visible {
-  outline: 3px solid #997236;
-  outline-offset: 4px;
 }
 
 .readout {
   white-space: pre-wrap;
-  font-size: 14px;
+  font-size: var(--text-base);
   line-height: 1.7;
   color: var(--ink);
-  background: #f7f8f3;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px 16px;
+  background: var(--paper);
+  border-left: 3px solid var(--forest);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 0.85rem 1rem;
   margin: 0 0 0.5rem;
 }
 
 .label {
   display: block;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
   margin: 1rem 0 0.4rem;
 }
 
 .meta {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--muted);
 }
 
-.status {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 3px 9px;
-  border-radius: 999px;
-  background: var(--mint);
-  color: var(--accent);
+.meta a {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .private {
-  background: #f3efe6;
-  border-color: #e3d9c3;
+  background: var(--cream);
+  border-color: transparent;
 }
 
 .wide {
@@ -118,14 +186,22 @@
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 520px) {
   .summary {
     grid-template-columns: minmax(0, 1fr);
   }
-}
 
-.meta a {
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  .stepper li {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: var(--text-xs);
+  }
+
+  .stepper li::after {
+    position: absolute;
+    top: 17px;
+    left: 44px;
+    right: 6px;
+    margin: 0;
+  }
 }
