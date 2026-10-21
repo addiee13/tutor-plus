@@ -2,14 +2,24 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getActor } from "../../src/domains/auth/service";
 import type { Actor } from "../../src/domains/auth/policy";
-import { parseBookingRequest, parseCancellation, parseUtcTimestamp } from "../../src/domains/bookings/validation";
+import {
+  parseBookingRequest,
+  parseCancellation,
+  parseSlotQuery,
+  parseUtcTimestamp,
+} from "../../src/domains/bookings/validation";
 import { InputError } from "../../src/domains/shared/errors";
 import {
   requireBookingActor,
   requireBookingParticipant,
   requireBookingStudent,
 } from "../../src/domains/bookings/policy";
-import { requestBooking, cancelBooking, readBookingWorkspace } from "../../src/domains/bookings/service";
+import {
+  requestBooking,
+  cancelBooking,
+  listTutorSlots,
+  readBookingWorkspace,
+} from "../../src/domains/bookings/service";
 import { formatMoney } from "../../src/domains/bookings/presentation";
 
 vi.mock("server-only", () => ({}));
@@ -329,5 +339,55 @@ describe("UC-04 server authorization and SQL contracts (mocked, not live persist
     expect(fixture.from.mock.results[0].value.select).toHaveBeenCalledWith(
       "id,public_display_name,headline,hourly_rate_minor,currency,supports_virtual,supports_in_person",
     );
+  });
+});
+
+describe("UC-04 bookable slot lookup", () => {
+  function slotClient(result: { data: unknown; error: { code: string } | null }) {
+    const rpc = vi.fn(async () => result);
+    return { client: { rpc } as unknown as SupabaseClient, rpc };
+  }
+
+  it("accepts whole-minute durations inside the 15–180 minute policy only", () => {
+    expect(parseSlotQuery(tutorId.toUpperCase(), 60)).toEqual({ tutor: tutorId, duration: 60 });
+    for (const duration of [14, 181, 30.5, "60", Number.NaN]) {
+      expect(() => parseSlotQuery(tutorId, duration)).toThrow(InputError);
+    }
+    expect(() => parseSlotQuery("not-a-tutor", 60)).toThrow(InputError);
+  });
+
+  it("asks SQL for a bounded window and normalizes labelled rows", async () => {
+    const { client, rpc } = slotClient({
+      data: [
+        { slot_start: "2026-10-22T15:00:00+00:00", slot_end: "2026-10-22T16:00:00+00:00", slot_status: "open" },
+        { slot_start: "2026-10-22T15:30:00+00:00", slot_end: "2026-10-22T16:30:00+00:00", slot_status: "booked" },
+        { slot_start: "2026-10-22T16:00:00+00:00", slot_end: "2026-10-22T17:00:00+00:00", slot_status: "unknown" },
+      ],
+      error: null,
+    });
+    const result = await listTutorSlots(client, { tutor: tutorId, duration: 60 });
+    expect(result.slots).toEqual([
+      { startsAt: "2026-10-22T15:00:00.000Z", endsAt: "2026-10-22T16:00:00.000Z", status: "open" },
+      { startsAt: "2026-10-22T15:30:00.000Z", endsAt: "2026-10-22T16:30:00.000Z", status: "booked" },
+    ]);
+    const [name, parameters] = rpc.mock.calls[0] as unknown as [string, Record<string, string | number>];
+    expect(name).toBe("list_tutor_bookable_slots");
+    expect(parameters).toMatchObject({ tutor: tutorId, duration_minutes: 60 });
+    const span = Date.parse(String(parameters.to_time)) - Date.parse(String(parameters.from_time));
+    expect(span).toBeLessThanOrEqual(16 * 24 * 60 * 60 * 1000);
+  });
+
+  it("is limited to students and never reports a failed read as an empty schedule", async () => {
+    vi.mocked(getActor).mockResolvedValueOnce({ ...actor, roles: ["tutor"] });
+    const denied = slotClient({ data: [], error: null });
+    await expect(listTutorSlots(denied.client, { tutor: tutorId, duration: 60 })).rejects.toMatchObject({
+      code: "forbidden",
+    });
+    expect(denied.rpc).not.toHaveBeenCalled();
+
+    const failed = slotClient({ data: null, error: { code: "XX000" } });
+    await expect(listTutorSlots(failed.client, { tutor: tutorId, duration: 60 })).rejects.toMatchObject({
+      code: "unavailable",
+    });
   });
 });

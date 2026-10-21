@@ -6,10 +6,12 @@ import { hasRole, type Actor } from "../auth/policy";
 import { DomainError, InputError } from "../shared/errors";
 import { PgErrorCode } from "../shared/postgres";
 import { requireBookingActor, requireBookingParticipant, requireBookingStudent } from "./policy";
-import { parseBookingRequest, parseCancellation } from "./validation";
+import { parseBookingRequest, parseCancellation, parseSlotQuery } from "./validation";
 import {
   CANCELLABLE_STATUSES,
+  slotStatuses,
   type AvailabilityException,
+  type BookableSlot,
   type AvailabilityRule,
   type Booking,
   type PublicSubject,
@@ -22,9 +24,12 @@ const BOOKING_FIELDS =
 const TUTOR_FIELDS = "id,public_display_name,headline,hourly_rate_minor,currency,supports_virtual,supports_in_person";
 const DAY_MS = 24 * 60 * 60 * 1000;
 const SCHEDULE_WINDOW_DAYS = 8;
+/** Bookable starts are listed from now to two weeks ahead; starts already in the past are never choices. */
+const SLOT_WINDOW_DAYS = 14;
 
 type OwnedTutor = { id: string; public_display_name: string };
 type PublicTutorSubjectRow = { subject_id: string; name: string; hourly_rate_minor: number; currency: string };
+type SlotRow = { slot_start: string; slot_end: string; slot_status: string };
 
 type TutorSchedules = {
   rules: AvailabilityRule[];
@@ -142,11 +147,12 @@ export async function readBookingWorkspace(client: SupabaseClient) {
   const actor = await getActor(client);
   requireBookingActor(actor);
   const now = Date.now();
-  const [tutors, subjects, bookings, ownTutors] = await Promise.all([
+  const [tutors, subjects, bookings, ownTutors, profile] = await Promise.all([
     client.from("public_tutor_snapshots").select(TUTOR_FIELDS).order("public_display_name").limit(100),
     client.from("subjects").select("id,name").eq("active", true).order("name").limit(200),
     client.from("bookings").select(BOOKING_FIELDS).order("created_at", { ascending: false }).limit(50),
     ownedTutors(client, actor),
+    client.from("profiles").select("timezone").eq("id", actor.id).maybeSingle<{ timezone: string }>(),
   ]);
   if (tutors.error || subjects.error || bookings.error) throw new DomainError("unavailable");
 
@@ -174,12 +180,44 @@ export async function readBookingWorkspace(client: SupabaseClient) {
     bookings: participantBookings,
     ownTutors,
     ...schedules,
+    // The picker falls back to UTC rather than failing the page when the profile time zone cannot be read.
+    timezone: profile.data?.timezone ?? "UTC",
     observedAt: now,
     requestKey: randomUUID(),
   };
 }
 
 export type BookingWorkspace = Awaited<ReturnType<typeof readBookingWorkspace>>;
+
+/** Lists a published tutor's candidate start times for the student, each labelled open, booked or too soon. */
+export async function listTutorSlots(
+  client: SupabaseClient,
+  input: { tutor: unknown; duration: unknown },
+): Promise<{ slots: BookableSlot[]; observedAt: number }> {
+  const actor = await getActor(client);
+  requireBookingStudent(actor);
+  const { tutor, duration } = parseSlotQuery(input.tutor, input.duration);
+  const now = Date.now();
+  const { data, error } = await client.rpc("list_tutor_bookable_slots", {
+    tutor,
+    from_time: new Date(now).toISOString(),
+    to_time: new Date(now + SLOT_WINDOW_DAYS * DAY_MS).toISOString(),
+    duration_minutes: duration,
+  });
+  if (error) throw new DomainError(error.code === PgErrorCode.insufficientPrivilege ? "forbidden" : "unavailable");
+  const slots = ((data ?? []) as SlotRow[]).flatMap((row): BookableSlot[] =>
+    (slotStatuses as readonly string[]).includes(row.slot_status)
+      ? [
+          {
+            startsAt: new Date(row.slot_start).toISOString(),
+            endsAt: new Date(row.slot_end).toISOString(),
+            status: row.slot_status as BookableSlot["status"],
+          },
+        ]
+      : [],
+  );
+  return { slots, observedAt: now };
+}
 
 export async function requestBooking(client: SupabaseClient, form: FormData): Promise<Booking> {
   const actor = await getActor(client);

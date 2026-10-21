@@ -67,6 +67,22 @@ export function parseBookingRequest(form: FormData, now = Date.now()) {
   return { tutor, subject, starts_at, ends_at, mode: mode as BookingMode, request_key: parseRequestKey(form) };
 }
 
+/** Validates a slot lookup; the duration must be a whole number of minutes inside the booking policy. */
+export function parseSlotQuery(tutor: unknown, duration: unknown) {
+  const parsedTutor = parseBookingId(tutor, "tutor");
+  if (
+    typeof duration !== "number" ||
+    !Number.isInteger(duration) ||
+    duration < MIN_DURATION_MINUTES ||
+    duration > MAX_DURATION_MINUTES
+  ) {
+    throw new InputError({
+      duration: `Choose a session length between ${MIN_DURATION_MINUTES} and ${MAX_DURATION_MINUTES} minutes.`,
+    });
+  }
+  return { tutor: parsedTutor, duration };
+}
+
 export function parseCancellation(form: FormData) {
   const booking = parseBookingId(readText(form, "booking"));
   const reason = readText(form, "reason");

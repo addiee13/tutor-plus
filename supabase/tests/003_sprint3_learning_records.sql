@@ -187,6 +187,25 @@ select pg_temp.check_true((select count(*) = 1 from public.assignment_feedback),
 select pg_temp.act_as(3);
 select pg_temp.check_true((select count(*) = 0 from public.assignments) and (select count(*) = 0 from public.assignment_submissions), 'unrelated student sees no assignment work');
 
+-- UC-04 bookable slots: the picker's labels must match what create_booking would accept.
+select pg_temp.act_as(3);
+create temporary table slot_fixture as select * from public.list_tutor_bookable_slots(
+  '54000000-0000-4000-8000-000000000001', now(), now() + interval '3 days', 60);
+select pg_temp.check_true((select slot_status = 'booked' from slot_fixture
+  where slot_start = date_trunc('day', now()) + interval '2 days 12 hours'), 'slot overlapping a confirmed booking is booked');
+select pg_temp.check_true((select slot_status = 'booked' from slot_fixture
+  where slot_start = date_trunc('day', now()) + interval '2 days 11 hours'), 'slot inside the booking buffer is booked');
+select pg_temp.check_true((select slot_status = 'open' from slot_fixture
+  where slot_start = date_trunc('day', now()) + interval '2 days 10 hours 30 minutes'), 'slot clear of the buffer is open');
+select pg_temp.check_true((select count(*) = 0 from slot_fixture where (slot_status = 'too_soon') <> (slot_start < now() + interval '60 minutes')),
+  'exactly the starts inside the lead time are too soon');
+select pg_temp.check_true((select bool_and(slot_end - slot_start = interval '60 minutes') from slot_fixture), 'slots span the requested duration');
+select pg_temp.expect_error($c$select * from public.list_tutor_bookable_slots('54000000-0000-4000-8000-000000000001', now(), now() + interval '20 days', 60)$c$, '22023', 'slot window is bounded');
+select pg_temp.expect_error($c$select * from public.list_tutor_bookable_slots('54000000-0000-4000-8000-000000000001', now(), now() + interval '1 day', 10)$c$, '22023', 'slot duration follows booking policy');
+reset role;
+select pg_temp.check_true(not has_function_privilege('anon', 'public.list_tutor_bookable_slots(uuid, timestamptz, timestamptz, integer)', 'execute'),
+  'anonymous visitors cannot list bookable slots');
+
 reset role;
 select pg_temp.check_true((select bool_and(relrowsecurity) from pg_class where oid in ('public.session_plans'::regclass,
   'public.session_recaps'::regclass, 'public.session_reflections'::regclass, 'public.reviews'::regclass,

@@ -51,22 +51,23 @@ test.describe("LIVE UC-04 reservation persistence (explicit disposable fixtures 
       await page.getByLabel("Published tutor", { exact: true }).selectOption(process.env.BOOKING_E2E_TUTOR_ID!);
       await page.getByLabel("Subject", { exact: true }).selectOption(process.env.BOOKING_E2E_SUBJECT_ID!);
       await page.getByLabel("Session mode").selectOption(mode);
-      await page
-        .getByLabel("Start time (UTC)")
-        .fill(new Date(process.env.BOOKING_E2E_STARTS_AT!).toISOString().slice(0, 16));
-      await page
-        .getByLabel("End time (UTC)")
-        .fill(new Date(process.env.BOOKING_E2E_ENDS_AT!).toISOString().slice(0, 16));
-      await expect(page.getByLabel("Start time (UTC)")).toHaveAttribute("type", "datetime-local");
-      await expect(page.getByLabel("End time (UTC)")).toHaveAttribute("type", "datetime-local");
-      // The UTC-labelled picker must submit the same instant even in a non-UTC browser.
-      await expect(page.locator('input[type="hidden"][name="starts_at"]')).toHaveValue(
-        new Date(process.env.BOOKING_E2E_STARTS_AT!).toISOString().slice(0, 16) + "Z",
-      );
-      await page.getByLabel("Start time (UTC)").scrollIntoViewIfNeeded();
+      const startsAt = new Date(process.env.BOOKING_E2E_STARTS_AT!).toISOString();
+      const endsAt = new Date(process.env.BOOKING_E2E_ENDS_AT!).toISOString();
+      const minutes = (Date.parse(endsAt) - Date.parse(startsAt)) / 60_000;
+      await page.getByRole("button", { name: `${minutes} min`, exact: true }).click();
+      // The fixture start must be offered as open; a blind UTC entry is no longer possible.
+      const hourCell = page.locator(`[data-slot-starts~="${startsAt}"]`);
+      if (!(await hourCell.isVisible().catch(() => false))) {
+        await page.getByRole("button", { name: "Next week →" }).click();
+      }
+      await hourCell.click();
+      await page.locator(`[data-starts-at="${startsAt}"]`).click();
+      // The picker shows times in the profile time zone but must submit the exact UTC instants.
+      await expect(page.locator('input[type="hidden"][name="starts_at"]')).toHaveValue(startsAt);
+      await expect(page.locator('input[type="hidden"][name="ends_at"]')).toHaveValue(endsAt);
       await page
         .getByRole("form", { name: "Request a booking" })
-        .screenshot({ path: testInfo.outputPath("booking-date-time-pickers.png") });
+        .screenshot({ path: testInfo.outputPath("booking-slot-picker.png") });
       submittedKey = await page.locator('input[name="request_key"]').inputValue();
       await page.getByRole("button", { name: "Request reservation — no charge" }).click();
       await expect(page.getByRole("status").filter({ hasText: "Reservation saved." })).toBeVisible();
