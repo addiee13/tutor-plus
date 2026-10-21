@@ -64,3 +64,14 @@ export type Booking = {
 };
 
 export type BookingActionState = ActionState & { bookingId?: string };
+
+export const slotStatuses = ["open", "booked", "too_soon", "student_busy"] as const;
+export type SlotStatus = (typeof slotStatuses)[number];
+
+/** A candidate start time labelled by the database with the same rules `create_booking` enforces. */
+export type BookableSlot = { startsAt: string; endsAt: string; status: SlotStatus };
+
+/** Session lengths offered by the slot picker; all fall inside the 15–180 minute booking policy. */
+export const SLOT_DURATIONS = [30, 45, 60, 90, 120] as const;
+
+export type SlotListResult = { slots: BookableSlot[]; observedAt: number } | { message: string };

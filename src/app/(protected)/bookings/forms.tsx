@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useId, useState } from "react";
+import { useActionState, useCallback, useId, useState } from "react";
 import type { BookingActionState, PublicSubject, PublicTutor, TutorSubject } from "@/domains/bookings/types";
 import { formatMoney } from "@/domains/bookings/presentation";
 import { FormResult } from "@/components/form-controls";
-import { DateTimeField } from "@/components/date-time-field";
+import styles from "./bookings.module.css";
 import { cancelBookingAction, requestBookingAction } from "./actions";
+import { SlotPicker } from "./slot-picker";
 
 const initial: BookingActionState = { message: "" };
 
@@ -23,6 +24,10 @@ type RequestFormProps = {
   links: TutorSubject[];
   readableSubjectTutorIds: string[];
   requestKey: string;
+  /** The student's profile time zone, used as the picker's starting display zone. */
+  timezone: string;
+  /** Each tutor's availability time zone, keyed by tutor ID. */
+  tutorZones: Record<string, string>;
 };
 
 /** Remounts the request form with a fresh idempotency key when the student starts another reservation. */
@@ -44,10 +49,14 @@ function RequestForm({
   links,
   readableSubjectTutorIds,
   requestKey,
+  timezone,
+  tutorZones,
   onAnother,
 }: RequestFormProps & { onAnother: () => void }) {
   const [state, action, pending] = useActionState(requestBookingAction, initial);
   const [selectedId, setSelectedId] = useState(tutors[0]?.id ?? "");
+  const [hasSlot, setHasSlot] = useState(false);
+  const onSlotChange = useCallback((selected: boolean) => setHasSlot(selected), []);
   const selected = tutors.find((tutor) => tutor.id === selectedId);
   const readableLinks = links.filter((link) => link.tutor_id === selectedId);
   const subjectsReadable = readableSubjectTutorIds.includes(selectedId);
@@ -134,26 +143,25 @@ function RequestForm({
             hint="Only modes on the public listing are offered. Meeting details are not created by this reservation."
           />
         </div>
-        <DateTimeField
-          name="starts_at"
-          label="Start time"
-          error={state.fields?.starts_at}
-          hint="Choose a date and time in UTC within the tutor’s shared availability. UTC may differ from your local time zone."
-        />
-        <DateTimeField
-          name="ends_at"
-          label="End time"
-          error={state.fields?.ends_at}
-          hint="Choose the end date and time in UTC. Sessions must last 15–180 whole minutes."
-        />
+        <fieldset className={`field ${styles.slotField}`}>
+          <legend>Choose a time</legend>
+          <SlotPicker
+            key={selectedId}
+            tutorId={selectedId}
+            tutorZone={tutorZones[selectedId]}
+            initialZone={timezone}
+            error={state.fields?.starts_at ?? state.fields?.ends_at}
+            onSelectionChange={onSlotChange}
+          />
+        </fieldset>
         <p className="hint">
-          Schedule summaries are not bookable slot guarantees. The database rechecks subject, mode, lead time, buffers
-          and competing reservations atomically when you submit.
+          Only open times can be picked. The database rechecks the time, subject and mode when you submit, so a slot
+          taken in the meantime is refused rather than double-booked.
         </p>
         <button
           className="button primary full"
           type="submit"
-          disabled={pending || state.success || !selected || !offeredSubjects.length}
+          disabled={pending || state.success || !selected || !offeredSubjects.length || !hasSlot}
         >
           {pending ? "Saving reservation…" : "Request reservation — no charge"}
         </button>

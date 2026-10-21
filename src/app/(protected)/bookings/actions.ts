@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { createUserClient } from "@/lib/supabase/server";
 import { actionFailure } from "@/lib/action-state";
-import { cancelBooking, requestBooking } from "@/domains/bookings/service";
-import type { BookingActionState } from "@/domains/bookings/types";
+import { safeMessage } from "@/domains/shared/errors";
+import { cancelBooking, listTutorSlots, requestBooking } from "@/domains/bookings/service";
+import type { BookingActionState, SlotListResult } from "@/domains/bookings/types";
 
 /** Booking forms lead with the first field problem, since their fields sit far apart on the page. */
 function bookingFailure(error: unknown): BookingActionState {
@@ -39,5 +40,13 @@ export async function cancelBookingAction(_previous: BookingActionState, form: F
     };
   } catch (error) {
     return bookingFailure(error);
+  }
+}
+
+export async function listTutorSlotsAction(tutor: string, duration: number): Promise<SlotListResult> {
+  try {
+    return await listTutorSlots(await createUserClient(), { tutor, duration });
+  } catch (error) {
+    return { message: safeMessage(error) };
   }
 }

@@ -204,3 +204,337 @@
     letter-spacing: 0.08em;
   }
 }
+
+/* Weekly hours on tutor cards */
+.hoursRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+}
+
+.hoursTime {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.hoursTime small {
+  display: block;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.summary .hoursZone {
+  border-bottom: 0;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+/* Slot picker */
+.slotField {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.slotField > legend {
+  padding: 0;
+  margin-bottom: 0.4rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.picker {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--field);
+  min-width: 0;
+}
+
+.pickerControls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: end;
+}
+
+.pickerControls .field:last-child {
+  flex: 1 1 12rem;
+}
+
+.controlLabel {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--card);
+}
+
+.segmented button {
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.segmented button[aria-pressed="true"] {
+  background: var(--forest);
+  color: var(--on-dark);
+}
+
+.pickerNote {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.picks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.5rem;
+}
+
+.pick {
+  display: grid;
+  gap: 0.1rem;
+  text-align: left;
+  padding: 0.65rem 0.8rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.pick:hover {
+  border-color: var(--forest);
+}
+
+.pick[aria-pressed="true"] {
+  border-color: var(--forest);
+  box-shadow: inset 0 0 0 1px var(--forest);
+  background: var(--forest-tint);
+}
+
+.pickLabel {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pickTime {
+  font-family: var(--font-head);
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.pickHint {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.weekBar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.weekNav {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.heatScroll {
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.heatmap {
+  display: grid;
+  gap: 3px;
+}
+
+.heatRow {
+  display: contents;
+}
+
+.heatHour {
+  font-size: 0.68rem;
+  color: var(--muted);
+  text-align: left;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.heatDay {
+  align-self: center;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.heatCell {
+  height: 1.9rem;
+  padding: 0;
+  border-radius: 4px;
+  border: 1px dashed var(--line);
+  background: none;
+  cursor: pointer;
+}
+
+.heatCell:disabled {
+  cursor: default;
+}
+
+.heatCell:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.heatCell[data-active] {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.heatCell[data-tone="many"],
+.legend i[data-tone="many"] {
+  border: 0;
+  background: var(--forest);
+}
+
+.heatCell[data-tone="few"],
+.legend i[data-tone="few"] {
+  border: 0;
+  background: color-mix(in srgb, var(--forest) 40%, var(--field));
+}
+
+.heatCell[data-tone="booked"],
+.legend i[data-tone="booked"] {
+  border: 1px solid var(--clay);
+  background: repeating-linear-gradient(135deg, var(--clay-tint) 0 3px, transparent 3px 6px);
+}
+
+.heatCell[data-tone="soon"],
+.legend i[data-tone="soon"] {
+  border: 0;
+  background: var(--line-soft);
+}
+
+.heatCell:not(:disabled):hover {
+  filter: brightness(1.12);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legend i {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 3px;
+  border: 1px dashed var(--line);
+}
+
+.cellDetail {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.slotChips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+  gap: 0.4rem;
+}
+
+.slotChip {
+  display: grid;
+  justify-items: center;
+  padding: 0.55rem 0.5rem;
+  border: 1.5px solid var(--forest);
+  border-radius: var(--radius-sm);
+  background: var(--forest-tint);
+  color: var(--forest-deep);
+  font: inherit;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.slotChip[aria-pressed="true"] {
+  background: var(--forest);
+  color: var(--on-dark);
+}
+
+.slotChip:disabled {
+  cursor: not-allowed;
+  font-weight: 500;
+}
+
+.slotChip[data-status="booked"],
+.slotChip[data-status="student_busy"] {
+  border-color: var(--clay);
+  color: var(--clay-deep);
+  background: repeating-linear-gradient(135deg, var(--clay-tint) 0 4px, transparent 4px 8px);
+}
+
+.slotChip[data-status="too_soon"] {
+  border-color: var(--line);
+  color: var(--muted);
+  background: var(--line-soft);
+}
+
+.slotChip small {
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+.choice {
+  display: grid;
+  gap: 0.25rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.choiceWhen {
+  font-family: var(--font-head);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+}
