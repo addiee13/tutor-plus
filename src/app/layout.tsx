@@ -36,6 +36,9 @@ const googleSans = Google_Sans({
   variable: "--font-google",
   display: "swap",
   preload: false,
+  // No metric overrides exist for this family; fall back to the interface sans instead.
+  adjustFontFallback: false,
+  fallback: ["Instrument Sans", "Arial", "sans-serif"],
 });
 
 export const metadata: Metadata = {
