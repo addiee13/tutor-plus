@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition, type CSSProperties } from "react";
 import { TIME_ZONES } from "@/lib/time-zones";
 import { SLOT_DURATIONS, type BookableSlot, type SlotListResult } from "@/domains/bookings/types";
+import { sessionHourCoverage } from "@/domains/bookings/presentation";
 import { listTutorSlotsAction } from "./actions";
 import styles from "./bookings.module.css";
 
@@ -133,11 +134,18 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
   const days = useMemo(() => (observedAt ? buildDays(slots, zone, observedAt) : []), [slots, zone, observedAt]);
   const open = useMemo(() => days.flatMap((day) => day.slots.filter((slot) => slot.status === "open")), [days]);
   const selected = open.find((slot) => slot.startsAt === selectedStart) ?? null;
+  const coverage = useMemo<ReturnType<typeof sessionHourCoverage>>(
+    () => (selected ? sessionHourCoverage(selected.startsAt, selected.endsAt, zone) : new Map()),
+    [selected, zone],
+  );
 
   useEffect(() => onSelectionChange(selected !== null), [selected, onSelectionChange]);
 
   const visible = days.slice(week * WEEK, week * WEEK + WEEK);
-  const hours = visible.flatMap((day) => day.slots.map((slot) => Math.floor(slot.minute / 60)));
+  const hours = visible.flatMap((day) => [
+    ...day.slots.map((slot) => Math.floor(slot.minute / 60)),
+    ...[...coverage.values()].filter((part) => part.day === day.key).map((part) => part.hour),
+  ]);
   const firstHour = hours.length ? Math.min(...hours) : 0;
   const lastHour = hours.length ? Math.max(...hours) : -1;
   const columns = Array.from({ length: lastHour - firstHour + 1 }, (_, index) => firstHour + index);
@@ -171,6 +179,8 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
   const zoneName = (instant: string) =>
     format.zone.formatToParts(Date.parse(instant)).find((part) => part.type === "timeZoneName")?.value ?? zone;
   const tutorFormat = tutorZone && tutorZone !== zone ? formatters(tutorZone) : null;
+  const timeRange = (slot: BookableSlot) =>
+    `${format.time.format(Date.parse(slot.startsAt))}–${format.time.format(Date.parse(slot.endsAt))}`;
 
   return (
     <div className={styles.picker}>
@@ -215,12 +225,18 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
             Try again
           </button>
         </div>
-      ) : !open.length ? (
+      ) : !slots.length ? (
         <p className={styles.pickerNote}>
           This tutor has no open {duration}-minute times in the next two weeks. Try a shorter session or another tutor.
         </p>
       ) : (
         <>
+          {!open.length && (
+            <p className={styles.pickerNote}>
+              No open {duration}-minute times. Choose a booked square to see unavailable ranges, or try a shorter
+              session.
+            </p>
+          )}
           <div className={styles.picks} role="group" aria-label="Suggested times">
             {picks.map(({ label, hint, slot }) => (
               <button
@@ -232,7 +248,7 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
               >
                 <span className={styles.pickLabel}>{label}</span>
                 <span className={styles.pickTime}>
-                  {format.day.format(Date.parse(slot.startsAt))} · {format.time.format(Date.parse(slot.startsAt))}
+                  {format.day.format(Date.parse(slot.startsAt))} · {timeRange(slot)}
                 </span>
                 <span className={styles.pickHint}>{hint}</span>
               </button>
@@ -271,16 +287,26 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
                       const inCell = cellSlots(day, hour);
                       const state = cellState(inCell);
                       const openStarts = inCell.filter((slot) => slot.status === "open");
-                      const label = `${day.label}, ${hourRange(hour)}: ${state.text}`;
+                      const occupied = coverage.get(`${day.key}:${hour}`);
+                      const label = `${day.label}, ${hourRange(hour)}: ${state.text}${occupied && selected ? `; selected session ${timeRange(selected)}` : ""}`;
                       return (
                         <button
                           key={hour}
                           type="button"
                           className={styles.heatCell}
                           data-tone={state.tone}
-                          data-active={(cell?.day === day.key && cell.hour === hour) || undefined}
+                          data-active={(!occupied && cell?.day === day.key && cell.hour === hour) || undefined}
+                          data-selected={Boolean(occupied) || undefined}
+                          style={
+                            occupied
+                              ? ({
+                                  "--selection-from": `${(occupied.from / 60) * 100}%`,
+                                  "--selection-to": `${(occupied.to / 60) * 100}%`,
+                                } as CSSProperties)
+                              : undefined
+                          }
                           data-slot-starts={openStarts.map((slot) => slot.startsAt).join(" ") || undefined}
-                          disabled={!openStarts.length}
+                          disabled={!inCell.length}
                           aria-label={label}
                           title={label}
                           onClick={() => setCell({ day: day.key, hour })}
@@ -296,6 +322,9 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
           )}
 
           <ul className={styles.legend} aria-label="Legend">
+            <li>
+              <i data-selected /> Selected session
+            </li>
             <li>
               <i data-tone="many" /> Several open starts
             </li>
@@ -316,7 +345,7 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
           {cell && detail.length ? (
             <div className={styles.cellDetail}>
               <span className={styles.controlLabel}>
-                {cellDay?.label}, {hourRange(cell.hour)}
+                {cellDay?.label}, starts between {hourRange(cell.hour)}
               </span>
               <div className={styles.slotChips}>
                 {detail.map((slot) => (
@@ -330,7 +359,7 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
                     disabled={slot.status !== "open"}
                     onClick={() => choose(slot)}
                   >
-                    {format.time.format(Date.parse(slot.startsAt))}
+                    {timeRange(slot)}
                     {slot.status !== "open" && <small>{STATUS_TEXT[slot.status]}</small>}
                   </button>
                 ))}
@@ -338,7 +367,7 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
             </div>
           ) : (
             <p className={styles.pickerNote}>
-              Darker green means more open start times. Choose a green square to see its times.
+              Choose a square to see full session ranges. A selected session highlights its entire duration.
             </p>
           )}
         </>
