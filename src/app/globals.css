@@ -1428,20 +1428,55 @@ input[type="radio"] {
   height: 1px;
   background: var(--line);
 }
+/* One button per row so every option carries equal weight, as Google's sign-in guidelines require. */
 .alt-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: var(--space-2);
 }
-.alt-buttons .button {
+/*
+ * Provider buttons follow Google's light theme (https://developers.google.com/identity/branding-guidelines):
+ * white fill, 1px #747775 stroke, #1f1f1f Google Sans Medium 14/20, 12px before the logo and 10px after it,
+ * pill shape. GitHub and the email-code link share the same frame so the three options read as one set.
+ */
+.social-button {
+  display: grid;
+  grid-template-columns: 20px 1fr 20px;
+  align-items: center;
+  gap: 10px;
   width: 100%;
-  border-color: var(--line);
-  background: var(--field);
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #747775;
+  border-radius: 999px;
+  background: #fff;
+  color: #1f1f1f;
+  font-family: var(--font-google), var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
 }
-.alt-buttons .button:hover:not(:disabled) {
-  border-color: var(--ink);
-  background: var(--field);
-  color: var(--ink);
+.social-button:hover {
+  background: #f2f2f2;
+  color: #1f1f1f;
+}
+.social-button:active {
+  background: #e8e8e8;
+}
+.alt-buttons:disabled .social-button {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.alt-buttons:disabled .social-button:hover {
+  background: #fff;
+}
+.provider-logo {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 /* ---------- App shell ---------- */
