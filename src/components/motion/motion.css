@@ -1,0 +1,212 @@
+/* Landing-only enhancement. Static HTML is always the default state. */
+.landing .masthead {
+  position: relative;
+  isolation: isolate;
+}
+.hero-scene {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: clip;
+}
+.hero-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.landing .how-steps {
+  position: relative;
+  --step-progress: 1;
+}
+.landing .how-steps::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--forest);
+  transform: scaleX(var(--step-progress));
+  transform-origin: left;
+  pointer-events: none;
+}
+.motion-tilt {
+  perspective: 1000px;
+}
+.motion-tilt .vignette {
+  position: relative;
+}
+.motion-tilt .vignette::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgb(255 253 248 / 0.22),
+    transparent 65%
+  );
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) and (min-width: 768px) {
+  .motion-tilt .vignette {
+    transition:
+      box-shadow 0.3s ease,
+      translate 0.3s ease;
+  }
+  .motion-tilt .vignette::after {
+    transition: opacity 0.3s ease;
+  }
+  .motion-tilt:hover .vignette {
+    translate: 0 -4px;
+    box-shadow: var(--shadow-lift);
+  }
+  .motion-tilt:hover .vignette::after {
+    opacity: 1;
+  }
+  .site-header:has(+ .landing) .button,
+  .landing .button {
+    transition-property: background-color, color, border-color;
+  }
+  .site-header:has(+ .landing) .public-nav-link,
+  .landing + .site-footer nav a {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 0 1px;
+    transition: background-size 0.25s ease;
+    text-decoration: none;
+  }
+  .site-header:has(+ .landing) .public-nav-link:is(:hover, :focus-visible),
+  .landing + .site-footer nav a:is(:hover, :focus-visible) {
+    background-size: 100% 1px;
+    text-decoration: none;
+  }
+}
+@media (max-width: 767px) {
+  .landing .how-steps::before {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scene {
+    display: none;
+  }
+  .landing .how-steps::before {
+    transform: none;
+  }
+}
+
+/* General Dental-inspired scroll accordion; native sticky holds the reading stage. */
+@media (min-width: 768px) and (min-height: 640px) and (prefers-reduced-motion: no-preference) {
+  .landing .how.is-scroll-story {
+    height: 260svh;
+    padding-block: 24px;
+    overflow: clip;
+  }
+  .how.is-scroll-story > .container {
+    position: sticky;
+    top: 24px;
+    height: calc(100svh - 48px);
+    display: flex;
+    flex-direction: column;
+  }
+  .how.is-scroll-story .section-head {
+    flex-shrink: 0;
+    max-width: none;
+    margin-bottom: 28px;
+    gap: 8px;
+  }
+  .how.is-scroll-story .section-head h2 {
+    font-size: clamp(2rem, 4vw, 3.75rem);
+  }
+  .how.is-scroll-story .how-steps {
+    --story-rail: clamp(64px, 7vw, 96px);
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow: clip;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .how.is-scroll-story .how-steps::before {
+    z-index: 4;
+    top: 0;
+  }
+  .how.is-scroll-story .how-steps > li {
+    flex: 0 0 calc(100% - 2 * var(--story-rail));
+    display: grid;
+    grid-template-columns: minmax(120px, 0.5fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 24px;
+    position: relative;
+    padding: 32px 28px 40px;
+    background: var(--cream);
+    border-top: 0;
+  }
+  .how.is-scroll-story .how-steps > li:first-child {
+    padding-left: 24px;
+  }
+  .how.is-scroll-story .how-numeral {
+    font-size: clamp(10rem, 32svh, 22rem);
+    margin: 0;
+    align-self: end;
+  }
+  .how.is-scroll-story .how-step-copy {
+    padding-bottom: 4px;
+  }
+  .how.is-scroll-story .how-step-copy p {
+    max-width: 34rem;
+    margin-bottom: 0;
+  }
+  .how.is-scroll-story .text-link {
+    margin-top: 20px;
+  }
+}
+
+/* Fixed-size sample frames keep the lifecycle and rating motion free of layout shifts. */
+.session-preview .vignette-stepper {
+  gap: 6px;
+  min-height: 25px;
+  font-size: 0.625rem;
+  letter-spacing: 0.035em;
+}
+.session-preview .vignette-stepper > span {
+  padding-inline: 0.4rem;
+}
+.session-preview .vignette-block small {
+  min-height: 18px;
+}
+.session-preview .bar,
+.session-preview .preview-connector-fill {
+  transform-origin: left center;
+}
+.session-preview .vignette-stepper .preview-connector {
+  position: relative;
+  background: var(--line);
+}
+.session-preview .vignette-stepper .preview-connector-fill {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: var(--forest);
+}
+.review-stars {
+  display: flex;
+  gap: 0.08em;
+  letter-spacing: 0;
+}
+.review-stars .review-star {
+  display: inline-grid;
+  position: relative;
+  color: rgb(27 26 23 / 0.2);
+}
+.review-stars .review-star-fill {
+  position: absolute;
+  inset: 0;
+  color: var(--clay-deep);
+}

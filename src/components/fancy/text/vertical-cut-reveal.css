@@ -1,0 +1,33 @@
+.vertical-cut-reveal {
+  display: inline-flex;
+  flex-wrap: wrap;
+  white-space: pre-wrap;
+}
+.vertical-cut-reveal-lines {
+  flex-direction: column;
+}
+.vertical-cut-reveal-word {
+  display: inline-flex;
+  overflow: hidden;
+}
+.vertical-cut-reveal-element {
+  white-space: pre-wrap;
+  position: relative;
+}
+.vertical-cut-reveal-glyph {
+  display: inline-block;
+}
+/* Keep the original inline typography and protect Newsreader's italic overhangs. */
+.hero h1 .hero-cut {
+  display: inline;
+}
+.hero-cut .vertical-cut-reveal-word {
+  padding: 0.16em 0.075em;
+  margin: -0.16em -0.075em;
+  vertical-align: baseline;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-cut .vertical-cut-reveal-glyph {
+    transform: none !important;
+  }
+}
