@@ -1,4 +1,9 @@
 import Link from "next/link";
+import { HeroHeadline } from "@/components/motion/HeroHeadline";
+import { HeroScene } from "@/components/motion/HeroScene";
+import { LandingMotion } from "@/components/motion/LandingMotion";
+import { ReviewScene, SessionWorkspaceScene } from "@/components/motion/ProductScenes";
+import { TiltCard } from "@/components/motion/TiltCard";
 import { Footer, PublicHeader } from "@/components/shell";
 
 const NOW = [
@@ -25,6 +30,7 @@ export default function Home() {
       <PublicHeader />
       <main id="main" className="landing">
         <section className="masthead" aria-labelledby="hero-heading">
+          <HeroScene />
           <div className="container">
             <p className="masthead-word" aria-hidden="true">
               Tutor Plus
@@ -33,9 +39,7 @@ export default function Home() {
           <div className="container hero">
             <div className="hero-copy">
               <span className="eyebrow">For adult students &amp; tutors · 18+</span>
-              <h1 id="hero-heading">
-                <span>Great learning</span> <span>starts with</span> <em>the right support.</em>
-              </h1>
+              <HeroHeadline />
               <p className="hero-lede">
                 Find a tutor, request a time that fits your time zone, and keep every session’s goals, agenda and recap
                 in one calm, shared place.
@@ -96,31 +100,37 @@ export default function Home() {
                 <span className="how-numeral" aria-hidden="true">
                   1
                 </span>
-                <h3>Create your account.</h3>
-                <p>Sign up, confirm your email, and choose whether you’re here to learn, to teach, or both.</p>
-                <Link href="/signup" className="text-link">
-                  Create an account <span aria-hidden="true">→</span>
-                </Link>
+                <div className="how-step-copy">
+                  <h3>Create your account.</h3>
+                  <p>Sign up, confirm your email, and choose whether you’re here to learn, to teach, or both.</p>
+                  <Link href="/signup" className="text-link">
+                    Create an account <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
               </li>
               <li>
                 <span className="how-numeral" aria-hidden="true">
                   2
                 </span>
-                <h3>Request a time.</h3>
-                <p>
-                  Choose a published tutor, a subject, and a time. Your request is saved as payment pending; no charge
-                  is taken.
-                </p>
+                <div className="how-step-copy">
+                  <h3>Request a time.</h3>
+                  <p>
+                    Choose a published tutor, a subject, and a time. Your request is saved as payment pending; no charge
+                    is taken.
+                  </p>
+                </div>
               </li>
               <li>
                 <span className="how-numeral" aria-hidden="true">
                   3
                 </span>
-                <h3>Plan, meet, reflect.</h3>
-                <p>
-                  Share goals beforehand, read your tutor’s recap afterwards, keep a private reflection, and leave a
-                  review.
-                </p>
+                <div className="how-step-copy">
+                  <h3>Plan, meet, reflect.</h3>
+                  <p>
+                    Share goals beforehand, read your tutor’s recap afterwards, keep a private reflection, and leave a
+                    review.
+                  </p>
+                </div>
               </li>
             </ol>
           </div>
@@ -163,7 +173,7 @@ export default function Home() {
               <p>Illustrations of screens that exist today, shown with sample data.</p>
             </div>
             <div className="peek-grid">
-              <figure className="peek-item">
+              <TiltCard>
                 <div className="vignette" aria-hidden="true">
                   <div className="vignette-head">
                     <b>Statistics · Virtual</b>
@@ -184,43 +194,19 @@ export default function Home() {
                 <figcaption>
                   <b>Bookings.</b> Request a reservation and see its saved price, status and hold.
                 </figcaption>
-              </figure>
-              <figure className="peek-item">
-                <div className="vignette" aria-hidden="true">
-                  <div className="vignette-stepper">
-                    <span className="is-done">Planning</span>
-                    <i />
-                    <span className="is-current">Ended</span>
-                    <i />
-                    <span>Completed</span>
-                  </div>
-                  <div className="vignette-block">
-                    <small>Goals</small>
-                    <span className="bar" />
-                    <span className="bar short" />
-                  </div>
-                  <div className="vignette-block">
-                    <small>Agenda</small>
-                    <span className="bar" />
-                    <span className="bar shorter" />
-                  </div>
-                </div>
+              </TiltCard>
+              <TiltCard>
+                <SessionWorkspaceScene />
                 <figcaption>
                   <b>Session workspace.</b> Goals, agenda, recap and a private reflection for each booking.
                 </figcaption>
-              </figure>
-              <figure className="peek-item">
-                <div className="vignette" aria-hidden="true">
-                  <span className="vignette-stars">
-                    ★★★★<span>★</span>
-                  </span>
-                  <p className="vignette-quote">“Clear steps and a recap I actually reread.”</p>
-                  <span className="vignette-note">Sample review · completed session</span>
-                </div>
+              </TiltCard>
+              <TiltCard>
+                <ReviewScene />
                 <figcaption>
                   <b>Reviews.</b> One to five stars, once per completed session.
                 </figcaption>
-              </figure>
+              </TiltCard>
             </div>
           </div>
         </section>
@@ -269,6 +255,7 @@ export default function Home() {
         </section>
       </main>
       <Footer />
+      <LandingMotion />
     </>
   );
 }
