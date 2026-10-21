@@ -18,6 +18,7 @@ import {
   statusAction,
 } from "@/app/actions";
 import { initialActionState as initial } from "@/lib/action-state";
+import { MailIcon, ProviderLogo } from "@/components/brand-icons";
 import type { OAuthProvider } from "@/domains/auth/validation";
 import {
   AdultAttestationField,
@@ -114,13 +115,15 @@ export function AltSignIn({ configured, providers, showCode = true }: AltSignInP
       <form action={action} className="form">
         <fieldset disabled={!configured || pending} className="form-fields alt-buttons">
           {providers.map((provider) => (
-            <button key={provider} className="button secondary" type="submit" name="provider" value={provider}>
-              Continue with {providerNames[provider]}
+            <button key={provider} className="social-button" type="submit" name="provider" value={provider}>
+              <ProviderLogo provider={provider} />
+              <span>Continue with {providerNames[provider]}</span>
             </button>
           ))}
           {showCode && (
-            <Link className="button secondary" href="/login?method=code">
-              Email me a code
+            <Link className="social-button" href="/login?method=code">
+              <MailIcon />
+              <span>Email me a code</span>
             </Link>
           )}
         </fieldset>
