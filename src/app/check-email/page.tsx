@@ -6,8 +6,9 @@ export default function CheckEmail() {
   const configured = !!publicConfig();
   return (
     <AuthShell
-      eyebrow="ONE MORE STEP"
+      eyebrow="One more step"
       title="Check your email."
+      step={2}
       description="If your registration is eligible, a verification link has been requested. Open the link to confirm your email before signing in."
     >
       <div className="notice">

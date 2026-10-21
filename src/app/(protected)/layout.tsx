@@ -10,7 +10,10 @@ export default async function ProtectedLayout({ children }: { children: React.Re
       <>
         <PublicHeader />
         <main id="main" className="workspace container">
-          <h1>Let’s connect your account.</h1>
+          <section className="page-heading">
+            <span className="eyebrow">Setup needed</span>
+            <h1>Let’s connect your account.</h1>
+          </section>
           <SetupNotice />
         </main>
         <Footer />

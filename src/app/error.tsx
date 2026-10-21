@@ -5,7 +5,10 @@ import Link from "next/link";
 export default function ErrorPage({ reset }: { reset: () => void }) {
   return (
     <main id="main" className="error-page container">
-      <span className="eyebrow">LET’S TRY THAT AGAIN</span>
+      <span className="error-code" aria-hidden="true">
+        Oops.
+      </span>
+      <span className="eyebrow">Let’s try that again</span>
       <h1>We couldn’t open this page.</h1>
       <p>
         Your account may not have access, or a service may be temporarily unavailable. No changes have been confirmed.

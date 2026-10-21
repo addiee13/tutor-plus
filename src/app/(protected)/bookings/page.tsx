@@ -51,11 +51,11 @@ export default async function BookingsPage() {
   return (
     <>
       <section className="page-heading">
-        <span className="eyebrow">UC-04 · REAL RESERVATIONS</span>
+        <span className="eyebrow">Reservations</span>
         <h1>Bookings.</h1>
         <p>Request a tutoring reservation, inspect its saved price and hold, or cancel an eligible reservation.</p>
       </section>
-      <div className="notice warning" role="note">
+      <div className={`notice warning ${styles.payment}`} role="note">
         <strong>Payment not implemented — no charge.</strong>
         <br />
         This page does not run checkout, take payment, or confirm a session. A saved request is normally{" "}
@@ -63,7 +63,8 @@ export default async function BookingsPage() {
         no payment button or simulated confirmation here.
       </div>
       <div className={styles.grid}>
-        <section className={`panel ${styles.card}`} aria-labelledby="request-heading">
+        <section className={`panel ${styles.card} ${styles.request}`} aria-labelledby="request-heading">
+          <span className="tag">New request</span>
           <h2 id="request-heading">Request a reservation</h2>
           {!hasRole(actor, "student") ? (
             <p>
@@ -86,7 +87,9 @@ export default async function BookingsPage() {
           )}
         </section>
         <section className={styles.stack} aria-labelledby="tutors-heading">
-          <h2 id="tutors-heading">Published tutors &amp; availability</h2>
+          <h2 id="tutors-heading" className={styles.sectionTitle}>
+            Published tutors &amp; availability
+          </h2>
           <p className="hint">
             Readable schedule summary for the next seven days, as of {formatUtc(new Date(now).toISOString())}. Local
             schedule times show their IANA time zone; request fields require UTC. These are not guaranteed free slots.
@@ -105,8 +108,10 @@ export default async function BookingsPage() {
           ))}
         </section>
       </div>
-      <section className={styles.stack} aria-labelledby="saved-heading">
-        <h2 id="saved-heading">Your saved reservations</h2>
+      <section className={`${styles.stack} ${styles.saved}`} aria-labelledby="saved-heading">
+        <h2 id="saved-heading" className={styles.sectionTitle}>
+          Your saved reservations
+        </h2>
         <p className="hint">
           Latest 50 participant-visible records, reloaded from the database. Times below are UTC. Refresh to see changes
           made since this page loaded.
@@ -144,6 +149,17 @@ function isExceptionInWindow(exception: AvailabilityException, now: number, hori
   );
 }
 
+function initials(name: string): string {
+  return (
+    name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "T"
+  );
+}
+
 function modeLabels(tutor: PublicTutor): string {
   return [tutor.supports_virtual ? "Virtual" : "", tutor.supports_in_person ? "In person" : ""]
     .filter(Boolean)
@@ -159,14 +175,22 @@ type TutorCardProps = {
 
 function TutorCard({ tutor, links, rules, exceptions }: TutorCardProps) {
   return (
-    <article className={`panel ${styles.card}`}>
-      <h3>{tutor.public_display_name}</h3>
-      <p>{tutor.headline}</p>
-      <p>
-        Base rate: <strong>{formatMoney(tutor.hourly_rate_minor, tutor.currency)}/hour</strong> · {modeLabels(tutor)}
+    <article className={`panel ${styles.card} ${styles.tutor}`}>
+      <div className={styles.tutorHead}>
+        <span className={styles.avatar} aria-hidden="true">
+          {initials(tutor.public_display_name)}
+        </span>
+        <div className={styles.tutorName}>
+          <h3>{tutor.public_display_name}</h3>
+          <p>{tutor.headline}</p>
+        </div>
+      </div>
+      <p className={styles.rate}>
+        Base rate <strong>{formatMoney(tutor.hourly_rate_minor, tutor.currency)}/hour</strong>
+        <span className="tag">{modeLabels(tutor)}</span>
       </p>
       {links.length ? (
-        <ul className={styles.summary}>
+        <ul className={styles.subjects} aria-label={`Subjects offered by ${tutor.public_display_name}`}>
           {links.map((link) => (
             <li key={link.subject_id}>
               {link.name} · {formatMoney(link.hourly_rate_minor, link.currency)}/hour
@@ -220,16 +244,24 @@ function BookingCard({ booking, tutor, subject, now }: BookingCardProps) {
     booking.hold_expires_at !== null &&
     Date.parse(booking.hold_expires_at) <= now;
   return (
-    <article className={`panel ${styles.card}`} data-booking-id={booking.id}>
-      <h3>
-        {tutor?.public_display_name ?? "Tutor listing no longer public"} · {subject?.name ?? "Subject no longer public"}
-      </h3>
+    <article className={`panel ${styles.card} ${styles.booking}`} data-booking-id={booking.id}>
+      <div className={styles.bookingHead}>
+        <h3>
+          {tutor?.public_display_name ?? "Tutor listing no longer public"} ·{" "}
+          {subject?.name ?? "Subject no longer public"}
+        </h3>
+        <time className={styles.when} dateTime={booking.starts_at}>
+          {formatUtc(booking.starts_at)}
+        </time>
+      </div>
       <dl className={styles.facts}>
         <dt>Booking ID</dt>
         <dd>{booking.id}</dd>
         <dt>Saved status</dt>
         <dd>
-          <code data-testid="booking-status">{booking.status}</code>
+          <code className="status-chip" data-status={booking.status} data-testid="booking-status">
+            {booking.status}
+          </code>
         </dd>
         <dt>Starts (UTC)</dt>
         <dd>
@@ -269,14 +301,14 @@ function BookingCard({ booking, tutor, subject, now }: BookingCardProps) {
         </p>
       )}
       {WORKSPACE_STATUSES.includes(booking.status) && (
-        <p>
-          <Link className="button secondary compact" href={`/sessions/${booking.id}`}>
-            Open session workspace <span aria-hidden="true">↗</span>
+        <p className={styles.actions}>
+          <Link className="button primary compact" href={`/sessions/${booking.id}`}>
+            Open session workspace <span aria-hidden="true">→</span>
           </Link>
         </p>
       )}
       {canCancel && (
-        <details>
+        <details className={styles.cancel}>
           <summary>Cancel reservation</summary>
           <BookingCancellationForm bookingId={booking.id} />
         </details>

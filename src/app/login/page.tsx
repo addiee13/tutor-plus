@@ -23,8 +23,9 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
   const code = method === "code";
   return (
     <AuthShell
-      eyebrow="YOUR SPACE TO GROW"
+      eyebrow="Your space to grow"
       title="Welcome back."
+      story="return"
       description={
         code ? "We’ll email you a one-time code. No password needed." : "Sign in and pick up where you left off."
       }

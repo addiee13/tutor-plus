@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ProfileForm } from "@/components/forms";
 import { publicConfig } from "@/lib/supabase/config";
 import { protectedContext } from "@/lib/protected-context";
@@ -10,7 +11,7 @@ export default async function Profile() {
   return (
     <>
       <section className="page-heading">
-        <span className="eyebrow">A LITTLE MORE YOU</span>
+        <span className="eyebrow">A little more you</span>
         <h1>Your profile.</h1>
         <p>The basics that make your learning space feel right.</p>
       </section>
@@ -23,20 +24,19 @@ export default async function Profile() {
           <ProfileForm profile={profile} />
         </section>
         <aside className="panel quiet-panel">
-          <span className="eyebrow">GOOD TO KNOW</span>
-          <h2>
-            Your account,
-            <br />
-            your details.
-          </h2>
+          <span className="tag">Good to know</span>
+          <h2>Your account, your details.</h2>
           <p>
             Your age confirmation and account capabilities are protected. Profile edits cannot change roles or grant
             administrator access.
           </p>
           <p>
-            This sprint saves your display name and time zone. Tutor publication, subjects, rates, availability,
-            avatars, and learning preferences are not part of this profile editor yet.
+            For now, this page saves your display name and time zone. Tutor listings, subjects, rates, availability,
+            avatars, and learning preferences can’t be edited here yet.
           </p>
+          <Link className="text-link" href="/update-password">
+            Change your password <span aria-hidden="true">→</span>
+          </Link>
         </aside>
       </div>
     </>
