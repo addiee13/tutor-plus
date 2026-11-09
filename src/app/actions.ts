@@ -19,7 +19,7 @@ import {
   verifyEmailCode,
 } from "@/domains/auth/service";
 import { parseEmail, parsePassword } from "@/domains/auth/validation";
-import { DomainError, isDomainError, type ActionState } from "@/domains/shared/errors";
+import { InputError, DomainError, isDomainError, type ActionState } from "@/domains/shared/errors";
 import { readValues } from "@/domains/shared/form";
 import { saveOwnProfile } from "@/domains/profiles/service";
 
@@ -137,6 +137,7 @@ export async function profileAction(_previous: ActionState, form: FormData): Pro
 
 export async function roleAction(_previous: ActionState, form: FormData): Promise<ActionState> {
   try {
+    if (!form.has("confirmed")) throw new InputError({ confirmed: "Confirm this administrative change." });
     await changeRole(await createUserClient(), form);
     revalidatePath("/admin");
     revalidatePath("/dashboard");
@@ -151,6 +152,7 @@ export async function roleAction(_previous: ActionState, form: FormData): Promis
 
 export async function statusAction(_previous: ActionState, form: FormData): Promise<ActionState> {
   try {
+    if (!form.has("confirmed")) throw new InputError({ confirmed: "Confirm this administrative change." });
     await changeAccountStatus(await createUserClient(), form);
     revalidatePath("/admin");
     return {

@@ -6,7 +6,13 @@ import { hasRole, type Actor } from "../auth/policy";
 import { DomainError, InputError } from "../shared/errors";
 import { PgErrorCode } from "../shared/postgres";
 import { requireBookingActor, requireBookingParticipant, requireBookingStudent } from "./policy";
-import { parseBookingRequest, parseCancellation, parseSlotQuery } from "./validation";
+import {
+  parseBookingId,
+  parseBookingRequest,
+  parseBookingStudentNotesInput,
+  parseCancellation,
+  parseSlotQuery,
+} from "./validation";
 import {
   CANCELLABLE_STATUSES,
   slotStatuses,
@@ -14,8 +20,11 @@ import {
   type BookableSlot,
   type AvailabilityRule,
   type Booking,
+  type BookingStudentNotes,
   type PublicSubject,
   type PublicTutor,
+  type SaveBookingStudentNotesInput,
+  type TutorBookingNotes,
   type TutorSubject,
 } from "./types";
 
@@ -189,6 +198,43 @@ export async function readBookingWorkspace(client: SupabaseClient) {
 
 export type BookingWorkspace = Awaited<ReturnType<typeof readBookingWorkspace>>;
 
+/**
+ * A bounded dashboard feed without the tutor schedule/subject fanout used by the booking picker.
+ * Returns up to 40 future active reservations and 10 most recent past outcomes under participant RLS.
+ */
+export async function listActorBookings(client: SupabaseClient): Promise<Booking[]> {
+  const actor = await getActor(client);
+  requireBookingActor(actor);
+  const now = new Date();
+  const nowIso = now.toISOString();
+  const [future, past, ownTutors] = await Promise.all([
+    client
+      .from("bookings")
+      .select(BOOKING_FIELDS)
+      .gte("starts_at", nowIso)
+      .in("status", ["payment_pending", "confirmed", "in_progress"])
+      .order("starts_at", { ascending: true })
+      .limit(40),
+    client
+      .from("bookings")
+      .select(BOOKING_FIELDS)
+      .lt("starts_at", nowIso)
+      .in("status", ["completed", "cancelled"])
+      .order("starts_at", { ascending: false })
+      .limit(10),
+    ownedTutors(client, actor),
+  ]);
+  if (future.error || past.error) throw new DomainError("unavailable");
+  const ownedTutorIds = ownTutors.map((tutor) => tutor.id);
+  const visibleFuture = ((future.data ?? []) as Booking[]).filter(
+    (booking) =>
+      booking.status !== "payment_pending" || (booking.hold_expires_at !== null && booking.hold_expires_at > nowIso),
+  );
+  const rows = [...visibleFuture, ...((past.data ?? []) as Booking[])].slice(0, 50);
+  rows.forEach((booking) => requireBookingParticipant(actor, booking, ownedTutorIds));
+  return rows;
+}
+
 /** Lists a published tutor's candidate start times for the student, each labelled open, booked or too soon. */
 export async function listTutorSlots(
   client: SupabaseClient,
@@ -240,9 +286,14 @@ export async function requestBooking(client: SupabaseClient, form: FormData): Pr
     throw new InputError({ subject: "Choose an active subject offered by this tutor." });
   }
 
-  const { data: id, error } = await client.rpc("create_booking", {
-    ...parsed,
+  const { data: id, error } = await client.rpc("create_booking_with_notes", {
+    tutor: parsed.tutor,
+    subject: parsed.subject,
+    starts_at: parsed.starts_at,
+    ends_at: parsed.ends_at,
+    mode: parsed.mode,
     request_key: parsed.request_key ?? randomUUID(),
+    student_notes: parsed.student_notes,
   });
   if (error) databaseFailure(error);
   if (typeof id !== "string") throw new DomainError("unavailable");
@@ -250,6 +301,104 @@ export async function requestBooking(client: SupabaseClient, form: FormData): Pr
   const saved = await readBooking(client, id);
   requireBookingParticipant(actor, saved, []);
   return saved;
+}
+
+function mapStudentNotes(row: {
+  booking_id: string;
+  learning_goal: string | null;
+  topics: string[];
+  questions: string | null;
+  private_note: string | null;
+  share_with_tutor: boolean;
+  updated_at: string;
+}): BookingStudentNotes {
+  return {
+    bookingId: row.booking_id,
+    learningGoal: row.learning_goal,
+    topics: row.topics ?? [],
+    questions: row.questions,
+    privateNote: row.private_note,
+    shareWithTutor: row.share_with_tutor,
+    updatedAt: row.updated_at,
+  };
+}
+
+/** Reads a student's complete private note for their own booking. */
+export async function readBookingStudentNotes(
+  client: SupabaseClient,
+  bookingId: string,
+): Promise<BookingStudentNotes | null> {
+  const actor = await getActor(client);
+  requireBookingStudent(actor);
+  const target = parseBookingId(bookingId);
+  const { data, error } = await client
+    .from("booking_student_notes")
+    .select("booking_id,learning_goal,topics,questions,private_note,share_with_tutor,updated_at")
+    .eq("booking_id", target)
+    .eq("student_id", actor.id)
+    .maybeSingle<{
+      booking_id: string;
+      learning_goal: string | null;
+      topics: string[];
+      questions: string | null;
+      private_note: string | null;
+      share_with_tutor: boolean;
+      updated_at: string;
+    }>();
+  if (error) throw new DomainError("unavailable");
+  return data ? mapStudentNotes(data) : null;
+}
+
+/** Persists structured notes only for the student who owns this booking. */
+export async function saveBookingStudentNotes(
+  client: SupabaseClient,
+  bookingId: string,
+  value: SaveBookingStudentNotesInput,
+): Promise<BookingStudentNotes> {
+  const actor = await getActor(client);
+  requireBookingStudent(actor);
+  const target = parseBookingId(bookingId);
+  const input = parseBookingStudentNotesInput(value);
+  const { data: booking, error: bookingError } = await client
+    .from("bookings")
+    .select("id,student_id")
+    .eq("id", target)
+    .maybeSingle<{ id: string; student_id: string }>();
+  if (bookingError) throw new DomainError("unavailable");
+  if (!booking || booking.student_id !== actor.id) throw new DomainError("forbidden");
+  const { error } = await client.rpc("save_booking_student_notes", { booking: target, notes: input });
+  if (error) databaseFailure(error);
+  const saved = await readBookingStudentNotes(client, target);
+  if (!saved) throw new DomainError("unavailable");
+  return saved;
+}
+
+/** The tutor receives only the fields the student explicitly chose to share; privateNote is never returned. */
+export async function readTutorBookingNotes(
+  client: SupabaseClient,
+  bookingId: string,
+): Promise<TutorBookingNotes | null> {
+  const actor = await getActor(client);
+  if (!hasRole(actor, "tutor")) throw new DomainError("forbidden");
+  const target = parseBookingId(bookingId);
+  const { data, error } = await client.rpc("read_tutor_booking_notes", { booking: target });
+  if (error) databaseFailure(error);
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row) return null;
+  const notes = row as {
+    booking_id: string;
+    learning_goal: string | null;
+    topics: string[];
+    questions: string | null;
+    updated_at: string;
+  };
+  return {
+    bookingId: notes.booking_id,
+    learningGoal: notes.learning_goal,
+    topics: notes.topics ?? [],
+    questions: notes.questions,
+    updatedAt: notes.updated_at,
+  };
 }
 
 export async function cancelBooking(client: SupabaseClient, form: FormData): Promise<Booking> {

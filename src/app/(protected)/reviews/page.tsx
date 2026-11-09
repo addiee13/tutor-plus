@@ -113,6 +113,7 @@ function SubmittedReview({ review }: { review: Review }) {
   return (
     <div data-testid="submitted-review">
       <Stars rating={review.rating} />
+      {review.recommended && <p className="hint">You recommended this tutor to other adult learners.</p>}
       {review.comment && <p className={styles.quote}>{review.comment}</p>}
       <p className={styles.meta}>
         Submitted {formatUtc(review.created_at)} · {review.status === "visible" ? "Visible" : "Hidden by moderation"}.
@@ -151,6 +152,7 @@ function TutorReputationPanel({ reputation }: { reputation: TutorReputation[] })
               {entry.recent.map((review) => (
                 <li key={review.id}>
                   <Stars rating={review.rating} />
+                  {review.recommended && <p className="hint">This learner recommends your teaching.</p>}
                   {review.comment && <p className={styles.quote}>{review.comment}</p>}
                   <span className={styles.meta}>{formatUtc(review.created_at)}</span>
                 </li>

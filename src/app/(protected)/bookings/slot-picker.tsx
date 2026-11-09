@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useId, useMemo, useState, useTransition } from "react";
 import { TIME_ZONES } from "@/lib/time-zones";
 import { SLOT_DURATIONS, type BookableSlot, type SlotListResult } from "@/domains/bookings/types";
 import { listTutorSlotsAction } from "./actions";
@@ -104,6 +104,7 @@ const STATUS_TEXT: Record<BookableSlot["status"], string> = {
 
 /** UC-04 slot picker: quick picks plus a week heatmap of the tutor's real bookable start times. Rendered only from the client request form. */
 export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelectionChange }: Props) {
+  const fieldId = useId();
   const [duration, setDuration] = useState<number>(60);
   const [zone, setZone] = useState(initialZone);
   const [week, setWeek] = useState(0);
@@ -176,10 +177,10 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
     <div className={styles.picker}>
       <div className={styles.pickerControls}>
         <div className="field">
-          <span className={styles.controlLabel} id="duration-label">
+          <span className={styles.controlLabel} id={`${fieldId}-duration`}>
             Session length
           </span>
-          <div className={styles.segmented} role="group" aria-labelledby="duration-label">
+          <div className={styles.segmented} role="group" aria-labelledby={`${fieldId}-duration`}>
             {SLOT_DURATIONS.map((minutes) => (
               <button
                 key={minutes}
@@ -193,8 +194,8 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
           </div>
         </div>
         <div className="field">
-          <label htmlFor="slot-zone">Show times in</label>
-          <select id="slot-zone" value={zone} onChange={(event) => setZone(event.target.value)}>
+          <label htmlFor={`${fieldId}-zone`}>Show times in</label>
+          <select id={`${fieldId}-zone`} value={zone} onChange={(event) => setZone(event.target.value)}>
             {(TIME_ZONES.includes(zone) ? TIME_ZONES : [zone, ...TIME_ZONES]).map((name) => (
               <option key={name} value={name}>
                 {name.replaceAll("_", " ")}
@@ -364,7 +365,7 @@ export function SlotPicker({ tutorId, tutorZone, initialZone, error, onSelection
           <span className="hint">Pick an open time above. It will appear here.</span>
         )}
         {error && (
-          <span id="starts_at-help" className="field-error">
+          <span id={`${fieldId}-starts-help`} className="field-error">
             {error}{" "}
             <button className="button subtle compact" type="button" onClick={() => setReloads((count) => count + 1)}>
               Refresh times

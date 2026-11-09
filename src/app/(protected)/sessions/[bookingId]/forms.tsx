@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import type { SessionActionState } from "@/domains/sessions/types";
+import type { SessionResource } from "@/domains/sessions/types";
 import { FormResult } from "@/components/form-controls";
 import {
   markCompletedAction,
@@ -62,10 +63,12 @@ export function GoalsForm({
   bookingId,
   goals,
   questions,
+  priorityTopics,
 }: {
   bookingId: string;
   goals?: string | null;
   questions?: string | null;
+  priorityTopics?: string[] | null;
 }) {
   const [state, action, pending] = useActionState(saveGoalsAction, initial);
   return (
@@ -80,6 +83,15 @@ export function GoalsForm({
           maxLength={2000}
           required
           hint="What would make this session a success? Required, up to 2,000 characters."
+        />
+        <TextArea
+          name="priorityTopics"
+          label="Priority topics"
+          state={state}
+          saved={priorityTopics?.join(", ")}
+          maxLength={2000}
+          rows={3}
+          hint="Optional. Separate up to ten specific topics with commas or new lines."
         />
         <TextArea
           name="questions"
@@ -138,10 +150,26 @@ type RecapProps = {
   summary?: string | null;
   masteryNotes?: string | null;
   nextSteps?: string | null;
+  topics?: string[] | null;
+  strengths?: string | null;
+  practiceAreas?: string | null;
+  resourceOptions: SessionResource[];
+  selectedResourceIds: string[];
   published: boolean;
 };
 
-export function RecapForm({ bookingId, summary, masteryNotes, nextSteps, published }: RecapProps) {
+export function RecapForm({
+  bookingId,
+  summary,
+  masteryNotes,
+  nextSteps,
+  published,
+  topics,
+  strengths,
+  practiceAreas,
+  resourceOptions,
+  selectedResourceIds,
+}: RecapProps) {
   const [state, action, pending] = useActionState(publishRecapAction, initial);
   return (
     <form className="form" action={action} aria-label="Publish session recap">
@@ -158,13 +186,58 @@ export function RecapForm({ bookingId, summary, masteryNotes, nextSteps, publish
           hint="Required, up to 4,000 characters. Your student can read the published recap."
         />
         <TextArea
+          name="topics"
+          label="Topics covered"
+          state={state}
+          saved={topics?.join(", ")}
+          required
+          maxLength={4000}
+          rows={3}
+          hint="Required. Separate the topics actually covered with commas or new lines."
+        />
+        <TextArea
+          name="strengths"
+          label="Observed strengths"
+          state={state}
+          saved={strengths}
+          required
+          maxLength={2000}
+          rows={3}
+          hint="Required. Describe the strengths you observed during this session."
+        />
+        <TextArea
+          name="practiceAreas"
+          label="Areas to practise"
+          state={state}
+          saved={practiceAreas}
+          required
+          maxLength={2000}
+          rows={3}
+          hint="Required. Name the skills that need further practice, based on the session."
+        />
+        <fieldset className="workflow-choices">
+          <legend>Practice resources (optional)</legend>
+          {resourceOptions.map((resource) => (
+            <label className="checkbox" key={resource.id}>
+              <input
+                type="checkbox"
+                name="resourceIds"
+                value={resource.id}
+                defaultChecked={selectedResourceIds.includes(resource.id)}
+              />
+              <span>{resource.title}</span>
+            </label>
+          ))}
+          {!resourceOptions.length && <p className="hint">No active resources match this session’s subject yet.</p>}
+        </fieldset>
+        <TextArea
           name="mastery_notes"
-          label="Mastery notes"
+          label="Additional tutor notes"
           state={state}
           saved={masteryNotes}
           maxLength={2000}
           rows={3}
-          hint="Optional. Strengths and areas to practise, based on what you observed."
+          hint="Optional. Additional observations for the learner, up to 2,000 characters. This does not assign topic mastery."
         />
         <TextArea
           name="next_steps"

@@ -20,8 +20,8 @@ export function PublicHeader() {
       <div className="container site-header-inner">
         <Brand />
         <nav aria-label="Main navigation" className="public-nav">
-          <Link className="public-nav-link optional" href="/#how-it-works">
-            How it works
+          <Link className="public-nav-link" href="/tutors">
+            Find a tutor
           </Link>
           <Link className="public-nav-link optional" href="/#students">
             For students
@@ -169,11 +169,20 @@ function navItems(actor: Actor): NavItem[] {
   const items: NavItem[] = [
     { href: "/dashboard", label: "Overview" },
     { href: "/profile", label: "My profile", also: ["/update-password"] },
+    { href: "/tutors", label: "Find a tutor", also: ["/matching"] },
   ];
   if (canBook(actor)) {
     items.push({ href: "/bookings", label: "Bookings", also: ["/sessions"] });
+    items.push({
+      href: "/learning",
+      label: "Learning",
+      also: ["/assessments", "/assignments", "/study-plans", "/progress"],
+    });
+    items.push({ href: "/resources", label: "Resources", also: ["/assistant"] });
     items.push({ href: "/reviews", label: "Reviews" });
   }
+  items.push({ href: "/notifications", label: "Updates" });
+  if (hasRole(actor, "tutor")) items.push({ href: "/tutor-studio", label: "Tutor studio" });
   if (hasRole(actor, "administrator")) items.push({ href: "/admin", label: "Admin" });
   return items;
 }
@@ -205,7 +214,7 @@ export function Footer({ variant = "full" }: { variant?: "full" | "compact" }) {
             Tutor+
           </span>
           <span>Adult learning, thoughtfully coordinated.</span>
-          <span>Tutor Plus · Group 11</span>
+          <Link href="/support">Report a concern</Link>
         </div>
       </footer>
     );

@@ -33,6 +33,8 @@ export function sessionPermissions(role: SessionRole, phase: SessionPhase): Sess
     markCompleted: role === "tutor" && phase === "ended",
     publishRecap: role === "tutor" && afterSession,
     writeReflection: role === "student" && afterSession,
+    uploadAttachment: role === "student" && phase === "planning",
+    reviewAttachment: role === "tutor" && phase !== "unavailable",
   });
 }
 

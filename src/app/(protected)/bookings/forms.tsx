@@ -1,11 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useCallback, useId, useState } from "react";
 import type { BookingActionState, PublicSubject, PublicTutor, TutorSubject } from "@/domains/bookings/types";
 import { formatMoney } from "@/domains/bookings/presentation";
 import { FormResult } from "@/components/form-controls";
 import styles from "./bookings.module.css";
-import { cancelBookingAction, requestBookingAction } from "./actions";
+import { cancelBookingAction, requestBookingAction, rescheduleBookingAction } from "./actions";
 import { SlotPicker } from "./slot-picker";
 
 const initial: BookingActionState = { message: "" };
@@ -28,6 +29,7 @@ type RequestFormProps = {
   timezone: string;
   /** Each tutor's availability time zone, keyed by tutor ID. */
   tutorZones: Record<string, string>;
+  initialTutorId?: string;
 };
 
 /** Remounts the request form with a fresh idempotency key when the student starts another reservation. */
@@ -52,9 +54,12 @@ function RequestForm({
   timezone,
   tutorZones,
   onAnother,
+  initialTutorId,
 }: RequestFormProps & { onAnother: () => void }) {
   const [state, action, pending] = useActionState(requestBookingAction, initial);
-  const [selectedId, setSelectedId] = useState(tutors[0]?.id ?? "");
+  const [selectedId, setSelectedId] = useState(
+    tutors.some((tutor) => tutor.id === initialTutorId) ? initialTutorId! : (tutors[0]?.id ?? ""),
+  );
   const [hasSlot, setHasSlot] = useState(false);
   const onSlotChange = useCallback((selected: boolean) => setHasSlot(selected), []);
   const selected = tutors.find((tutor) => tutor.id === selectedId);
@@ -143,6 +148,32 @@ function RequestForm({
             hint="Only modes on the public listing are offered. Meeting details are not created by this reservation."
           />
         </div>
+        <details className="workspace-details">
+          <summary>Add learning context & private notes (optional)</summary>
+          <div className="form-fields">
+            <div className="field">
+              <label htmlFor="request-learning-goal">Learning goal</label>
+              <textarea id="request-learning-goal" name="learningGoal" rows={3} maxLength={500} />
+            </div>
+            <div className="field">
+              <label htmlFor="request-topics">Topics</label>
+              <input id="request-topics" name="topics" maxLength={800} />
+              <span className="hint">Separate topics with commas.</span>
+            </div>
+            <div className="field">
+              <label htmlFor="request-questions">Questions for the session</label>
+              <textarea id="request-questions" name="questions" rows={3} maxLength={2000} />
+            </div>
+            <label className="checkbox">
+              <input type="checkbox" name="shareWithTutor" />
+              <span>Share this goal, topics and questions with the tutor on this request.</span>
+            </label>
+            <div className="field">
+              <label htmlFor="request-private-note">Private note — only you</label>
+              <textarea id="request-private-note" name="privateNote" rows={3} maxLength={1000} />
+            </div>
+          </div>
+        </details>
         <fieldset className={`field ${styles.slotField}`}>
           <legend>Choose a time</legend>
           <SlotPicker
@@ -167,6 +198,11 @@ function RequestForm({
         </button>
       </fieldset>
       <FormResult state={state} />
+      {state.success && state.bookingId && (
+        <Link className="button secondary" href={`/bookings/${state.bookingId}`}>
+          Review saved booking & notes →
+        </Link>
+      )}
       {state.success && (
         <button className="button secondary" type="button" onClick={onAnother}>
           Start another reservation
@@ -202,6 +238,86 @@ export function BookingCancellationForm({ bookingId }: { bookingId: string }) {
         </div>
         <button type="submit" className="button secondary" disabled={pending || state.success}>
           {pending ? "Saving cancellation…" : "Save cancellation"}
+        </button>
+      </fieldset>
+      <FormResult state={state} />
+    </form>
+  );
+}
+
+type RescheduleProps = {
+  booking: { id: string; tutor_id: string; subject_id: string; mode: string; status: string };
+  timezone: string;
+  requestKey: string;
+};
+/** Load slot availability only when a participant opens this booking's time-change form. */
+export function BookingRescheduleControls(props: RescheduleProps) {
+  const [open, setOpen] = useState(false);
+  return (
+    <details className={styles.cancel} onToggle={(event) => setOpen(event.currentTarget.open)}>
+      <summary>
+        {props.booking.status === "confirmed" ? "Reschedule confirmed session" : "Move pending reservation"}
+      </summary>
+      {open && <BookingRescheduleForm {...props} />}
+    </details>
+  );
+}
+
+export function BookingRescheduleForm({
+  booking,
+  timezone,
+  requestKey,
+}: {
+  booking: { id: string; tutor_id: string; subject_id: string; mode: string; status: string };
+  timezone: string;
+  requestKey: string;
+}) {
+  const [state, action, pending] = useActionState(rescheduleBookingAction, initial);
+  const [hasSlot, setHasSlot] = useState(false);
+  const onSlotChange = useCallback((selected: boolean) => setHasSlot(selected), []);
+  return (
+    <form
+      action={action}
+      className="form"
+      aria-label={booking.status === "confirmed" ? "Reschedule confirmed session" : "Reschedule pending reservation"}
+    >
+      <input type="hidden" name="bookingId" value={booking.id} />
+      <input type="hidden" name="tutorId" value={booking.tutor_id} />
+      <input type="hidden" name="subjectId" value={booking.subject_id} />
+      <input type="hidden" name="mode" value={booking.mode} />
+      <input type="hidden" name="requestKey" value={requestKey} />
+      <fieldset className="form-fields" disabled={pending || state.success}>
+        <p className="hint">
+          Choose a new open time with the same tutor, subject and mode. If the change cannot be saved, your original
+          time stays in place.
+        </p>
+        <SlotPicker
+          tutorId={booking.tutor_id}
+          initialZone={timezone}
+          error={state.fields?.startsAt ?? state.fields?.starts_at}
+          onSelectionChange={onSlotChange}
+        />
+        {booking.status === "confirmed" && (
+          <>
+            <div className="field">
+              <label htmlFor={`reschedule-reason-${booking.id}`}>Reason for the time change</label>
+              <textarea id={`reschedule-reason-${booking.id}`} name="reason" required maxLength={500} rows={3} />
+            </div>
+            <label className="checkbox">
+              <input type="checkbox" name="confirmed_move" required />
+              <span>I confirm this change to the confirmed session time.</span>
+            </label>
+            <p className="hint">
+              The existing booking and financial records are retained. This time change creates no charge.
+            </p>
+          </>
+        )}
+        <button type="submit" className="button secondary" disabled={pending || state.success || !hasSlot}>
+          {pending
+            ? "Saving new time…"
+            : booking.status === "confirmed"
+              ? "Confirm new session time"
+              : "Move pending reservation"}
         </button>
       </fieldset>
       <FormResult state={state} />

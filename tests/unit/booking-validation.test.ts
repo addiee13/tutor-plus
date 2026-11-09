@@ -5,6 +5,7 @@ import type { Actor } from "../../src/domains/auth/policy";
 import {
   parseBookingRequest,
   parseCancellation,
+  parseBookingStudentNotesInput,
   parseSlotQuery,
   parseUtcTimestamp,
 } from "../../src/domains/bookings/validation";
@@ -117,7 +118,7 @@ function database({
     (name: string, parameters: Record<string, unknown>) => Promise<{ data: string | null; error: typeof rpcError }>
   >(async (name) => {
     if (name === "cancel_booking" && !rpcError) booking.status = "cancelled";
-    return { data: name === "create_booking" ? bookingId : null, error: rpcError };
+    return { data: name === "create_booking_with_notes" ? bookingId : null, error: rpcError };
   });
   const rpcWithCatalog = vi.fn(async (name: string, parameters: Record<string, unknown>) => {
     if (name === "list_public_tutor_subjects")
@@ -212,6 +213,38 @@ describe("UC-04 strict request parsing", () => {
     expect(parsed).not.toHaveProperty("status");
   });
 
+  it("parses structured booking notes with private-by-default sharing and bounded topics", () => {
+    expect(parseBookingRequest(request(), now).student_notes).toEqual({
+      learningGoal: null,
+      topics: [],
+      questions: null,
+      privateNote: null,
+      shareWithTutor: false,
+    });
+    expect(
+      parseBookingRequest(
+        request({
+          learningGoal: "  Review fractions  ",
+          topics: "unit rates, fractions",
+          questions: "How do I compare them?",
+          privateNote: "Schedule is tight",
+          shareWithTutor: "on",
+        }),
+        now,
+      ).student_notes,
+    ).toEqual({
+      learningGoal: "Review fractions",
+      topics: ["unit rates", "fractions"],
+      questions: "How do I compare them?",
+      privateNote: "Schedule is tight",
+      shareWithTutor: true,
+    });
+    expect(() => parseBookingStudentNotesInput({ topics: ["Same", " same "], shareWithTutor: false })).toThrow(
+      InputError,
+    );
+    expect(() => parseBookingRequest(request({ shareWithTutor: "yes" }), now)).toThrow(InputError);
+  });
+
   it("validates and trims cancellation reasons", () => {
     expect(parseCancellation(cancellation({ reason: "  Plans changed  " })).reason).toBe("Plans changed");
     expect(() => parseCancellation(cancellation({ reason: "  " }))).toThrow(InputError);
@@ -239,7 +272,7 @@ describe("UC-04 server authorization and SQL contracts (mocked, not live persist
     expect(() => requireBookingParticipant(actor, booking, [tutorId])).toThrow();
   });
 
-  it("passes only the migration’s named arguments to create_booking and reads saved state", async () => {
+  it("passes the booking intent and structured notes to one atomic reservation RPC", async () => {
     const fixture = database();
     const starts_at = new Date(Date.now() + 86400000).toISOString();
     const ends_at = new Date(Date.parse(starts_at) + 3600000).toISOString();
@@ -247,13 +280,20 @@ describe("UC-04 server authorization and SQL contracts (mocked, not live persist
       fixture.client,
       request({ starts_at, ends_at, price_minor: "1", status: "confirmed" }),
     );
-    expect(fixture.rpc).toHaveBeenCalledExactlyOnceWith("create_booking", {
+    expect(fixture.rpc).toHaveBeenCalledExactlyOnceWith("create_booking_with_notes", {
       tutor: tutorId,
       subject: subjectId,
       starts_at,
       ends_at,
       mode: "virtual",
       request_key: key,
+      student_notes: {
+        learningGoal: null,
+        topics: [],
+        questions: null,
+        privateNote: null,
+        shareWithTutor: false,
+      },
     });
     expect(saved).toMatchObject({ id: bookingId, status: "payment_pending", price_minor: 3000 });
   });

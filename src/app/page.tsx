@@ -11,18 +11,19 @@ const NOW = [
     "Verified accounts",
     "Sign up with email verification, then sign in by password, emailed code, or a connected provider.",
   ],
-  ["Profiles & time zones", "Your display name and IANA time zone, saved and editable whenever you need."],
-  ["Reservation requests", "Ask a published tutor for a time. Payment isn’t implemented yet, so nothing is charged."],
-  ["Session workspace", "Goals before, an agenda from your tutor, a recap after, and a reflection only you can read."],
-  ["Reviews", "Rate a completed session from one to five stars. Tutor ratings come only from those reviews."],
+  [
+    "Tutor discovery & matching",
+    "Explore published profiles by subject, budget, mode and session time, with visible matching factors.",
+  ],
+  ["Tutor studio", "Manage your public teaching profile, subject offerings, rates and availability."],
+  ["Assessments & practice", "Keep assigned questions, submissions, scoring and tutor feedback together."],
+  ["Plans & progress", "Set structured goals and milestone dates, then follow dated evidence and tutor observations."],
+  ["Session workspace & reviews", "Share goals, prepare an agenda, publish a recap and review a completed session."],
+  [
+    "Resources & guidance",
+    "Read curated learning material and ask the learning assistant when its provider is connected.",
+  ],
 ] as const;
-
-const NEXT = [
-  "Online payment and checkout",
-  "Tutor search and filters",
-  "Tutor listing management",
-  "Assessments and assignments",
-];
 
 export default function Home() {
   return (
@@ -214,8 +215,8 @@ export default function Home() {
         <section id="now-and-next" className="now-next" aria-labelledby="now-heading">
           <div className="container now-next-grid">
             <div>
-              <span className="eyebrow">What’s here now</span>
-              <h2 id="now-heading">Available today.</h2>
+              <span className="eyebrow">One shared workspace</span>
+              <h2 id="now-heading">Your learning toolkit.</h2>
               <ul className="now-list">
                 {NOW.map(([title, body]) => (
                   <li key={title}>
@@ -226,16 +227,19 @@ export default function Home() {
               </ul>
             </div>
             <div className="next-col">
-              <span className="eyebrow">What’s next</span>
-              <h2>Coming soon.</h2>
-              <p>These are planned, not yet available. We’ll only show them in the app once they work.</p>
-              <ul className="next-list">
-                {NEXT.map((item) => (
-                  <li key={item}>
-                    {item} <span className="tag">Coming soon</span>
-                  </li>
-                ))}
-              </ul>
+              <span className="eyebrow">Before you book</span>
+              <h2>A request is the first step.</h2>
+              <p>
+                You can choose an open time and save a reservation request. Payment and checkout are unavailable, so a
+                request does not charge you or confirm a session.
+              </p>
+              <p>
+                Existing confirmed sessions retain their session workspace, private meeting details and learning
+                records.
+              </p>
+              <Link className="button secondary" href="/tutors">
+                Explore published tutors →
+              </Link>
             </div>
           </div>
         </section>

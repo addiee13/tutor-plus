@@ -8,21 +8,27 @@ export function DateTimeField({
   label,
   hint,
   error,
+  defaultValue = "",
+  required = true,
+  id = name,
 }: {
   name: string;
   label: string;
   hint: string;
   error?: string;
+  defaultValue?: string;
+  required?: boolean;
+  id?: string;
 }) {
-  const [value, setValue] = useState("");
-  const helpId = `${name}-help`;
+  const [value, setValue] = useState(defaultValue.replace(/Z$/, "").slice(0, 16));
+  const helpId = `${id}-help`;
   return (
     <div className="field">
-      <label htmlFor={name}>{label} (UTC)</label>
+      <label htmlFor={id}>{label} (UTC)</label>
       <input
-        id={name}
+        id={id}
         type="datetime-local"
-        required
+        required={required}
         step={60}
         value={value}
         onChange={(event) => setValue(event.target.value)}

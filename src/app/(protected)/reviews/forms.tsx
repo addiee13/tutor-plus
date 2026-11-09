@@ -58,6 +58,15 @@ export function ReviewForm({ bookingId }: { bookingId: string }) {
             {commentError ?? "Up to 2,000 characters. Visible to the tutor; your name is not shown publicly."}
           </span>
         </div>
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            name="recommend"
+            defaultChecked={["true", "on"].includes(state.values?.recommend ?? "")}
+          />
+          <span>I would recommend this tutor to other adult learners.</span>
+        </label>
+        <p className="hint">Optional. This records your recommendation; it is separate from the star rating.</p>
         <button className="button primary" type="submit" disabled={pending || state.success}>
           {pending ? "Submitting…" : "Submit review"}
           <span aria-hidden="true">→</span>

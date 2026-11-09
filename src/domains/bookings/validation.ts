@@ -1,5 +1,6 @@
 import { InputError } from "../shared/errors";
 import { readText } from "../shared/form";
+import type { SaveBookingStudentNotesInput } from "./types";
 import { bookingModes, type BookingMode } from "./types";
 
 export { bookingModes, type BookingMode };
@@ -64,7 +65,85 @@ export function parseBookingRequest(form: FormData, now = Date.now()) {
   if (!bookingModes.includes(mode as BookingMode)) {
     throw new InputError({ mode: "Choose virtual or in-person tutoring." });
   }
-  return { tutor, subject, starts_at, ends_at, mode: mode as BookingMode, request_key: parseRequestKey(form) };
+  const learningGoal = optionalFormText(form, "learningGoal", 500);
+  const questions = optionalFormText(form, "questions", 2000);
+  const privateNote = optionalFormText(form, "privateNote", 1000);
+  const topicsText = optionalFormText(form, "topics", 800);
+  const topics = parseTopics(topicsText ? topicsText.split(",") : []);
+  const shareWithTutor = parseShareWithTutor(form.get("shareWithTutor"));
+  return {
+    tutor,
+    subject,
+    starts_at,
+    ends_at,
+    mode: mode as BookingMode,
+    request_key: parseRequestKey(form),
+    student_notes: { learningGoal, topics, questions, privateNote, shareWithTutor },
+  };
+}
+
+function optionalFormText(form: FormData, field: string, maximum: number): string | null {
+  const value = form.get(field);
+  if (value === null || value === "") return null;
+  if (typeof value !== "string") throw new InputError({ [field]: "Enter text, not a file." });
+  const clean = value.trim();
+  if (clean.length > maximum || /[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(clean)) {
+    throw new InputError({ [field]: `Use at most ${maximum} characters.` });
+  }
+  return clean || null;
+}
+
+function parseTopics(values: string[]): string[] {
+  const topics = values.map((topic) => topic.trim()).filter(Boolean);
+  if (topics.length > 10 || topics.some((topic) => topic.length > 80 || /[\x00-\x1f\x7f]/.test(topic))) {
+    throw new InputError({ topics: "Enter up to 10 topics, each no longer than 80 characters." });
+  }
+  if (new Set(topics.map((topic) => topic.toLocaleLowerCase("en-US"))).size !== topics.length) {
+    throw new InputError({ topics: "Remove duplicate topics." });
+  }
+  return topics;
+}
+
+function parseShareWithTutor(value: FormDataEntryValue | null): boolean {
+  if (value === null || value === "" || value === "false") return false;
+  if (value === "on" || value === "true") return true;
+  throw new InputError({ shareWithTutor: "Choose whether to share the learning notes with your tutor." });
+}
+
+/** Validates the structured note shape used after a booking has been created. */
+export function parseBookingStudentNotesInput(value: unknown): SaveBookingStudentNotesInput {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new InputError({ notes: "Enter valid booking notes." });
+  }
+  const input = value as Record<string, unknown>;
+  const form = new FormData();
+  for (const key of ["learningGoal", "questions", "privateNote"] as const) {
+    if (input[key] !== undefined) {
+      if (input[key] !== null && typeof input[key] !== "string") throw new InputError({ [key]: "Enter text." });
+      form.set(key, (input[key] as string | null) ?? "");
+    }
+    if (input[key] === undefined) form.set(key, "");
+  }
+  const learningGoal = optionalFormText(form, "learningGoal", 500);
+  const questions = optionalFormText(form, "questions", 2000);
+  const privateNote = optionalFormText(form, "privateNote", 1000);
+  if (
+    !Array.isArray(input.topics) ||
+    input.topics.length > 10 ||
+    input.topics.some((topic) => typeof topic !== "string")
+  ) {
+    throw new InputError({ topics: "Enter up to 10 topic names." });
+  }
+  if (typeof input.shareWithTutor !== "boolean") {
+    throw new InputError({ shareWithTutor: "Choose whether to share the learning notes with your tutor." });
+  }
+  return {
+    learningGoal,
+    topics: parseTopics(input.topics as string[]),
+    questions,
+    privateNote,
+    shareWithTutor: input.shareWithTutor,
+  };
 }
 
 /** Validates a slot lookup; the duration must be a whole number of minutes inside the booking policy. */

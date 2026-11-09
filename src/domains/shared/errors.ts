@@ -20,7 +20,7 @@ const messages: Record<ErrorCode, string> = {
   unavailable: "We couldn’t complete that right now. Please try again shortly.",
   credentials: "We couldn’t sign you in. Check your details and verify your email.",
   onboarding: "Please finish setting up your account to continue.",
-  rateLimited: "Too many emails were requested recently. Please wait before trying again.",
+  rateLimited: "Too many requests were made recently. Please wait before trying again.",
 };
 
 export class DomainError extends Error {

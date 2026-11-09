@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { randomUUID } from "node:crypto";
 import { publicConfig } from "@/lib/supabase/config";
 import { protectedContext } from "@/lib/protected-context";
 import { safeMessage } from "@/domains/shared/errors";
 import { hasRole } from "@/domains/auth/policy";
 import { readBookingWorkspace, type BookingWorkspace } from "@/domains/bookings/service";
 import { formatMoney, formatUtc, localDate } from "@/domains/bookings/presentation";
+import { formatViewerInstant, viewerTimeZone } from "@/lib/time-presentation";
 import {
   CANCELLABLE_STATUSES,
   type AvailabilityException,
@@ -14,7 +16,7 @@ import {
   type PublicTutor,
   type TutorSubject,
 } from "@/domains/bookings/types";
-import { BookingCancellationForm, BookingRequestForm } from "./forms";
+import { BookingCancellationForm, BookingRequestForm, BookingRescheduleControls } from "./forms";
 import styles from "./bookings.module.css";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +27,13 @@ const SUMMARY_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 const HOLD_STATUSES: readonly Booking["status"][] = ["draft", "payment_pending"];
 const WORKSPACE_STATUSES: readonly Booking["status"][] = ["confirmed", "in_progress", "completed"];
 
-export default async function BookingsPage() {
+export default async function BookingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const query = await searchParams;
+  const initialTutorId = typeof query.tutor === "string" ? query.tutor : undefined;
   if (!publicConfig()) return null;
   const { client } = await protectedContext();
   let workspace: BookingWorkspace;
@@ -72,6 +80,7 @@ export default async function BookingsPage() {
             </p>
           ) : tutors.length && subjects.length ? (
             <BookingRequestForm
+              initialTutorId={initialTutorId}
               tutors={tutors}
               subjects={subjects}
               links={links}
@@ -114,8 +123,9 @@ export default async function BookingsPage() {
           Your saved reservations
         </h2>
         <p className="hint">
-          Latest 50 participant-visible records, reloaded from the database. Times below are UTC. Refresh to see changes
-          made since this page loaded.
+          Latest 50 participant-visible records, reloaded from the database. Session times use{" "}
+          {viewerTimeZone(workspace.timezone)}; canonical UTC details remain below. Refresh to see changes made since
+          this page loaded.
         </p>
         {!bookings.length && (
           <div className="panel">
@@ -129,6 +139,13 @@ export default async function BookingsPage() {
             tutor={[...tutors, ...ownTutors].find((entry) => entry.id === booking.tutor_id)}
             subject={subjects.find((entry) => entry.id === booking.subject_id)}
             now={now}
+            canReschedule={
+              booking.student_id === actor.id &&
+              (HOLD_STATUSES.includes(booking.status) ||
+                (booking.status === "confirmed" && Date.parse(booking.starts_at) > now))
+            }
+            timezone={workspace.timezone}
+            requestKey={randomUUID()}
           />
         ))}
       </section>
@@ -317,9 +334,12 @@ type BookingCardProps = {
   tutor?: Pick<PublicTutor, "public_display_name">;
   subject?: PublicSubject;
   now: number;
+  canReschedule: boolean;
+  timezone: string;
+  requestKey: string;
 };
 
-function BookingCard({ booking, tutor, subject, now }: BookingCardProps) {
+function BookingCard({ booking, tutor, subject, now, canReschedule, timezone, requestKey }: BookingCardProps) {
   const canCancel = CANCELLABLE_STATUSES.includes(booking.status);
   const expiredHold =
     booking.status === "payment_pending" &&
@@ -332,8 +352,13 @@ function BookingCard({ booking, tutor, subject, now }: BookingCardProps) {
           {tutor?.public_display_name ?? "Tutor listing no longer public"} ·{" "}
           {subject?.name ?? "Subject no longer public"}
         </h3>
-        <time className={styles.when} dateTime={booking.starts_at}>
-          {formatUtc(booking.starts_at)}
+        <time
+          className={styles.when}
+          dateTime={booking.starts_at}
+          data-testid="viewer-local-time"
+          data-timezone={viewerTimeZone(timezone)}
+        >
+          {formatViewerInstant(booking.starts_at, timezone)}
         </time>
       </div>
       <dl className={styles.facts}>
@@ -345,6 +370,8 @@ function BookingCard({ booking, tutor, subject, now }: BookingCardProps) {
             {booking.status}
           </code>
         </dd>
+        <dt>Your time zone</dt>
+        <dd>{viewerTimeZone(timezone)}</dd>
         <dt>Starts (UTC)</dt>
         <dd>
           <time dateTime={booking.starts_at}>{formatUtc(booking.starts_at)}</time>
@@ -389,6 +416,13 @@ function BookingCard({ booking, tutor, subject, now }: BookingCardProps) {
           </Link>
         </p>
       )}
+      <p>
+        <Link className="small-link" href={`/bookings/${booking.id}`}>
+          Booking details & time-change history →
+        </Link>
+      </p>
+      {canReschedule && <BookingRescheduleControls booking={booking} timezone={timezone} requestKey={requestKey} />}
+
       {canCancel && (
         <details className={styles.cancel}>
           <summary>Cancel reservation</summary>

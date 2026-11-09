@@ -63,6 +63,32 @@ export type Booking = {
   cancellation_reason: string | null;
 };
 
+export type BookingStudentNotes = {
+  bookingId: string;
+  learningGoal: string | null;
+  topics: string[];
+  questions: string | null;
+  privateNote: string | null;
+  shareWithTutor: boolean;
+  updatedAt: string;
+};
+
+export type SaveBookingStudentNotesInput = {
+  learningGoal?: string | null;
+  topics?: string[];
+  questions?: string | null;
+  privateNote?: string | null;
+  shareWithTutor: boolean;
+};
+
+export type TutorBookingNotes = {
+  bookingId: string;
+  learningGoal: string | null;
+  topics: string[];
+  questions: string | null;
+  updatedAt: string;
+};
+
 export type BookingActionState = ActionState & { bookingId?: string };
 
 export const slotStatuses = ["open", "booked", "too_soon", "student_busy"] as const;

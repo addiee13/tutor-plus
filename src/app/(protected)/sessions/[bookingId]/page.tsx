@@ -1,9 +1,16 @@
+import { BookingLearningNotes } from "../../bookings/[bookingId]/notes";
+import { AgendaLearningLinks, SessionAttachments } from "./learning-tools";
+import { loadWorkspace } from "@/components/workspace/load";
+import { WorkflowForm } from "@/components/workspace/workflow-form";
+import { deleteReflectionAction } from "../../learning/actions";
 import Link from "next/link";
+import { PrivateMeetingDetails } from "./meeting";
 import { publicConfig } from "@/lib/supabase/config";
 import { protectedContext } from "@/lib/protected-context";
 import { isDomainError, safeMessage } from "@/domains/shared/errors";
 import { formatUtc } from "@/domains/bookings/presentation";
-import { getWorkspace } from "@/domains/sessions/service";
+import { formatViewerInstant, viewerTimeZone } from "@/lib/time-presentation";
+import { getWorkspace, listSessionRecapResourceOptions } from "@/domains/sessions/service";
 import type { SessionPhase, SessionWorkspace } from "@/domains/sessions/types";
 import { AgendaForm, CompleteSessionForm, GoalsForm, RecapForm, ReflectionForm } from "./forms";
 import styles from "../sessions.module.css";
@@ -77,6 +84,9 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
 
   const { booking, role, phase, can, plan, recap, reflection } = workspace;
   const bookingRef = booking.id;
+  const recapOptions = can.publishRecap
+    ? await loadWorkspace(() => listSessionRecapResourceOptions(client, bookingRef))
+    : null;
   return (
     <>
       <section className="page-heading">
@@ -101,10 +111,22 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
             <dd>{workspace.tutorName}</dd>
           </div>
           <div>
-            <dt>Session (UTC)</dt>
+            <dt>Session ({viewerTimeZone(workspace.viewerTimezone)})</dt>
             <dd>
-              <time dateTime={booking.starts_at}>{formatUtc(booking.starts_at)}</time> –{" "}
-              <time dateTime={booking.ends_at}>{formatUtc(booking.ends_at).slice(11)}</time>
+              <time
+                dateTime={booking.starts_at}
+                data-testid="viewer-local-time"
+                data-timezone={viewerTimeZone(workspace.viewerTimezone)}
+              >
+                {formatViewerInstant(booking.starts_at, workspace.viewerTimezone)}
+              </time>{" "}
+              – <time dateTime={booking.ends_at}>{formatViewerInstant(booking.ends_at, workspace.viewerTimezone)}</time>
+            </dd>
+          </div>
+          <div>
+            <dt>Canonical session (UTC)</dt>
+            <dd>
+              {formatUtc(booking.starts_at)} – {formatUtc(booking.ends_at)}
             </dd>
           </div>
           <div>
@@ -123,6 +145,12 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
         {can.markCompleted && <CompleteSessionForm bookingId={bookingRef} />}
       </section>
 
+      {phase !== "unavailable" && (
+        <div className="workspace-grid equal" style={{ marginBlock: "1.5rem" }}>
+          <BookingLearningNotes client={client} bookingId={bookingRef} role={role} />
+          <PrivateMeetingDetails client={client} bookingId={bookingRef} isTutor={role === "tutor"} />
+        </div>
+      )}
       {phase === "unavailable" ? (
         <div className={`notice warning ${styles.unavailable}`} role="status">
           The planner opens once a booking is confirmed. This booking is <code>{booking.status}</code>, so there is
@@ -134,7 +162,12 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
             <span className="tag">Student</span>
             <h2 id="goals-heading">Goals and questions</h2>
             {can.editGoals ? (
-              <GoalsForm bookingId={bookingRef} goals={plan?.student_goals} questions={plan?.student_questions} />
+              <GoalsForm
+                bookingId={bookingRef}
+                goals={plan?.student_goals}
+                questions={plan?.student_questions}
+                priorityTopics={plan?.priority_topics}
+              />
             ) : (
               <SavedText
                 empty={
@@ -143,6 +176,7 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
                 entries={[
                   ["Goals", plan?.student_goals],
                   ["Questions", plan?.student_questions],
+                  ["Priority topics", plan?.priority_topics?.join(" · ")],
                 ]}
                 updatedAt={plan?.student_updated_at}
               />
@@ -168,20 +202,33 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
           <section className={`panel ${styles.card}`} aria-labelledby="recap-heading">
             <span className="tag">Recap</span>
             <h2 id="recap-heading">Session recap</h2>
-            {can.publishRecap ? (
+            {recapOptions && !recapOptions.ok && (
+              <p className="notice warning" role="alert">
+                {safeMessage(recapOptions.error)}
+              </p>
+            )}
+            {can.publishRecap && recapOptions?.ok ? (
               <RecapForm
                 bookingId={bookingRef}
                 summary={recap?.summary}
                 masteryNotes={recap?.mastery_notes}
                 nextSteps={recap?.next_steps}
                 published={!!recap}
+                topics={recap?.topics}
+                strengths={recap?.strengths}
+                practiceAreas={recap?.practice_areas}
+                resourceOptions={recapOptions.value}
+                selectedResourceIds={workspace.recapResources.map((resource) => resource.id)}
               />
             ) : recap ? (
               <SavedText
                 empty=""
                 entries={[
                   ["What we covered", recap.summary],
-                  ["Mastery notes", recap.mastery_notes],
+                  ["Topics covered", recap.topics?.join(" · ")],
+                  ["Observed strengths", recap.strengths],
+                  ["Areas to practise", recap.practice_areas],
+                  ["Additional tutor notes", recap.mastery_notes],
                   ["Next steps", recap.next_steps],
                 ]}
                 updatedAt={recap.updated_at}
@@ -193,10 +240,21 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
                   : "Recap pending — your tutor hasn’t published one yet."}
               </p>
             )}
-            {can.publishRecap && recap && (
-              <p className={styles.meta}>
-                Published {formatUtc(recap.published_at)} · revision {recap.revision} · last updated{" "}
-                {formatUtc(recap.updated_at)}
+            {!!workspace.recapResources.length && (
+              <ul>
+                {workspace.recapResources.map((resource) => (
+                  <li key={resource.id}>
+                    <a href={resource.url} target="_blank" rel="noreferrer">
+                      {resource.title} ↗
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {recap && (
+              <p className={styles.meta} data-testid="recap-provenance">
+                Published by {workspace.tutorName} on {formatUtc(recap.published_at)} · revision {recap.revision} · last
+                updated {formatUtc(recap.updated_at)}
               </p>
             )}
           </section>
@@ -223,6 +281,34 @@ export default async function SessionWorkspacePage({ params }: { params: Promise
             </section>
           )}
         </div>
+      )}
+
+      {phase !== "unavailable" && (
+        <div className="workspace-grid equal" style={{ marginBlock: "1.5rem" }}>
+          <AgendaLearningLinks client={client} workspace={workspace} />
+          <SessionAttachments workspace={workspace} />
+        </div>
+      )}
+      {role === "student" && reflection && (
+        <section className="panel workspace-section" style={{ marginBlock: "1.5rem" }}>
+          <h2>Delete your optional reflection</h2>
+          <p>This removes only your private reflection. Shared session and required learning evidence remain.</p>
+          <WorkflowForm
+            title="Delete optional reflection"
+            action={deleteReflectionAction}
+            hidden={{ bookingId: bookingRef }}
+            submit="Delete reflection"
+            fields={[
+              {
+                name: "confirmed",
+                label: "I confirm I want to delete my optional reflection",
+                type: "checkbox",
+                required: true,
+                wide: true,
+              },
+            ]}
+          />
+        </section>
       )}
       <p className="session-note">
         <Link href="/bookings">← Back to bookings</Link>

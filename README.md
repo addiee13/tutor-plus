@@ -4,6 +4,26 @@ Responsive tutoring marketplace and evidence-based learning-support platform for
 
 ## Current state
 
+**Sprint 4 implementation (November 8, 2026), under final integration review.** The user authorized implementing the remaining fourteen non-payment modules. The current checkout includes tutor publication and availability, public search and explainable matching, assessment/assignment workflows, structured session coordination, personal/shared study plans, source-backed progress, recipient notices, approved resources, a configurable AI adapter, and audited administration. Missing external provider keys produce setup/failure states; they do not imply delivery or a live model response.
+
+Start with the [Sprint 4 runtime setup](docs/sprint4/RUNTIME_SETUP.md), [implementation tracker](docs/planning/IMPLEMENTATION_ORCHESTRATION.md), [mandatory acceptance register](docs/testing/SPRINT4_ACCEPTANCE.md), and [independent verification report](docs/evidence/SPRINT4_VERIFIER.md). Apply the complete versioned migration chain in `supabase/migrations/`; historical standalone Sprint 2/3 SQL exports do not include these additions. Browser/API/database verification currently uses isolated local services. No Sprint 4 deployment or hosted database change is claimed.
+
+| Workflow | Application routes |
+| --- | --- |
+| Profile, publication and schedules | `/profile`, `/tutor-studio` |
+| Public discovery and matching | `/tutors`, `/tutors/[tutorId]`, `/matching` |
+| Reservations and private participant context | `/bookings`, `/bookings/[bookingId]` |
+| Assessments and practice work | `/assessments`, `/assignments`, their detail routes |
+| Session preparation, attachments and recap | `/sessions/[bookingId]` |
+| Personal/shared plans and dated evidence | `/study-plans`, `/progress`, `/learning` |
+| Notices, resources and assistant | `/notifications`, `/resources`, `/assistant` |
+| Reports and account administration | `/support`, `/admin/accounts`, `/admin/safety` |
+| Catalogs, policy and operational administration | `/admin/templates`, `/admin/assessment-templates`, `/admin/badges`, `/admin/matching`, `/admin/operations` |
+
+Payments remain excluded. Existing financial invariants are preserved, and confirmed local learning fixtures are explicitly test fixtures rather than charges. Final acceptance requires the evidence recorded in the linked register; the presence of a route is not a passing test.
+
+### Historical Sprint 3 state
+
 **Sprint 3 (October 2026).** Coordinator: **Edu M. Okpok** (Sprint 1 Shadmaan Akhand, Sprint 2 Adam Dalwai). Sprint 3 adds:
 
 - Database support for four more use cases — **UC-05 Diagnostic Assessment, UC-07 Reviews and Ratings, UC-08 Practice Tasks and Assignment Management, UC-09 Session Planner and Recap** — as versioned migrations `202610180001`–`202610180004` (12 tables plus public availability DTOs) with trigger-enforced invariants, RLS and least-privilege grants. Standalone replay: `sql/sprint2_tables.sql` then `sql/sprint3_tables.sql`.
@@ -79,6 +99,6 @@ Run `npm run check` before committing; it runs the typecheck, ESLint, the Pretti
 
 Date/time entry uses the shared `DateTimeField` native picker by default. Its visible label states UTC, matching booking summaries; it submits ISO UTC to the server without requiring users to type timestamp syntax. Reuse this control for new date/time fields and keep server-side validation authoritative.
 
-Run `supabase start --exclude realtime,storage-api,imgproxy,postgres-meta,studio,edge-runtime,logflare,vector,supavisor` and `supabase migration up --local` for this repository's local stack. Use `./scripts/build.sh` and `npm start -- --hostname 127.0.0.1 --port 3000` for a non-IDE production run. Integration/browser checks may require disposable test identities; skipped checks do not prove behavior. See the runbook for actual executed results and exact configuration.
+Run `supabase start` and `supabase migration up --local` for this repository's full local stack. Storage is required for assignment files, preparation attachments and private profile photos. The historical reduced Sprint 3 stack excluded Storage and does not exercise those workflows. Use `./scripts/build.sh` and `npm start -- --hostname 127.0.0.1 --port 3000` for a non-IDE production run. Integration/browser checks may require disposable test identities; skipped checks do not prove behavior. See the runbook for actual executed results and exact configuration.
 
 Three Group 8 client confirmations, GitHub project authorization, individual submission receipts, and the coordinator's printed copy are external/human gates until evidence is recorded. Generated review estimates are not instructor grades.

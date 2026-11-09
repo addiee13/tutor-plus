@@ -50,3 +50,68 @@ export async function listTutorSlotsAction(tutor: string, duration: number): Pro
     return { message: safeMessage(error) };
   }
 }
+
+export async function rescheduleBookingAction(
+  _previous: BookingActionState,
+  form: FormData,
+): Promise<BookingActionState> {
+  try {
+    const { rescheduleBooking } = await import("@/domains/marketplace/service");
+    const mode = String(form.get("mode") ?? "");
+    if (mode !== "virtual" && mode !== "in_person") return { message: "Choose a valid teaching mode." };
+    const booking = await rescheduleBooking(await createUserClient(), {
+      bookingId: String(form.get("bookingId") ?? ""),
+      tutorId: String(form.get("tutorId") ?? ""),
+      subjectId: String(form.get("subjectId") ?? ""),
+      startsAt: String(form.get("starts_at") ?? ""),
+      endsAt: String(form.get("ends_at") ?? ""),
+      mode,
+      requestKey: String(form.get("requestKey") ?? ""),
+      confirmedMove: form.has("confirmed_move"),
+      reason: String(form.get("reason") ?? "") || undefined,
+    });
+    revalidatePath("/bookings");
+    return {
+      success: true,
+      bookingId: booking.id,
+      message:
+        booking.status === "confirmed"
+          ? "The confirmed session time was changed. The same booking and financial records were retained; no charge was created."
+          : "Reservation moved to the new pending hold. The original reservation was replaced. No payment or confirmation was created.",
+    };
+  } catch (error) {
+    return bookingFailure(error);
+  }
+}
+
+export async function saveBookingNotesAction(
+  _previous: import("@/domains/shared/errors").ActionState,
+  form: FormData,
+): Promise<import("@/domains/shared/errors").ActionState> {
+  try {
+    const { saveBookingStudentNotes } = await import("@/domains/bookings/service");
+    const text = (name: string) => String(form.get(name) ?? "").trim();
+    await saveBookingStudentNotes(await createUserClient(), text("bookingId"), {
+      learningGoal: text("learningGoal") || null,
+      topics: text("topics")
+        .split(/[,\n]/)
+        .map((value) => value.trim())
+        .filter(Boolean),
+      questions: text("questions") || null,
+      privateNote: text("privateNote") || null,
+      shareWithTutor: form.has("shareWithTutor"),
+    });
+    return {
+      success: true,
+      message: "Your booking notes and sharing choice were saved. Your private note stays visible only to you.",
+    };
+  } catch (error) {
+    return actionFailure(
+      error,
+      Object.fromEntries([...form.entries()].filter(([, value]) => typeof value === "string")) as Record<
+        string,
+        string
+      >,
+    );
+  }
+}

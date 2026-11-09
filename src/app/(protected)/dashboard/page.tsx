@@ -5,7 +5,7 @@ import { readOwnProfile } from "@/domains/profiles/service";
 import { hasRole } from "@/domains/auth/policy";
 import { describeRating } from "@/domains/reviews/policy";
 import { getTutorRatingSummary } from "@/domains/reviews/service";
-import type { TutorReputation } from "@/domains/reviews/types";
+import { DashboardSummaries } from "./summaries";
 
 type Action = { key: string; kicker: string; title: string; body: string; href: string; cta: string; tone?: "clay" };
 
@@ -20,6 +20,33 @@ function nextActions(isStudent: boolean, isTutor: boolean, isAdmin: boolean): Ac
       body: "Request a time with a published tutor. Requests are saved as payment pending — payment isn’t implemented, so there is no charge.",
       href: "/bookings",
       cta: "Request a session",
+    });
+  if (isStudent || isTutor)
+    actions.push({
+      key: "learning",
+      kicker: "Learning desk",
+      title: "Make your next step clear.",
+      body: "Open assessments, practice assignments and study plans shared within your tutoring relationships.",
+      href: "/learning",
+      cta: "Open your learning desk",
+    });
+  if (isStudent)
+    actions.push({
+      key: "discovery",
+      kicker: "Find support",
+      title: "Meet a tutor who fits.",
+      body: "Explore published teaching profiles by subject, mode, budget and service area.",
+      href: "/tutors",
+      cta: "Find a tutor",
+    });
+  if (isTutor)
+    actions.push({
+      key: "studio",
+      kicker: "Tutor studio",
+      title: "Shape your teaching practice.",
+      body: "Manage your public profile, subject offerings, rates, publication and availability.",
+      href: "/tutor-studio",
+      cta: "Open tutor studio",
     });
   if (isTutor)
     actions.push({
@@ -63,6 +90,16 @@ function nextActions(isStudent: boolean, isTutor: boolean, isAdmin: boolean): Ac
       href: "/admin",
       cta: "Open administration",
     });
+  if (isStudent || isTutor)
+    actions.push({
+      key: "resources",
+      kicker: "Learning resources",
+      title: "Find another way into the idea.",
+      body: "Explore curated material and discuss a focused learning question with the assistant when configured.",
+      href: "/resources",
+      cta: "Explore resources",
+      tone: "clay",
+    });
   actions.push({
     key: "profile",
     kicker: "Account",
@@ -77,15 +114,13 @@ function nextActions(isStudent: boolean, isTutor: boolean, isAdmin: boolean): Ac
 export default async function Dashboard() {
   if (!publicConfig()) return null;
   const { actor, client } = await protectedContext();
-  const profile = await readOwnProfile(client);
   const isStudent = hasRole(actor, "student");
   const isTutor = hasRole(actor, "tutor");
   const isAdmin = hasRole(actor, "administrator");
-  let reputation: TutorReputation[] | null = null;
-  if (isTutor) {
-    // The rating card is optional; a failed read hides it rather than showing an invented rating.
-    reputation = await getTutorRatingSummary(client).catch(() => null);
-  }
+  const [profile, reputation] = await Promise.all([
+    readOwnProfile(client),
+    isTutor ? getTutorRatingSummary(client).catch(() => null) : Promise.resolve(null),
+  ]);
   const actions = nextActions(isStudent, isTutor, isAdmin);
   return (
     <>
@@ -94,6 +129,7 @@ export default async function Dashboard() {
         <h1>Hello, {profile.display_name}.</h1>
         <p>Here’s where to pick up. Everything below links to something you can do today.</p>
       </section>
+      <DashboardSummaries client={client} actor={actor} />
       <div className="hub">
         <section className="hub-main" aria-labelledby="next-heading">
           <h2 id="next-heading" className="hub-section-title">

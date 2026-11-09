@@ -17,7 +17,33 @@ export type SessionPermissions = Readonly<{
   markCompleted: boolean;
   publishRecap: boolean;
   writeReflection: boolean;
+  uploadAttachment: boolean;
+  reviewAttachment: boolean;
 }>;
+
+export type SessionAgendaLinkInput =
+  | { kind: "resource" | "assignment" | "assessment"; id: string }
+  | { kind: "milestone"; studyPlanId: string; milestoneId: string };
+
+export type SessionAgendaLinkOption = SessionAgendaLinkInput & { label: string };
+export type SessionAgendaLink = SessionAgendaLinkInput & { position: number; label: string };
+
+export type SessionResource = { id: string; title: string; url: string; resource_type: string };
+
+export type SessionAttachment = {
+  id: string;
+  booking_id: string;
+  uploader_id: string;
+  file_mime: "application/pdf" | "image/png" | "image/jpeg" | "text/plain";
+  file_size_bytes: number;
+  status: "pending" | "approved" | "rejected";
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  review_reason: string | null;
+  created_at: string;
+};
+
+export type SessionAttachmentReviewInput = { decision: "approved" | "rejected"; reason?: string | null };
 
 export type SessionPlan = {
   booking_id: string;
@@ -26,6 +52,7 @@ export type SessionPlan = {
   tutor_agenda: string | null;
   student_updated_at: string | null;
   tutor_updated_at: string | null;
+  priority_topics: string[] | null;
 };
 
 export type SessionRecap = {
@@ -36,6 +63,9 @@ export type SessionRecap = {
   revision: number;
   published_at: string;
   updated_at: string;
+  topics: string[] | null;
+  strengths: string | null;
+  practice_areas: string | null;
 };
 
 export type SessionReflection = {
@@ -51,10 +81,15 @@ export type SessionWorkspace = {
   booking: Booking;
   tutorName: string;
   subjectName: string;
+  /** Current viewer's validated IANA zone; UTC instants in `booking` are unchanged. */
+  viewerTimezone: string;
   plan: SessionPlan | null;
   recap: SessionRecap | null;
   /** Always null for the tutor: the reflection is never read on the tutor's behalf. */
   reflection: SessionReflection | null;
+  agendaLinks: SessionAgendaLink[];
+  recapResources: SessionResource[];
+  attachments: SessionAttachment[];
   observedAt: number;
 };
 

@@ -10,6 +10,7 @@ export type Review = {
   tutor_id: string;
   rating: number;
   comment: string | null;
+  recommended: boolean;
   status: "visible" | "hidden";
   created_at: string;
 };
@@ -18,6 +19,7 @@ export type TutorRatingSummary = {
   tutor_id: string;
   rating_count: number;
   rating_avg: number | null;
+  recommendation_count: number;
   updated_at: string;
 };
 

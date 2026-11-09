@@ -19,5 +19,11 @@ export function parseReview(form: FormData) {
   if (comment.length > COMMENT_MAX) fields.comment = `Keep your comment to ${COMMENT_MAX} characters or fewer.`;
   else if (CONTROL_CHARACTERS.test(comment)) fields.comment = "Remove unsupported characters from your comment.";
   if (Object.keys(fields).length) throw new InputError(fields);
-  return { booking, rating, comment: comment || null };
+  const recommendValue = form.get("recommend");
+  const recommend = recommendValue === "on" || recommendValue === "true";
+  if (recommendValue !== null && !["on", "true", "false", ""].includes(String(recommendValue))) {
+    fields.recommend = "Choose whether to recommend this tutor.";
+  }
+  if (Object.keys(fields).length) throw new InputError(fields);
+  return { booking, rating, comment: comment || null, recommended: recommend };
 }

@@ -9,8 +9,8 @@ import { isReviewable, requireReviewAuthor } from "./policy";
 import { parseReview } from "./validation";
 import type { Review, ReviewableBooking, TutorRatingSummary, TutorReputation } from "./types";
 
-const REVIEW_FIELDS = "id,booking_id,tutor_id,rating,comment,status,created_at";
-const SUMMARY_FIELDS = "tutor_id,rating_count,rating_avg,updated_at";
+const REVIEW_FIELDS = "id,booking_id,tutor_id,rating,comment,recommended,status,created_at";
+const SUMMARY_FIELDS = "tutor_id,rating_count,rating_avg,recommendation_count,updated_at";
 const DUPLICATE_MESSAGE = "You’ve already reviewed this session. Each completed session can be reviewed once.";
 
 type BookingRow = Pick<Booking, "id" | "student_id" | "tutor_id" | "subject_id" | "starts_at" | "ends_at" | "status">;

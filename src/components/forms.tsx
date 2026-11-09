@@ -288,6 +288,10 @@ export function RoleForm() {
           </select>
           <FieldError message={state.fields?.operation} />
         </div>
+        <label className="checkbox">
+          <input type="checkbox" name="confirmed" required />
+          <span>I confirm this capability change.</span>
+        </label>
         <SubmitButton pending={pending}>Record role change</SubmitButton>
       </fieldset>
       <FormResult state={state} />
@@ -328,6 +332,10 @@ export function AccountStatusForm() {
           error={state.fields?.reason}
           hint="Required for the audit trail. Your own account cannot be changed here."
         />
+        <label className="checkbox">
+          <input type="checkbox" name="confirmed" required />
+          <span>I confirm this account status change.</span>
+        </label>
         <SubmitButton pending={pending}>Record status change</SubmitButton>
       </fieldset>
       <FormResult state={state} />

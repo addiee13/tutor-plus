@@ -9,7 +9,14 @@ import {
   sessionPermissions,
   sessionPhase,
 } from "../../src/domains/sessions/policy";
-import { parseRecap, parseReflection, parseStudentPlan, parseTutorAgenda } from "../../src/domains/sessions/validation";
+import {
+  parseRecap,
+  parseReflection,
+  parseSessionAgendaLinks,
+  parseStudentPlan,
+  parseStructuredRecap,
+  parseTutorAgenda,
+} from "../../src/domains/sessions/validation";
 import { getWorkspace, publishRecap, saveStudentPlan } from "../../src/domains/sessions/service";
 import { describeRating, isReviewable, requireReviewAuthor } from "../../src/domains/reviews/policy";
 import { parseReview } from "../../src/domains/reviews/validation";
@@ -123,6 +130,7 @@ describe("UC-09 input validation", () => {
       booking: bookingId,
       goals: "Factor quadratics",
       questions: null,
+      priorityTopics: [],
     });
     expect(() => parseStudentPlan(form({ booking: bookingId, goals: "   " }))).toThrow(InputError);
     expect(() => parseStudentPlan(form({ booking: bookingId, goals: "x".repeat(2001) }))).toThrow(InputError);
@@ -134,6 +142,27 @@ describe("UC-09 input validation", () => {
     expect(() => parseTutorAgenda(form({ booking: bookingId, agenda: "bad\u0007bell" }))).toThrow(InputError);
   });
 
+  it("counts long session text after canonical line-ending normalization", () => {
+    const visibleAgenda = `${"A".repeat(1999)}\n${"B".repeat(2000)}`;
+    const browserTransport = visibleAgenda.replace(/\n/g, "\r\n");
+    expect(visibleAgenda).toHaveLength(4000);
+    expect(browserTransport).toHaveLength(4001);
+    expect(parseTutorAgenda(form({ booking: bookingId, agenda: visibleAgenda })).agenda).toBe(visibleAgenda);
+    expect(parseTutorAgenda(form({ booking: bookingId, agenda: browserTransport })).agenda).toBe(visibleAgenda);
+    expect(parseTutorAgenda(form({ booking: bookingId, agenda: "first\rsecond\tthird" })).agenda).toBe(
+      "first\nsecond\tthird",
+    );
+    const tooLong = `${"A".repeat(2000)}\r\n${"B".repeat(2000)}`;
+    expect(() => parseTutorAgenda(form({ booking: bookingId, agenda: tooLong }))).toThrow(InputError);
+  });
+
+  it("normalizes line endings before the 2000-character student goal limit", () => {
+    const goal = `${"A".repeat(999)}\r\n${"B".repeat(1000)}`;
+    expect(goal.replace(/\r\n?/g, "\n")).toHaveLength(2000);
+    expect(parseStudentPlan(form({ booking: bookingId, goals: goal })).goals).toBe(goal.replace(/\r\n?/g, "\n"));
+    expect(() => parseStudentPlan(form({ booking: bookingId, goals: `${goal}x` }))).toThrow(InputError);
+  });
+
   it("requires a recap summary and a reflection, and ignores forged authorship fields", () => {
     const recap = parseRecap(form({ booking: bookingId, summary: "Covered roots", tutor_id: "forged", revision: "9" }));
     expect(recap).toEqual({ booking: bookingId, summary: "Covered roots", mastery_notes: null, next_steps: null });
@@ -143,6 +172,62 @@ describe("UC-09 input validation", () => {
       booking: bookingId,
       reflection: "Private",
     });
+  });
+
+  it("keeps optional mastery notes separate from required recap strengths and practice areas", () => {
+    const visibleNotes = `${"N".repeat(999)}\n${"N".repeat(1000)}`;
+    const browserNotes = visibleNotes.replace(/\n/g, "\r\n");
+    const parsed = parseStructuredRecap({
+      bookingId,
+      summary: "Covered fraction models",
+      topics: ["Fractions"],
+      masteryNotes: browserNotes,
+      strengths: "Uses visual models",
+      practiceAreas: "Compare unlike denominators",
+      nextSteps: null,
+      resourceIds: [],
+    });
+    expect(parsed).toMatchObject({
+      masteryNotes: visibleNotes,
+      strengths: "Uses visual models",
+      practiceAreas: "Compare unlike denominators",
+    });
+    expect(
+      parseStructuredRecap({
+        bookingId,
+        summary: "Recap",
+        topics: ["Fractions"],
+        strengths: "Strength",
+        practiceAreas: "Practice",
+        resourceIds: [],
+      }).masteryNotes,
+    ).toBeNull();
+    expect(() =>
+      parseStructuredRecap({
+        bookingId,
+        summary: "Recap",
+        topics: ["Fractions"],
+        masteryNotes: "x".repeat(2001),
+        strengths: "Strength",
+        practiceAreas: "Practice",
+        resourceIds: [],
+      }),
+    ).toThrow(InputError);
+  });
+
+  it("accepts only typed, UUID-backed learning links for a session agenda", () => {
+    expect(
+      parseSessionAgendaLinks([
+        { kind: "resource", id: bookingId },
+        { kind: "milestone", studyPlanId: bookingId, milestoneId: tutorId },
+      ]),
+    ).toEqual([
+      { kind: "resource", id: bookingId },
+      { kind: "milestone", studyPlanId: bookingId, milestoneId: tutorId },
+    ]);
+    expect(() => parseSessionAgendaLinks([{ kind: "milestone", studyPlanId: bookingId, milestoneId: "raw" }])).toThrow(
+      InputError,
+    );
   });
 });
 
@@ -164,6 +249,19 @@ describe("UC-09 service contracts (mocked, not live persistence)", () => {
     const workspace = await getWorkspace(fixture.client, bookingId);
     expect(workspace.reflection).toMatchObject({ reflection: "Mine" });
     expect(workspace.can.writeReflection).toBe(true);
+    expect(workspace.viewerTimezone).toBe("UTC");
+  });
+
+  it("loads and validates the current viewer timezone with a UTC fallback", async () => {
+    const valid = database({
+      bookings: [booking()],
+      profiles: [{ timezone: "America/New_York" }],
+    });
+    await expect(getWorkspace(valid.client, bookingId)).resolves.toMatchObject({ viewerTimezone: "America/New_York" });
+    expect(valid.reads).toContain("profiles");
+
+    const invalid = database({ bookings: [booking()], profiles: [{ timezone: "Not/AZone" }] });
+    await expect(getWorkspace(invalid.client, bookingId)).resolves.toMatchObject({ viewerTimezone: "UTC" });
   });
 
   it("treats malformed and hidden booking IDs as forbidden", async () => {
@@ -173,13 +271,14 @@ describe("UC-09 service contracts (mocked, not live persistence)", () => {
     });
   });
 
-  it("passes only the migration's named arguments to save_session_goals", async () => {
+  it("passes priority topics to the relationship-scoped preparation RPC", async () => {
     const fixture = database({ bookings: [booking()] }, { data: "2026-10-18T12:00:00Z", error: null });
     await saveStudentPlan(fixture.client, form({ booking: bookingId, goals: "Goals", student_id: "forged" }));
-    expect(fixture.rpc).toHaveBeenCalledExactlyOnceWith("save_session_goals", {
+    expect(fixture.rpc).toHaveBeenCalledExactlyOnceWith("save_session_preparation", {
       booking: bookingId,
       goals: "Goals",
       questions: null,
+      priority_topics: [],
     });
   });
 
@@ -199,8 +298,11 @@ describe("UC-07 review rules", () => {
       booking: bookingId,
       rating: 5,
       comment: "Great",
+      recommended: false,
     });
     expect(parseReview(form({ booking: bookingId, rating: "1" })).comment).toBeNull();
+    expect(parseReview(form({ booking: bookingId, rating: "4", recommend: "on" })).recommended).toBe(true);
+    expect(() => parseReview(form({ booking: bookingId, rating: "4", recommend: "maybe" }))).toThrow(InputError);
     for (const rating of ["0", "6", "4.5", "", "five", "-1"])
       expect(() => parseReview(form({ booking: bookingId, rating }))).toThrow(InputError);
     expect(() => parseReview(form({ booking: bookingId, rating: "4", comment: "x".repeat(2001) }))).toThrow(InputError);
@@ -210,7 +312,7 @@ describe("UC-07 review rules", () => {
     const parsed = parseReview(
       form({ booking: bookingId, rating: "4", rating_avg: "5", student_id: "x", tutor_id: "y" }),
     );
-    expect(Object.keys(parsed).sort()).toEqual(["booking", "comment", "rating"]);
+    expect(Object.keys(parsed).sort()).toEqual(["booking", "comment", "rating", "recommended"]);
   });
 
   it("allows only the booked student and only completed sessions", () => {
@@ -261,7 +363,7 @@ describe("UC-07 service contracts (mocked, not live persistence)", () => {
     expect(foreign.rpc).not.toHaveBeenCalled();
   });
 
-  it("sends only booking, rating and comment to submit_review", async () => {
+  it("sends the authorized review content and explicit recommendation flag to submit_review", async () => {
     const fixture = database(
       { bookings: [booking({ status: "completed" })] },
       { data: "00000000-0000-4000-8000-000000000099", error: null },
@@ -273,17 +375,21 @@ describe("UC-07 service contracts (mocked, not live persistence)", () => {
       const query = originalFrom(table);
       if (table === "reviews" && reviewReads++ > 0) {
         query.single = vi.fn(async () => ({
-          data: { id: "00000000-0000-4000-8000-000000000099", rating: 4 },
+          data: { id: "00000000-0000-4000-8000-000000000099", rating: 4, recommended: true },
           error: null,
         }));
       }
       return query;
     });
-    const saved = await submitReview(fixture.client, form({ booking: bookingId, rating: "4", rating_avg: "5" }));
+    const saved = await submitReview(
+      fixture.client,
+      form({ booking: bookingId, rating: "4", recommend: "on", rating_avg: "5" }),
+    );
     expect(fixture.rpc).toHaveBeenCalledExactlyOnceWith("submit_review", {
       booking: bookingId,
       rating: 4,
       comment: null,
+      recommended: true,
     });
     expect(saved).toMatchObject({ rating: 4 });
   });
