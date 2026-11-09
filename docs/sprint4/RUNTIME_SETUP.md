@@ -26,6 +26,8 @@ Run `npm run check`, `npm run build`, then `npm start -- --hostname 127.0.0.1 --
 
 Provider configuration is a separate deployment step. Local signed-event fixtures prove the webhook boundary without proving an actual Resend message or inbox receipt. Deterministic assistant tests prove adapter behavior without claiming a live model response.
 
+The current local and hosted assistant configuration uses `OPENAI_BASE_URL=https://openrouter.ai/api/v1` and `OPENAI_MODEL=nvidia/nemotron-3.5-lightning:free`. Keep the key private. `ASSISTANT_TIMEOUT_MS=60000` permits slower free inference; the service bounds the setting to 1–60 seconds, and the assistant route reserves 90 seconds for authorization, inference and persistence. Free-provider availability and account rate limits still apply. Real local and production browser responses are recorded in [OpenRouter verification](../evidence/sprint4/openrouter-ai-verification.json).
+
 ## Catalogs, policy and private learning controls
 
 Administrators manage notification templates at `/admin/templates`, versioned assessment templates at `/admin/assessment-templates`, and fact-based badge thresholds at `/admin/badges`. Assessment-template answer keys are restricted to current Administrators and authorized Tutors; a learner-facing assessment receives its own copied definition. Later template edits do not rewrite existing attempts. Policy/template edits require confirmation and a reason and retain audit provenance.

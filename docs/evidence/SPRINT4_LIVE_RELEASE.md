@@ -1,6 +1,6 @@
 # Sprint 4 hosted release — November 9, 2026
 
-Live application: **https://tutor-plus.me**. Final Vercel deployment `dpl_4m2UEAkep1FMb6XqVC9Xda86AgMV` is Ready; aliases include `tutorplus-one.vercel.app` and `www.tutor-plus.me`. Final application source is commit `c2d4ccc`; the database permission correction is commit `92f0d2c`. Both are on `main` and pushed to `origin/main`. The 66 core browser observations and upload workflows ran on the preceding `e152228` deployment; the final release adds assistant validation clarity and truthful application identification, followed by a targeted live assistant check.
+Live application: **https://tutor-plus.me**. Latest Vercel deployment `dpl_DLye6jUAQ968atsZj42csPSow1Gr` is Ready; aliases include `tutorplus-one.vercel.app` and `www.tutor-plus.me`. Latest application source is commit `0ee9778`; the database permission correction is commit `92f0d2c`. Both are on `main` and pushed to `origin/main`. The 66 core browser observations and upload workflows ran on the preceding `e152228` deployment; the final release adds assistant validation clarity and truthful application identification, followed by a targeted live assistant check.
 
 ## Changes delivered
 
@@ -30,7 +30,9 @@ Screenshots are under [release-20261109](screenshots/sprint4/release-20261109/).
 
 ## Remaining external limits
 
-The supplied AgentRouter key was tried against the configured endpoint. It returned HTTP 401 with `unauthorized_client_error` and “unauthorized client detected.” A key/endpoint permitted for this custom application is required for generated answers. The new key is configured server-side; it is not in Git. No client impersonation was added to evade the provider restriction.
+**Update, November 9:** OpenRouter replaced AgentRouter after real local and production assistant responses passed. The active model is `nvidia/nemotron-3.5-lightning:free`; the configured provider timeout is bounded at 60 seconds. See [OpenRouter verification](sprint4/openrouter-ai-verification.json). Location lookup remains the outstanding provider setup.
+
+Historical initial provider finding: the supplied AgentRouter key was tried against the configured endpoint. It returned HTTP 401 with `unauthorized_client_error` and “unauthorized client detected.” A key/endpoint permitted for this custom application is required for generated answers. The new key is configured server-side; it is not in Git. No client impersonation was added to evade the provider restriction.
 
 `MAPBOX_ACCESS_TOKEN` is not available. Manual city/postal geocoding and location-based search need that configuration; virtual discovery and the remaining learning workflows do not. The implementation requests permanent geocoding because tutor locations are persisted, so the Mapbox account must permit that use.
 

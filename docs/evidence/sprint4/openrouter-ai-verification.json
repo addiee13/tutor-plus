@@ -1,0 +1,34 @@
+{
+  "deployment": "dpl_DLye6jUAQ968atsZj42csPSow1Gr",
+  "applicationCommit": "0ee9778",
+  "provider": "OpenRouter",
+  "baseURL": "https://openrouter.ai/api/v1",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "listedPromptPrice": 0,
+  "listedCompletionPrice": 0,
+  "timeoutMs": 60000,
+  "local": {
+    "url": "http://127.0.0.1:3020/assistant",
+    "timestamp": "2026-11-09T07:02:23.744Z",
+    "configuredModel": "nvidia/nemotron-3.5-lightning:free",
+    "realResponse": true,
+    "answer": "**Selected session goal (from context):** \"Check common factors with worked examples.\"\n\n**Short worked example (draft, for illustration only):**\n*Task:* Find the common factors of 12 and 18.\n\n- List the factors of each number:\n  - Factors of 12: 1, 2, 3, 4, 6, 12\n  - Factors of 18: 1, 2, 3, 6, 9, 18\n- Identify the common factors: 1, 2, 3, 6\n- The greatest common factor (GCF) is 6.\n\n**How this aligns with the goal:** This demonstrates the process of \"checking common factors\" using a worked example, as specified in your session goals.\n\n**Important notes:**\n- This example is a draft generated for alignment with your stated goal; it is not pulled from a record or external database.\n- It does not change any records or policies.\n- Authorized human confirmation is required before using it in a formal learning context.\n- If you need a different pair of numbers, a different format, or integration with specific materials, please let me know and I’ll adjust accordingly.",
+    "phoneOverflow": false
+  },
+  "production": {
+    "url": "https://tutor-plus.me/assistant",
+    "timestamp": "2026-11-09T07:04:12.226Z",
+    "configuredModel": "nvidia/nemotron-3.5-lightning:free",
+    "realResponse": true,
+    "answer": "**Worked Example: Finding a Common Factor**\n\n**Problem:** Find the greatest common factor (GCF) of 12 and 18.\n\n**Step 1:** List the factors of each number.  \n- Factors of 12: 1, 2, 3, 4, 6, 12  \n- Factors of 18: 1, 2, 3, 6, 9, 18  \n\n**Step 2:** Identify the factors common to both lists.  \nCommon factors: 1, 2, 3, 6  \n\n**Step 3:** Select the greatest of the common factors.  \nGCF = 6  \n\n**Verification:** 12 ÷ 6 = 2 and 18 ÷ 6 = 3, both whole numbers, confirming 6 is a common factor.\n\n---\n\n**Note:** This example is a draft created to align with the selected session goal *“Check common factors with worked examples.”* It requires authorized human confirmation before being used in a learning record.",
+    "phoneOverflow": false
+  },
+  "checks": {
+    "platformUnitTests": 15,
+    "typecheck": "passed",
+    "eslint": "passed",
+    "vercelBuild": "passed",
+    "githubCI": "passed"
+  },
+  "credentialHandling": "Key stored in ignored local environment and sensitive Vercel setting; not committed."
+}
