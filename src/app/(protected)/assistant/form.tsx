@@ -6,6 +6,7 @@ import type { Resource } from "@/domains/platform/types";
 import type { LearningRelationship, StudyPlanListItem } from "@/domains/learning/types";
 import { askAssistantAction, reportAssistantResponseAction, type AssistantState } from "./actions";
 import { WorkflowForm } from "@/components/workspace/workflow-form";
+import { AssistantThinking } from "./thinking";
 const initial: AssistantState = { message: "" };
 type AssistantFormProps = {
   configured: boolean;
@@ -44,14 +45,15 @@ function AssistantFormContent({
   const retained = (key: string) => (failed ? String(submitted?.get(key) ?? "") : "");
   const response = useRef<HTMLElement>(null);
   useEffect(() => {
-    if (state.answer) response.current?.focus();
-  }, [state]);
+    if (state.answer && !pending) response.current?.focus();
+  }, [state, pending]);
   return (
     <div className="workspace-stack">
       <form
         action={action}
         className="form"
         aria-label="Ask the learning assistant"
+        aria-busy={pending}
         onSubmit={(event) => setSubmitted(new FormData(event.currentTarget))}
       >
         <fieldset disabled={!configured || pending} className="form-fields">
@@ -143,13 +145,14 @@ function AssistantFormContent({
             </fieldset>
             <p className="hint">Only authorized shared context is used. Your private reflections are not included.</p>
           </details>
-          <button className="button primary" type="submit">
+          <button className="button primary" type="submit" disabled={!configured || pending}>
             {pending ? "Thinking…" : "Ask a learning question"}
             <span aria-hidden="true">→</span>
           </button>
         </fieldset>
-        <FormResult state={state} />
+        {!pending && <FormResult state={state} />}
       </form>
+      {pending && <AssistantThinking />}
       <div>
         <button className="button secondary" type="button" onClick={onClear} disabled={pending}>
           Clear question & output
@@ -158,7 +161,7 @@ function AssistantFormContent({
           This clears the local draft and generated output. Required usage and security records are retained.
         </p>
       </div>
-      {state.answer && (
+      {!pending && state.answer && (
         <section ref={response} tabIndex={-1} className="workspace-record" aria-label="Assistant response">
           <span className="eyebrow">Learning assistant</span>
           <h3>Draft guidance</h3>

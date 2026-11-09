@@ -1,0 +1,122 @@
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  scroll-margin-block: 1.5rem;
+}
+
+.mark {
+  position: relative;
+  display: grid;
+  flex: 0 0 3.5rem;
+  height: 3.5rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--forest-tint);
+  color: var(--forest);
+}
+
+.orbit {
+  position: absolute;
+  inset: 0;
+  border: 1.5px solid transparent;
+  border-top-color: var(--forest);
+  border-right-color: color-mix(in srgb, var(--forest) 25%, transparent);
+  border-radius: 50%;
+  animation: orbit 3.2s linear infinite;
+}
+
+.content {
+  min-width: 0;
+  padding-block: 0.15rem;
+}
+
+.heading {
+  margin: 0 0 0.5rem;
+  color: var(--forest);
+  font-family: var(--font-head);
+  font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.shimmer {
+  display: inline-block;
+  color: var(--forest);
+}
+
+@supports (background-clip: text) {
+  .shimmer {
+    background-image:
+      linear-gradient(90deg, transparent calc(50% - 28px), #65775b, transparent calc(50% + 28px)),
+      linear-gradient(var(--forest), var(--forest));
+    background-size:
+      250% 100%,
+      auto;
+    background-repeat: no-repeat;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+.description {
+  max-width: 48ch;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.reassurance {
+  max-width: 48ch;
+  margin: 0.85rem 0 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  .mark {
+    flex-basis: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit {
+    animation: none;
+  }
+
+  .shimmer {
+    background: none;
+    color: var(--forest);
+  }
+}
+
+@media (forced-colors: active) {
+  .card {
+    border-color: CanvasText;
+  }
+
+  .shimmer {
+    background: none;
+    color: CanvasText;
+  }
+}
