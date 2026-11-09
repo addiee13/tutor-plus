@@ -1,0 +1,71 @@
+{
+  "feature": "AI Learning Progress Summary",
+  "appCommit": "081f4bed5a7a069e4aa0142a830c07142fafcf2f",
+  "deployment": {
+    "id": "dpl_AzAgYYibQY2vkgtTnwsjC3gsHsCu",
+    "url": "https://tutorplus-jx3aii0g3-adams-projects-c67ba2f3.vercel.app",
+    "canonical": "https://tutor-plus.me",
+    "status": "Ready"
+  },
+  "quality": {
+    "unitTests": 236,
+    "unitFiles": 18,
+    "typecheck": "passed",
+    "eslint": "passed",
+    "changedSourceFormatting": "passed",
+    "githubBuildRun": 42584340237,
+    "githubBuildConclusion": "success",
+    "vercelOptimizedBuild": "passed"
+  },
+  "local": {
+    "base": "http://127.0.0.1:3020",
+    "at": "2026-11-09T08:11:35.089Z",
+    "checks": [
+      "real free-model summary from calculus demo evidence",
+      "demo label and evidence limitation preserved",
+      "trusted source links shown",
+      "loading and duplicate-submit protection",
+      "phone390 no overflow",
+      "clear and refresh remove transient summary",
+      "date-filtered empty evidence returns helpful error",
+      "logout denies progress",
+      "tutor viewing learner has no generation form",
+      "no browser page errors"
+    ]
+  },
+  "production": {
+    "base": "https://tutor-plus.me",
+    "at": "2026-11-09T08:14:01.115Z",
+    "checks": [
+      "real free-model summary from calculus demo evidence",
+      "demo label and evidence limitation preserved",
+      "trusted source links shown",
+      "loading and duplicate-submit protection",
+      "phone390 no overflow",
+      "clear and refresh remove transient summary",
+      "date-filtered empty evidence returns helpful error",
+      "logout denies progress",
+      "tutor viewing learner has no generation form",
+      "no browser page errors"
+    ]
+  },
+  "existingAssistantRegression": {
+    "url": "https://tutor-plus.me",
+    "timestamp": "2026-11-09T08:14:25.617Z",
+    "realProviderResponse": true,
+    "loaderVisibleDuringRealRequest": true,
+    "clearsOnSuccess": true,
+    "previousAnswerHiddenDuringNewRequest": true,
+    "previousSuccessHiddenDuringNewRequest": true,
+    "clearsOnValidationFailure": true,
+    "phoneFullyVisible": true
+  },
+  "notes": [
+    "Real provider responses using the existing OpenRouter free-model configuration.",
+    "Calculus evidence is an explicitly labeled demo; no actual mastery or improvement is claimed.",
+    "Rendered desktop1440x1000 and phone390x844 screenshots visually inspected.",
+    "Initial reasoning-enabled attempt produced an incomplete response; summary reasoning disabled and real local/live checks passed.",
+    "Summaries are transient. Request quota and outcome metadata persist through the existing database RPCs.",
+    "The output is escaped text with recognized headings, not a full Markdown or mathematics renderer."
+  ]
+}
