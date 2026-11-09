@@ -307,7 +307,7 @@
 
 .picks {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
   gap: 0.5rem;
 }
 
@@ -396,6 +396,7 @@
 }
 
 .heatCell {
+  position: relative;
   height: 1.9rem;
   padding: 0;
   border-radius: 4px;
@@ -416,6 +417,24 @@
 .heatCell[data-active] {
   outline: 2px solid var(--focus);
   outline-offset: 1px;
+}
+
+.heatCell[data-selected]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--selection-from);
+  right: calc(100% - var(--selection-to));
+  border: 2px solid var(--focus);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--focus) 25%, transparent);
+  pointer-events: none;
+}
+
+.legend i[data-selected] {
+  border: 2px solid var(--focus);
+  background: color-mix(in srgb, var(--focus) 25%, var(--forest));
 }
 
 .heatCell[data-tone="many"],
@@ -478,7 +497,7 @@
 
 .slotChips {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
   gap: 0.4rem;
 }
 
