@@ -21,6 +21,7 @@ export function ProgressFilterForm({
   return (
     <Section title="Choose the progress view">
       <form
+        key={`${studentId}:${JSON.stringify(filters)}`}
         action="/progress"
         method="get"
         className="form"
