@@ -1,0 +1,17 @@
+{
+  "caseId": "9.3",
+  "layer": "actual production browser multipart/ServerAction/PostgREST persistence",
+  "beforeCorrection": {
+    "visibleCharacters": 4000,
+    "transportCharacters": 4001,
+    "crlfPairs": 1,
+    "httpStatus": 200,
+    "outcome": "field validation refusal",
+    "persistedPreviousCharacters": 37,
+    "previousValueUnchanged": true
+  },
+  "cause": "Browser form transport expands LF to CRLF. Session validators measured transport representation before canonical line-ending normalization.",
+  "correction": "Session collect/textValue normalize CRLF and lone CR to LF before trim and length checks; shared scalar and Auth helpers unchanged.",
+  "postCorrectionBrowserResult": "Passed actual desktop and phone:4000-character agenda with line break/tab persists; blank/4001/unsupported-control submissions preserve prior value. Additional long-text helper family corrected and unit-tested.",
+  "privateTextRetained": false
+}

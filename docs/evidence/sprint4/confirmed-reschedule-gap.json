@@ -1,0 +1,11 @@
+{
+  "case": "4.12",
+  "fixtureState": "confirmed",
+  "error": {
+    "code": "22023",
+    "details": null,
+    "hint": null,
+    "message": "Only an active payment-pending hold can be rescheduled"
+  },
+  "oldBookingUnchanged": true
+}

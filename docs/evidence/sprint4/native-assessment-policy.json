@@ -1,0 +1,51 @@
+[
+  {
+    "name": "5.1 Student answer keys absent",
+    "rows": 0,
+    "error": null
+  },
+  {
+    "name": "5.1 Unrelated questions absent",
+    "rows": 0,
+    "error": null
+  },
+  {
+    "name": "5.1 Unrelated submission denied",
+    "code": "42501"
+  },
+  {
+    "name": "5.1 Student finalization",
+    "code": null
+  },
+  {
+    "name": "5.1 Objective and pending subjective state",
+    "status": "submitted",
+    "auto_score": 2,
+    "max_score": 5,
+    "score": null
+  },
+  {
+    "name": "5.1 Finalization replay rejected safely",
+    "code": "22023"
+  },
+  {
+    "name": "5.2 Score4/3 refused",
+    "code": "22023"
+  },
+  {
+    "name": "5.2 Unrelated scorer refused",
+    "code": "42501"
+  },
+  {
+    "name": "5.2 Score3/3 accepted",
+    "code": null
+  },
+  {
+    "name": "5.2 Canonical result",
+    "status": "scored",
+    "auto_score": 2,
+    "tutor_score": 3,
+    "max_score": 5,
+    "score": 5
+  }
+]

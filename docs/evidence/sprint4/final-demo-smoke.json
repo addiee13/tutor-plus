@@ -1,0 +1,19 @@
+{
+  "scope": "final critical local-demo read smoke, not production-readiness or performance certification",
+  "sourceSha256": "9b0abd1f57aaa95a93be5b47add29c35c1d9f12b7fe4004fd7d22eef2de708bf",
+  "buildId": "LsAzehHAIZUFP9UgElinP",
+  "target": "http://localhost:3018",
+  "passed": true,
+  "observations": [
+    "Real local login and dashboard read",
+    "Booking workspace and canonical feasible slot read; no reservation submitted",
+    "USD-budget filtered discovery returns the eligible USD fixture",
+    "Positive matching result and factual factor version after currency eligibility",
+    "Dated progress workspace read",
+    "Truthful adapter-disabled assistant state",
+    "Anonymous phone discovery rendered without horizontal overflow"
+  ],
+  "externalProviderRequests": 0,
+  "bookingWrites": 0,
+  "screenshot": "docs/evidence/screenshots/sprint4/final-demo/phone-discovery.png"
+}

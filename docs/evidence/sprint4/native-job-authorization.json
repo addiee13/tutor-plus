@@ -1,0 +1,25 @@
+{
+  "layer": "native HTTP",
+  "observations": [
+    {
+      "path": "/api/jobs/booking-reminders",
+      "variant": "missing token",
+      "status": 403
+    },
+    {
+      "path": "/api/jobs/booking-reminders",
+      "variant": "wrong token",
+      "status": 403
+    },
+    {
+      "path": "/api/jobs/notification-outbox",
+      "variant": "missing token",
+      "status": 403
+    },
+    {
+      "path": "/api/jobs/notification-outbox",
+      "variant": "wrong token",
+      "status": 403
+    }
+  ]
+}

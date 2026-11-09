@@ -1,0 +1,12 @@
+{
+  "layer": "actual Next development requests and browser action",
+  "observations": [
+    "Invalid callback token canary absent from new development log bytes",
+    "Learner query canary absent from new development log bytes",
+    "Actual failed login action name and arguments suppressed",
+    "Credential canary absent",
+    "Browser warning canary is not forwarded to the terminal"
+  ],
+  "logBytesInspected": 0,
+  "externalEmailSent": false
+}

@@ -1,0 +1,1415 @@
+{
+  "scope": "Optimized local demo; no hosted deployment or production-readiness claim.",
+  "revisedScope": "User requested a critical-fix finish because credits were ending. Exhaustive performance and provider extras deferred.",
+  "runs": [
+    {
+      "name": "critical-corrected",
+      "folder": "/tmp/tutorplus-production-final-corrected",
+      "note": "22 passed;3 quality-harness failures and1 desktop-touch variant not applicable. Functional Auth/fault/reputation/session cases passed on both viewports.",
+      "stats": {
+        "startTime": "2026-11-08T22:49:12.495Z",
+        "duration": 209856.222,
+        "expected": 22,
+        "skipped": 1,
+        "unexpected": 3,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "file": "final-auth.spec.ts",
+          "case": "pending signup, actual SMTP token through app callback, reload and fresh-browser replay denial",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-auth.spec.ts",
+          "case": "actual numeric SMTP code authenticates once and the real browser session obeys its original deadline",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-auth.spec.ts",
+          "case": "pending signup, actual SMTP token through app callback, reload and fresh-browser replay denial",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-auth.spec.ts",
+          "case": "actual numeric SMTP code authenticates once and the real browser session obeys its original deadline",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "signup and resend outage show failure without creating an identity or claiming email delivery",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "failed reservation reports retry and leaves the canonical booking rows unchanged",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "failed session planner save retains the old canonical goals after reload",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "signup and resend outage show failure without creating an identity or claiming email delivery",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "failed reservation reports retry and leaves the canonical booking rows unchanged",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "failed session planner save retains the old canonical goals after reload",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "module pages retain names, keyboard focus, mobile targets and reduced-motion content",
+          "project": "desktop",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "keyboard reaches and saves owned profile then logout removes private access",
+          "project": "desktop",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "phone touch events complete profile save and logout",
+          "project": "desktop",
+          "outcomes": [
+            "skipped"
+          ],
+          "status": "skipped"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "module pages retain names, keyboard focus, mobile targets and reduced-motion content",
+          "project": "phone",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "keyboard reaches and saves owned profile then logout removes private access",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "phone touch events complete profile save and logout",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-reputation.spec.ts",
+          "case": "one completed-session review, factual public recommendation and audited hide/restore",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-reputation.spec.ts",
+          "case": "one completed-session review, factual public recommendation and audited hide/restore",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "student preparation accepts2000 but refuses blank, overlength and control input without overwriting",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "tutor agenda accepts4000 and line breaks but rejects blank,4001 and unsupported controls",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "recap keeps additional notes optional, permits exact2000 notes and4000 summary, and refuses overflow",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "profile viewer zone renders booking/session local time without changing the canonical instant",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "student preparation accepts2000 but refuses blank, overlength and control input without overwriting",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "tutor agenda accepts4000 and line breaks but rejects blank,4001 and unsupported controls",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "recap keeps additional notes optional, permits exact2000 notes and4000 summary, and refuses overflow",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "profile viewer zone renders booking/session local time without changing the canonical instant",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        }
+      ]
+    },
+    {
+      "name": "normalization-final-attempt",
+      "folder": "/tmp/tutorplus-production-final-normalized",
+      "note": "13 passed; remaining checks were interrupted by a local test launcher failure or a corrected audit-harness issue; not reported as a green run.",
+      "stats": {
+        "startTime": "2026-11-08T22:58:35.741Z",
+        "duration": 135271.58099999998,
+        "expected": 13,
+        "skipped": 1,
+        "unexpected": 12,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "file": "final-auth.spec.ts",
+          "case": "pending signup, actual SMTP token through app callback, reload and fresh-browser replay denial",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-auth.spec.ts",
+          "case": "actual numeric SMTP code authenticates once and the real browser session obeys its original deadline",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-auth.spec.ts",
+          "case": "pending signup, actual SMTP token through app callback, reload and fresh-browser replay denial",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-auth.spec.ts",
+          "case": "actual numeric SMTP code authenticates once and the real browser session obeys its original deadline",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "signup and resend outage show failure without creating an identity or claiming email delivery",
+          "project": "desktop",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "failed reservation reports retry and leaves the canonical booking rows unchanged",
+          "project": "desktop",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "failed session planner save retains the old canonical goals after reload",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "signup and resend outage show failure without creating an identity or claiming email delivery",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "failed reservation reports retry and leaves the canonical booking rows unchanged",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-failures.spec.ts",
+          "case": "failed session planner save retains the old canonical goals after reload",
+          "project": "phone",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "module pages retain names, keyboard focus, mobile targets and reduced-motion content",
+          "project": "desktop",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "keyboard reaches and saves owned profile then logout removes private access",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "phone touch events complete profile save and logout",
+          "project": "desktop",
+          "outcomes": [
+            "skipped"
+          ],
+          "status": "skipped"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "module pages retain names, keyboard focus, mobile targets and reduced-motion content",
+          "project": "phone",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "keyboard reaches and saves owned profile then logout removes private access",
+          "project": "phone",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "phone touch events complete profile save and logout",
+          "project": "phone",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-reputation.spec.ts",
+          "case": "one completed-session review, factual public recommendation and audited hide/restore",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-reputation.spec.ts",
+          "case": "one completed-session review, factual public recommendation and audited hide/restore",
+          "project": "phone",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "student preparation accepts2000 but refuses blank, overlength and control input without overwriting",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "tutor agenda accepts4000 and line breaks but rejects blank,4001 and unsupported controls",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "recap keeps additional notes optional, permits exact2000 notes and4000 summary, and refuses overflow",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "profile viewer zone renders booking/session local time without changing the canonical instant",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "student preparation accepts2000 but refuses blank, overlength and control input without overwriting",
+          "project": "phone",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "tutor agenda accepts4000 and line breaks but rejects blank,4001 and unsupported controls",
+          "project": "phone",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "recap keeps additional notes optional, permits exact2000 notes and4000 summary, and refuses overflow",
+          "project": "phone",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        },
+        {
+          "file": "final-session-boundaries.spec.ts",
+          "case": "profile viewer zone renders booking/session local time without changing the canonical instant",
+          "project": "phone",
+          "outcomes": [
+            "failed"
+          ],
+          "status": "unexpected"
+        }
+      ]
+    },
+    {
+      "name": "quality-final",
+      "folder": "/tmp/tutorplus-production-quality-final",
+      "note": "5 passed and1 desktop-touch variant not applicable; both25-page viewport audits, keyboard saves/logout and real phone touch passed.",
+      "stats": {
+        "startTime": "2026-11-08T23:02:37.792Z",
+        "duration": 47392.665,
+        "expected": 5,
+        "skipped": 1,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "file": "final-quality.spec.ts",
+          "case": "module pages retain names, keyboard focus, mobile targets and reduced-motion content",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "keyboard reaches and saves owned profile then logout removes private access",
+          "project": "desktop",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "phone touch events complete profile save and logout",
+          "project": "desktop",
+          "outcomes": [
+            "skipped"
+          ],
+          "status": "skipped"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "module pages retain names, keyboard focus, mobile targets and reduced-motion content",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "keyboard reaches and saves owned profile then logout removes private access",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        },
+        {
+          "file": "final-quality.spec.ts",
+          "case": "phone touch events complete profile save and logout",
+          "project": "phone",
+          "outcomes": [
+            "passed"
+          ],
+          "status": "expected"
+        }
+      ]
+    }
+  ],
+  "independentVisualChecks": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "routeActorViews": 25,
+      "observations": [
+        {
+          "role": "student",
+          "path": "/dashboard",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/saved-tutors",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/profile",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/bookings",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/sessions/a9218f56-718a-4f1e-873a-20feffd63c72",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/sessions/46ddd74b-5a50-465e-8f19-8e79fd507991",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/reviews",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/assessments",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/assignments",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/study-plans",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/progress",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/notifications",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/resources",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/assistant",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/support",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/matching",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/tutors",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "tutor",
+          "path": "/tutor-studio",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/accounts",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/safety",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/templates",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/matching",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/assessment-templates",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/badges",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/operations",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "routeActorViews": 25,
+      "observations": [
+        {
+          "role": "student",
+          "path": "/dashboard",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/saved-tutors",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/profile",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/bookings",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/sessions/a9218f56-718a-4f1e-873a-20feffd63c72",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/sessions/46ddd74b-5a50-465e-8f19-8e79fd507991",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/reviews",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/assessments",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/assignments",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/study-plans",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/progress",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/notifications",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/resources",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/assistant",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/support",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/matching",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "student",
+          "path": "/tutors",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "tutor",
+          "path": "/tutor-studio",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/accounts",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/safety",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/templates",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/matching",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/assessment-templates",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/badges",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        },
+        {
+          "role": "admin",
+          "path": "/admin/operations",
+          "width": 390,
+          "scrollWidth": 390,
+          "unnamed": [],
+          "smallTargets": [],
+          "reducedMotion": true,
+          "focus": {
+            "tag": "A",
+            "outline": "solid",
+            "outlineWidth": 3,
+            "boxShadow": "none",
+            "visible": true
+          }
+        }
+      ]
+    }
+  ],
+  "frontendOwnerEvidence": [
+    {
+      "folder": "/tmp/tutorplus-production-progress-views",
+      "passed": 2,
+      "description": "Desktop/phone actual goal/topic/Tutor/date navigation and invalid-range handling."
+    },
+    {
+      "folder": "/tmp/tutorplus-production-phone-baseline",
+      "passed": 4,
+      "description": "Template versions/pinned reuse/private keys, saved Tutor/dashboard/bounds/methods, reversible badge policy, cancellation retaining history; owner inspected phone captures."
+    }
+  ],
+  "externalProviders": "No live OpenAI, Mapbox or external email delivery verified. Real local GoTrue/SMTP and deterministic adapter units are labeled separately.",
+  "optionalConfiguredAssistantFixture": "Prepared but not executed; secondary3019 and Responses55449 were stopped at user scope reduction.",
+  "performance": "Not executed; deferred by user; no p95 pass claimed.",
+  "finalCurrencyReadSmoke": {
+    "passed": true,
+    "observations": 7,
+    "evidence": "docs/evidence/sprint4/final-demo-smoke.json",
+    "phoneImageVisuallyInspected": true
+  },
+  "finalBuildSourceSha256": "9b0abd1f57aaa95a93be5b47add29c35c1d9f12b7fe4004fd7d22eef2de708bf"
+}

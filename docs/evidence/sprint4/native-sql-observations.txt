@@ -1,0 +1,334 @@
+psql:supabase/tests/001_regression.sql:48: NOTICE:  PASS: initial administrator bootstrap
+psql:supabase/tests/001_regression.sql:50: NOTICE:  PASS: administrator bootstrap exactly once
+psql:supabase/tests/001_regression.sql:56: NOTICE:  PASS: signup cannot grant administrator
+psql:supabase/tests/001_regression.sql:57: NOTICE:  PASS: failed signup rolls back provisioning
+psql:supabase/tests/001_regression.sql:58: NOTICE:  PASS: managed signup trigger provisions all profiles
+psql:supabase/tests/001_regression.sql:64: NOTICE:  PASS: every domain table has RLS
+psql:supabase/tests/001_regression.sql:68: NOTICE:  PASS: authoritative live session read
+psql:supabase/tests/001_regression.sql:69: NOTICE:  PASS: student only sees own profile
+psql:supabase/tests/001_regression.sql:71: NOTICE:  PASS: permitted profile edits persist
+psql:supabase/tests/001_regression.sql:72: NOTICE:  PASS: owner cannot change status
+psql:supabase/tests/001_regression.sql:73: NOTICE:  PASS: owner cannot change adult eligibility
+psql:supabase/tests/001_regression.sql:74: NOTICE:  PASS: owner cannot rewrite adult attestation time
+psql:supabase/tests/001_regression.sql:75: NOTICE:  PASS: invalid timezone rejected
+psql:supabase/tests/001_regression.sql:76: NOTICE:  PASS: role table not browser-writable
+psql:supabase/tests/001_regression.sql:77: NOTICE:  PASS: student cannot grant administrator
+psql:supabase/tests/001_regression.sql:78: NOTICE:  PASS: Auth sessions are not exposed
+psql:supabase/tests/001_regression.sql:79: NOTICE:  PASS: provider events are not exposed
+psql:supabase/tests/001_regression.sql:80: NOTICE:  PASS: payment provider RPC not browser executable
+psql:supabase/tests/001_regression.sql:81: NOTICE:  PASS: student cannot create tutor profile
+psql:supabase/tests/001_regression.sql:86: NOTICE:  PASS: editable metadata does not authorize
+psql:supabase/tests/001_regression.sql:88: NOTICE:  PASS: malformed session claim denies safely
+psql:supabase/tests/001_regression.sql:90: NOTICE:  PASS: foreign session rejected
+psql:supabase/tests/001_regression.sql:92: NOTICE:  PASS: missing session rejected
+psql:supabase/tests/001_regression.sql:94: NOTICE:  PASS: unverified user denied
+psql:supabase/tests/001_regression.sql:96: NOTICE:  PASS: adult attestation missing denies
+psql:supabase/tests/001_regression.sql:100: NOTICE:  PASS: student and tutor coexist
+psql:supabase/tests/001_regression.sql:101: NOTICE:  PASS: role grant audited
+psql:supabase/tests/001_regression.sql:103: NOTICE:  PASS: role revocation audited
+psql:supabase/tests/001_regression.sql:106: NOTICE:  PASS: inactive status checked from database
+psql:supabase/tests/001_regression.sql:114: NOTICE:  PASS: authenticated tutor insert RETURNING succeeds without source self-lookup
+psql:supabase/tests/001_regression.sql:115: NOTICE:  PASS: publication requires readiness
+psql:supabase/tests/001_regression.sql:121: NOTICE:  PASS: overlapping recurrence rules rejected
+psql:supabase/tests/001_regression.sql:124: NOTICE:  PASS: anonymous sees approved public snapshot
+psql:supabase/tests/001_regression.sql:125: NOTICE:  PASS: public subject DTO omits private source fields
+psql:supabase/tests/001_regression.sql:126: NOTICE:  PASS: anonymous cannot read private profile
+psql:supabase/tests/001_regression.sql:127: NOTICE:  PASS: anonymous cannot read tutor source
+psql:supabase/tests/001_regression.sql:128: NOTICE:  PASS: anonymous cannot inspect session
+psql:supabase/tests/001_regression.sql:135: NOTICE:  PASS: price and half-open buffered snapshot
+psql:supabase/tests/001_regression.sql:137: NOTICE:  PASS: booking retry idempotent
+psql:supabase/tests/001_regression.sql:139: NOTICE:  PASS: active tutor/student conflict rejected
+psql:supabase/tests/001_regression.sql:141: NOTICE:  PASS: outside availability rejected
+psql:supabase/tests/001_regression.sql:142: NOTICE:  PASS: browser cannot forge booking price
+psql:supabase/tests/001_regression.sql:143: NOTICE:  PASS: bootstrap not browser executable
+psql:supabase/tests/001_regression.sql:144: NOTICE:  PASS: browser cannot mutate payments
+psql:supabase/tests/001_regression.sql:145: NOTICE:  PASS: provider identifiers hidden
+psql:supabase/tests/001_regression.sql:147: NOTICE:  PASS: tutor participant sees booking
+psql:supabase/tests/001_regression.sql:148: NOTICE:  PASS: schedule cannot invalidate active booking
+psql:supabase/tests/001_regression.sql:150: NOTICE:  PASS: price snapshot survives tutor rate edit
+psql:supabase/tests/001_regression.sql:153: NOTICE:  PASS: snapshot immutable even to privileged update
+psql:supabase/tests/001_regression.sql:154: NOTICE:  PASS: confirmation cannot precede captured payment
+psql:supabase/tests/001_regression.sql:155: NOTICE:  PASS: audit history append-only
+psql:supabase/tests/001_regression.sql:156: NOTICE:  PASS: booking history append-only
+psql:supabase/tests/001_regression.sql:160: NOTICE:  PASS: unrelated account cannot read booking/meeting
+psql:supabase/tests/001_regression.sql:165: NOTICE:  PASS: canonical payment retry idempotent
+psql:supabase/tests/001_regression.sql:166: NOTICE:  PASS: verified provider boundary applies paid
+psql:supabase/tests/001_regression.sql:167: NOTICE:  PASS: provider event deduplicated
+psql:supabase/tests/001_regression.sql:168: NOTICE:  PASS: stale event cannot regress paid
+psql:supabase/tests/001_regression.sql:170: NOTICE:  PASS: authoritative state confirms booking
+psql:supabase/tests/001_regression.sql:172: NOTICE:  PASS: refund request idempotent
+psql:supabase/tests/001_regression.sql:173: NOTICE:  PASS: reserved refunds cannot exceed capture
+psql:supabase/tests/001_regression.sql:174: NOTICE:  PASS: verified refund boundary applies success
+psql:supabase/tests/001_regression.sql:175: NOTICE:  PASS: refund event deduplicated
+psql:supabase/tests/001_regression.sql:176: NOTICE:  PASS: partial refund state projection
+psql:supabase/tests/001_regression.sql:177: NOTICE:  PASS: service role also limited to financial RPCs
+psql:supabase/tests/001_regression.sql:184: NOTICE:  PASS: 24h expiry cannot slide on refresh
+psql:supabase/tests/001_regression.sql:185: NOTICE:  PASS: expired admin denied
+psql:supabase/tests/001_regression.sql:190: NOTICE:  PASS: provider session deadline denies RLS
+psql:supabase/tests/001_regression.sql:195: NOTICE:  PASS: revoked session row denies replayed JWT
+psql:supabase/tests/003_sprint3_learning_records.sql:75: NOTICE:  PASS: fixture bookings confirmed by verified payment events
+psql:supabase/tests/003_sprint3_learning_records.sql:80: NOTICE:  PASS: student saves goals
+psql:supabase/tests/003_sprint3_learning_records.sql:81: NOTICE:  PASS: ended confirmed planner refuses student goals
+psql:supabase/tests/003_sprint3_learning_records.sql:82: NOTICE:  PASS: student cannot write tutor agenda
+psql:supabase/tests/003_sprint3_learning_records.sql:83: NOTICE:  PASS: plans are not directly writable
+psql:supabase/tests/003_sprint3_learning_records.sql:84: NOTICE:  PASS: reflection refused before the session ends
+psql:supabase/tests/003_sprint3_learning_records.sql:85: NOTICE:  PASS: review refused before completion
+psql:supabase/tests/003_sprint3_learning_records.sql:87: NOTICE:  PASS: tutor reads student goals
+psql:supabase/tests/003_sprint3_learning_records.sql:88: NOTICE:  PASS: tutor saves agenda
+psql:supabase/tests/003_sprint3_learning_records.sql:89: NOTICE:  PASS: agenda save preserves student goals
+psql:supabase/tests/003_sprint3_learning_records.sql:90: NOTICE:  PASS: recap refused before the session ends
+psql:supabase/tests/003_sprint3_learning_records.sql:91: NOTICE:  PASS: future session cannot be completed
+psql:supabase/tests/003_sprint3_learning_records.sql:92: NOTICE:  PASS: ended confirmed planner refuses tutor agenda
+psql:supabase/tests/003_sprint3_learning_records.sql:93: NOTICE:  PASS: tutor completes ended session
+psql:supabase/tests/003_sprint3_learning_records.sql:94: NOTICE:  PASS: completion retry idempotent
+psql:supabase/tests/003_sprint3_learning_records.sql:95: NOTICE:  PASS: tutor publishes recap after session
+psql:supabase/tests/003_sprint3_learning_records.sql:96: NOTICE:  PASS: tutor edits recap
+psql:supabase/tests/003_sprint3_learning_records.sql:97: NOTICE:  PASS: recap edit keeps first publication time and counts revision
+psql:supabase/tests/003_sprint3_learning_records.sql:99: NOTICE:  PASS: unrelated student sees no plan or recap
+psql:supabase/tests/003_sprint3_learning_records.sql:100: NOTICE:  PASS: unrelated student cannot write plan
+psql:supabase/tests/003_sprint3_learning_records.sql:102: NOTICE:  PASS: planner closed after completion
+psql:supabase/tests/003_sprint3_learning_records.sql:103: NOTICE:  PASS: student reads published recap
+psql:supabase/tests/003_sprint3_learning_records.sql:104: NOTICE:  PASS: student saves private reflection
+psql:supabase/tests/003_sprint3_learning_records.sql:105: NOTICE:  PASS: student reads own reflection
+psql:supabase/tests/003_sprint3_learning_records.sql:107: NOTICE:  PASS: tutor never sees student reflection
+psql:supabase/tests/003_sprint3_learning_records.sql:110: NOTICE:  PASS: tutor cannot review own session
+psql:supabase/tests/003_sprint3_learning_records.sql:112: NOTICE:  PASS: wrong student cannot review
+psql:supabase/tests/003_sprint3_learning_records.sql:114: NOTICE:  PASS: rating above 5 rejected
+psql:supabase/tests/003_sprint3_learning_records.sql:115: NOTICE:  PASS: incomplete booking cannot be reviewed
+psql:supabase/tests/003_sprint3_learning_records.sql:116: NOTICE:  PASS: student reviews completed session
+psql:supabase/tests/003_sprint3_learning_records.sql:117: NOTICE:  PASS: duplicate review rejected
+psql:supabase/tests/003_sprint3_learning_records.sql:118: NOTICE:  PASS: review not directly editable
+psql:supabase/tests/003_sprint3_learning_records.sql:119: NOTICE:  PASS: aggregate not client writable
+psql:supabase/tests/003_sprint3_learning_records.sql:121: NOTICE:  PASS: public aggregate derived server-side
+psql:supabase/tests/003_sprint3_learning_records.sql:122: NOTICE:  PASS: public review DTO lists visible review
+psql:supabase/tests/003_sprint3_learning_records.sql:123: NOTICE:  PASS: anonymous cannot read review rows
+psql:supabase/tests/003_sprint3_learning_records.sql:124: NOTICE:  PASS: published weekly availability readable through public DTO
+psql:supabase/tests/003_sprint3_learning_records.sql:125: NOTICE:  PASS: exception DTO refuses windows over 31 days
+psql:supabase/tests/003_sprint3_learning_records.sql:128: NOTICE:  PASS: tutor reads visible review about them
+psql:supabase/tests/003_sprint3_learning_records.sql:130: NOTICE:  PASS: review content immutable even to privileged update
+psql:supabase/tests/003_sprint3_learning_records.sql:131: NOTICE:  PASS: reviews are not deletable
+psql:supabase/tests/003_sprint3_learning_records.sql:133: NOTICE:  PASS: hidden review leaves aggregate
+psql:supabase/tests/003_sprint3_learning_records.sql:135: NOTICE:  PASS: restored review re-enters aggregate
+psql:supabase/tests/003_sprint3_learning_records.sql:144: NOTICE:  PASS: assessment requires tutor-student booking relationship
+psql:supabase/tests/003_sprint3_learning_records.sql:148: NOTICE:  PASS: assign requires answer keys
+psql:supabase/tests/003_sprint3_learning_records.sql:149: NOTICE:  PASS: answer key must be a listed choice
+psql:supabase/tests/003_sprint3_learning_records.sql:152: NOTICE:  PASS: assigned content frozen
+psql:supabase/tests/003_sprint3_learning_records.sql:154: NOTICE:  PASS: student reads assigned questions
+psql:supabase/tests/003_sprint3_learning_records.sql:155: NOTICE:  PASS: student cannot read answer keys
+psql:supabase/tests/003_sprint3_learning_records.sql:158: NOTICE:  PASS: objective score computed server-side; subjective awaits tutor
+psql:supabase/tests/003_sprint3_learning_records.sql:159: NOTICE:  PASS: finalized assessment closed to resubmission
+psql:supabase/tests/003_sprint3_learning_records.sql:161: NOTICE:  PASS: unrelated student sees no assessment
+psql:supabase/tests/003_sprint3_learning_records.sql:163: NOTICE:  PASS: tutor score cannot replace missed objective points
+psql:supabase/tests/003_sprint3_learning_records.sql:165: NOTICE:  PASS: tutor finalizes subjective score
+psql:supabase/tests/003_sprint3_learning_records.sql:173: NOTICE:  PASS: submitted state requires a real submission
+psql:supabase/tests/003_sprint3_learning_records.sql:175: NOTICE:  PASS: submission refused after due date
+psql:supabase/tests/003_sprint3_learning_records.sql:177: NOTICE:  PASS: submission moves assignment to submitted
+psql:supabase/tests/003_sprint3_learning_records.sql:178: NOTICE:  PASS: no resubmission until returned
+psql:supabase/tests/003_sprint3_learning_records.sql:179: NOTICE:  PASS: submissions not directly editable
+psql:supabase/tests/003_sprint3_learning_records.sql:182: NOTICE:  PASS: feedback returns work
+psql:supabase/tests/003_sprint3_learning_records.sql:185: NOTICE:  PASS: returned work accepts a numbered resubmission
+psql:supabase/tests/003_sprint3_learning_records.sql:186: NOTICE:  PASS: student reads tutor feedback
+psql:supabase/tests/003_sprint3_learning_records.sql:188: NOTICE:  PASS: unrelated student sees no assignment work
+psql:supabase/tests/003_sprint3_learning_records.sql:195: NOTICE:  PASS: slot overlapping a confirmed booking is booked
+psql:supabase/tests/003_sprint3_learning_records.sql:197: NOTICE:  PASS: slot inside the booking buffer is booked
+psql:supabase/tests/003_sprint3_learning_records.sql:199: NOTICE:  PASS: slot clear of the buffer is open
+psql:supabase/tests/003_sprint3_learning_records.sql:201: NOTICE:  PASS: exactly the starts inside the lead time are too soon
+psql:supabase/tests/003_sprint3_learning_records.sql:202: NOTICE:  PASS: slots span the requested duration
+psql:supabase/tests/003_sprint3_learning_records.sql:203: NOTICE:  PASS: slot window is bounded
+psql:supabase/tests/003_sprint3_learning_records.sql:204: NOTICE:  PASS: slot duration follows booking policy
+psql:supabase/tests/003_sprint3_learning_records.sql:207: NOTICE:  PASS: anonymous visitors cannot list bookable slots
+psql:supabase/tests/003_sprint3_learning_records.sql:214: NOTICE:  PASS: every Sprint 3 table has RLS
+psql:supabase/tests/003_sprint3_learning_records.sql:218: NOTICE:  PASS: least-privilege grants
+psql:supabase/tests/004_remaining_modules.sql:71: NOTICE:  PASS: anonymous cannot inspect private profiles after module expansion
+psql:supabase/tests/004_remaining_modules.sql:72: NOTICE:  PASS: anonymous cannot inspect role authority after module expansion
+psql:supabase/tests/004_remaining_modules.sql:76: NOTICE:  PASS: student profile isolation survives new migrations
+psql:supabase/tests/004_remaining_modules.sql:78: NOTICE:  PASS: learning and marketplace access never grants administrator authority
+psql:supabase/tests/004_remaining_modules.sql:85: NOTICE:  PASS: student cannot bypass service checks to create tutor listing
+psql:supabase/tests/004_remaining_modules.sql:91: NOTICE:  PASS: tutor listing transaction creates one owned listing
+psql:supabase/tests/004_remaining_modules.sql:93: NOTICE:  PASS: new listing cannot publish without availability
+psql:supabase/tests/004_remaining_modules.sql:100: NOTICE:  PASS: ready published listing appears in safe public projection
+psql:supabase/tests/004_remaining_modules.sql:106: NOTICE:  PASS: another tutor cannot take ownership of an existing listing
+psql:supabase/tests/004_remaining_modules.sql:134: NOTICE:  PASS: anonymous discovery returns eligible published tutor through public DTO
+psql:supabase/tests/004_remaining_modules.sql:138: NOTICE:  PASS: discovery enforces maximum price before pagination
+psql:supabase/tests/004_remaining_modules.sql:142: NOTICE:  PASS: discovery enforces requested teaching mode
+psql:supabase/tests/004_remaining_modules.sql:145: NOTICE:  PASS: incomplete distance constraint is rejected instead of silently ignored
+psql:supabase/tests/004_remaining_modules.sql:148: NOTICE:  PASS: nonfinite geographic coordinates rejected at database boundary
+psql:supabase/tests/004_remaining_modules.sql:151: NOTICE:  PASS: Tutor language eligibility accepts at least one explicitly requested language
+psql:supabase/tests/004_remaining_modules.sql:154: NOTICE:  PASS: Tutor language hard filter excludes incompatible listings before pagination
+psql:supabase/tests/004_remaining_modules.sql:157: NOTICE:  PASS: Tutor language search refuses null entries rather than dropping constraints
+psql:supabase/tests/004_remaining_modules.sql:160: NOTICE:  PASS: Sprint4 3.2: price bounds include exact 3000 and 4000 minor-unit listings
+psql:supabase/tests/004_remaining_modules.sql:164: NOTICE:  PASS: Sprint4 3.2: rating threshold includes 4.00 and excludes 3.99
+psql:supabase/tests/004_remaining_modules.sql:171: NOTICE:  PASS: Sprint4 3.7: three hard-eligible tutors paginate two plus one with no repeated IDs
+psql:supabase/tests/004_remaining_modules.sql:174: NOTICE:  PASS: Sprint4 3.7: later page retains incompatible mode exclusion instead of broadening results
+psql:supabase/tests/004_remaining_modules.sql:183: NOTICE:  PASS: Sprint4 3.2: price bounds exclude 2999 and 4001 without weakening other filters
+psql:supabase/tests/004_remaining_modules.sql:199: NOTICE:  PASS: Sprint4 4.2: direct RPC rejects fractional-minute duration
+psql:supabase/tests/004_remaining_modules.sql:204: NOTICE:  PASS: Sprint4 4.2: direct RPC refuses 14 whole minutes
+psql:supabase/tests/004_remaining_modules.sql:209: NOTICE:  PASS: Sprint4 4.2: direct RPC refuses 181 whole minutes
+psql:supabase/tests/004_remaining_modules.sql:221: NOTICE:  PASS: Sprint4 4.2: exact 15 and 180 whole-minute bounds create eligible unpaid reservations
+psql:supabase/tests/004_remaining_modules.sql:232: NOTICE:  PASS: Sprint4 4.8: reusing an existing request key with a different interval is refused
+psql:supabase/tests/004_remaining_modules.sql:235: NOTICE:  PASS: Sprint4 4.8: conflicting key reuse leaves the original interval unchanged
+psql:supabase/tests/004_remaining_modules.sql:238: NOTICE:  PASS: Sprint4 4.8: another Student cannot retrieve the original reservation by known identity
+psql:supabase/tests/004_remaining_modules.sql:243: NOTICE:  PASS: Sprint4 4.8: same text request key is scoped to the authenticated Student and never returns another identity
+psql:supabase/tests/004_remaining_modules.sql:247: NOTICE:  PASS: student cannot overwrite tutor meeting details
+psql:supabase/tests/004_remaining_modules.sql:253: NOTICE:  PASS: unrelated tutor cannot read private meeting link
+psql:supabase/tests/004_remaining_modules.sql:256: NOTICE:  PASS: booked student can read meeting details
+psql:supabase/tests/004_remaining_modules.sql:263: NOTICE:  PASS: reschedule cannot reserve outside tutor availability
+psql:supabase/tests/004_remaining_modules.sql:265: NOTICE:  PASS: failed replacement transaction preserves original reservation
+psql:supabase/tests/004_remaining_modules.sql:273: NOTICE:  PASS: unpaid reschedule cancels original and saves replacement without fabricated confirmation
+psql:supabase/tests/004_remaining_modules.sql:279: NOTICE:  PASS: retry returns same replacement without another cancellation or reservation
+psql:supabase/tests/004_remaining_modules.sql:288: NOTICE:  PASS: Booking and valid structured Student notes persist atomically
+psql:supabase/tests/004_remaining_modules.sql:291: NOTICE:  PASS: Booked Tutor cannot read unshared Student notes
+psql:supabase/tests/004_remaining_modules.sql:298: NOTICE:  PASS: Tutor cannot query raw Student note rows containing private notes
+psql:supabase/tests/004_remaining_modules.sql:302: NOTICE:  PASS: Booked Tutor sees only explicitly shared goal topics questions without private note or Student ID
+psql:supabase/tests/004_remaining_modules.sql:305: NOTICE:  PASS: Unrelated Tutor cannot read shared booking notes through the projection RPC
+psql:supabase/tests/004_remaining_modules.sql:308: NOTICE:  PASS: Sprint4 4.10: empty cancellation reason is refused
+psql:supabase/tests/004_remaining_modules.sql:310: NOTICE:  PASS: Sprint4 4.10: 501-character cancellation reason is refused
+psql:supabase/tests/004_remaining_modules.sql:312: NOTICE:  PASS: Sprint4 4.10: invalid cancellation reasons preserve the existing hold
+psql:supabase/tests/004_remaining_modules.sql:317: NOTICE:  PASS: Sprint4 4.10: exact 500-character cancellation persists once despite retry
+psql:supabase/tests/004_remaining_modules.sql:325: NOTICE:  PASS: Sprint4 4.10: cancellation releases the slot for a new hold and a one-character reason is accepted
+psql:supabase/tests/004_remaining_modules.sql:345: NOTICE:  PASS: Sprint4 4.11: expired hold is canonically cancelled before the new reservation commits
+psql:supabase/tests/004_remaining_modules.sql:350: NOTICE:  PASS: Sprint4 4.11: unexpired replacement hold still excludes another reservation
+psql:supabase/tests/004_remaining_modules.sql:353: NOTICE:  PASS: Sprint4 4.11: exactly one active unpaid hold remains without manufactured confirmation
+psql:supabase/tests/004_remaining_modules.sql:357: NOTICE:  PASS: Sprint4 4.11: hold expiry and retry do not fabricate a payment record
+psql:supabase/tests/004_remaining_modules.sql:377: NOTICE:  PASS: Sprint4 5.1: student answer DTO cannot expose private scoring keys
+psql:supabase/tests/004_remaining_modules.sql:382: NOTICE:  PASS: Sprint4 5.1: objective score comes from stored keys, not submitted totals
+psql:supabase/tests/004_remaining_modules.sql:384: NOTICE:  PASS: Sprint4 5.2: student cannot self-authorize another assessment attempt
+psql:supabase/tests/004_remaining_modules.sql:387: NOTICE:  PASS: Sprint4 5.2: unrelated tutor cannot authorize retake
+psql:supabase/tests/004_remaining_modules.sql:396: NOTICE:  PASS: Sprint4 5.2: authorized retake appends numbered history and preserves original score
+psql:supabase/tests/004_remaining_modules.sql:398: NOTICE:  PASS: Sprint4 5.2: student cannot erase recorded attempt history
+psql:supabase/tests/005_platform.sql:42: NOTICE:  PASS: Sprint4 10.1: repeated domain event creates one outbox intent
+psql:supabase/tests/005_platform.sql:48: NOTICE:  PASS: Sprint4 10.1: one recipient feed record persists before provider acknowledgement
+psql:supabase/tests/005_platform.sql:55: NOTICE:  PASS: Sprint4 10.1: optional email preference persists
+psql:supabase/tests/005_platform.sql:58: NOTICE:  PASS: Sprint4 10.1: required security category cannot be disabled
+psql:supabase/tests/005_platform.sql:61: NOTICE:  PASS: Sprint4 10.1: owner can mark their notice read
+psql:supabase/tests/005_platform.sql:64: NOTICE:  PASS: Sprint4 10.1: unrelated student cannot read another recipient feed
+psql:supabase/tests/005_platform.sql:66: NOTICE:  PASS: Sprint4 10.1: unrelated student cannot mark a known notice read
+psql:supabase/tests/005_platform.sql:68: NOTICE:  PASS: Sprint4 12.1: non-administrator cannot search private user accounts
+psql:supabase/tests/005_platform.sql:71: NOTICE:  PASS: Sprint4 12.1: verified administrator can search the intended user
+psql:supabase/tests/005_platform.sql:75: NOTICE:  PASS: Sprint4 11.1: oversized prompt is refused before a request is recorded
+psql:supabase/tests/005_platform.sql:82: NOTICE:  PASS: Sprint4 11.2: failed assistant request cannot later be rewritten as success
+psql:supabase/tests/005_platform.sql:86: NOTICE:  PASS: Sprint4 11.1: third request exceeds quota two, including an earlier failed attempt
+psql:supabase/tests/005_platform.sql:90: NOTICE:  PASS: Sprint4 11.2: unrelated student cannot finish another learner assistant request
+psql:supabase/tests/005_platform.sql:94: NOTICE:  PASS: Sprint4 11.1: rejected limit variants leave only two canonical request records
+psql:supabase/tests/005_platform.sql:97: NOTICE:  PASS: Sprint4 11.2: failed provider outcome remains distinct without a fabricated response
+psql:supabase/tests/005_platform.sql:104: NOTICE:  PASS: Sprint4 10.2: ordinary account cannot fabricate provider delivery events
+psql:supabase/tests/005_platform.sql:110: NOTICE:  PASS: Sprint4 10.2: verified delivery boundary records a matching delivered event
+psql:supabase/tests/005_platform.sql:113: NOTICE:  PASS: Sprint4 10.2: repeated provider event returns the canonical delivery state
+psql:supabase/tests/005_platform.sql:116: NOTICE:  PASS: Sprint4 10.2: stale sent event cannot regress observed delivery
+psql:supabase/tests/005_platform.sql:119: NOTICE:  PASS: Sprint4 10.2: repeated webhook identity retains one canonical event
+psql:supabase/tests/005_platform.sql:121: NOTICE:  PASS: Sprint4 10.2: delivery projection updates the existing recipient notice
+psql:supabase/tests/005_platform.sql:129: NOTICE:  PASS: Sprint4 12.1: reporter cannot resolve a report without administrator authority
+psql:supabase/tests/005_platform.sql:133: NOTICE:  PASS: Sprint4 12.1: moderation resolution requires a nonempty reason
+psql:supabase/tests/005_platform.sql:138: NOTICE:  PASS: Sprint4 12.1: moderator resolution retains original report and attributed decision
+psql:supabase/tests/005_platform.sql:143: NOTICE:  PASS: Sprint4 12.1: accepted moderation resolution retains actor target action time and reason in audit
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: due retry is claimed at attempt 1
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: failed provider attempt 1 retains bounded backoff or terminal failure
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: due retry is claimed at attempt 2
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: failed provider attempt 2 retains bounded backoff or terminal failure
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: due retry is claimed at attempt 3
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: failed provider attempt 3 retains bounded backoff or terminal failure
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: due retry is claimed at attempt 4
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: failed provider attempt 4 retains bounded backoff or terminal failure
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: due retry is claimed at attempt 5
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: failed provider attempt 5 retains bounded backoff or terminal failure
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: exhausted retries preserve one in-app notice with truthful failed delivery state
+psql:supabase/tests/005_platform.sql:178: NOTICE:  PASS: Sprint4 10.2: exhausted notice is not claimed a sixth time
+psql:supabase/tests/006_learning_completion.sql:75: NOTICE:  PASS: Sprint4 7.3 C01: student creates a private structured plan before a booking
+psql:supabase/tests/006_learning_completion.sql:81: NOTICE:  PASS: Sprint4 13.2 C06: owner records a dated personal replan with reason and provenance
+psql:supabase/tests/006_learning_completion.sql:84: NOTICE:  PASS: Sprint4 7.3 C02: another student cannot read a personal plan
+psql:supabase/tests/006_learning_completion.sql:87: NOTICE:  PASS: Sprint4 7.3 C03: another student cannot revise a personal plan
+psql:supabase/tests/006_learning_completion.sql:141: NOTICE:  PASS: Sprint4 7.3 C04: personal plan cannot be shared with another learner booking
+psql:supabase/tests/006_learning_completion.sql:145: NOTICE:  PASS: Sprint4 7.3 C05: student can explicitly share the plan with the tutor on a matching booking
+psql:supabase/tests/006_learning_completion.sql:148: NOTICE:  PASS: Sprint4 7.3 C06: unrelated tutor cannot read a shared personal plan
+psql:supabase/tests/006_learning_completion.sql:151: NOTICE:  PASS: Sprint4 7.3 C07: explicitly selected tutor can read the shared plan
+psql:supabase/tests/006_learning_completion.sql:161: NOTICE:  PASS: Sprint4 9.6 C04: student priorities are explicit, deduplicated and safely replaceable
+psql:supabase/tests/006_learning_completion.sql:169: NOTICE:  PASS: Sprint4 9.6 C01: first recap publication creates one dated progress event
+psql:supabase/tests/006_learning_completion.sql:178: NOTICE:  PASS: Sprint4 9.6 C02: mastery notes, strengths, practice areas and first publication time remain distinct on repeat save
+psql:supabase/tests/006_learning_completion.sql:183: NOTICE:  PASS: Sprint4 9.6 C03: legacy seven-argument structured recap contract remains available
+psql:supabase/tests/006_learning_completion.sql:190: NOTICE:  PASS: Sprint4 9.6 C04: resource snapshot replacement and recap progress event are duplicate-safe
+psql:supabase/tests/006_learning_completion.sql:217: NOTICE:  PASS: Sprint4 9.6 C05: repeated agenda saves replace validated links without duplicates
+psql:supabase/tests/006_learning_completion.sql:221: NOTICE:  PASS: Sprint4 9.6 C06: unrelated learner cannot read another booking agenda links
+psql:supabase/tests/006_learning_completion.sql:227: NOTICE:  PASS: Sprint4 5.1 C01: student cannot read the private answer key
+psql:supabase/tests/006_learning_completion.sql:229: NOTICE:  PASS: Sprint4 5.2 C03: student cannot execute the answer-key-bearing definition snapshot helper
+psql:supabase/tests/006_learning_completion.sql:231: NOTICE:  PASS: Sprint4 5.1 C02: objective score is computed from the stored key
+psql:supabase/tests/006_learning_completion.sql:234: NOTICE:  PASS: Sprint4 6.10 C01: scored tagged question produces dated topic-level points evidence
+psql:supabase/tests/006_learning_completion.sql:237: NOTICE:  PASS: Sprint4 5.2 C02: retake source definition is pinned and private from the student
+psql:supabase/tests/006_learning_completion.sql:242: NOTICE:  PASS: Sprint4 5.1 C03: exact finalized retry returns the existing attempt
+psql:supabase/tests/006_learning_completion.sql:245: NOTICE:  PASS: Sprint4 5.1 C04: conflicting finalized retry is refused
+psql:supabase/tests/006_learning_completion.sql:256: NOTICE:  PASS: Sprint4 5.2 C01: tutor-authorized retake preserves numbered original score and answer history
+psql:supabase/tests/006_learning_completion.sql:274: NOTICE:  PASS: Sprint4 8.1 C01: assignment stores a subject topic and pinned matching plan milestone
+psql:supabase/tests/006_learning_completion.sql:285: NOTICE:  PASS: Sprint4 8.1 C02: student draft persists without forcing a submission
+psql:supabase/tests/006_learning_completion.sql:288: NOTICE:  PASS: Sprint4 8.1 C03: unrelated learner cannot save another student draft
+psql:supabase/tests/006_learning_completion.sql:292: NOTICE:  PASS: Sprint4 8.1 C04: tutor cannot read private student draft contents
+psql:supabase/tests/006_learning_completion.sql:297: NOTICE:  PASS: Sprint4 8.1 C05: draft is removed only after explicit submission
+psql:supabase/tests/006_learning_completion.sql:301: NOTICE:  PASS: Sprint4 8.2 C01: allowed late submission is retained and visibly marked late
+psql:supabase/tests/006_learning_completion.sql:303: NOTICE:  PASS: Sprint4 8.2 C02: explicit close rejects further submissions
+psql:supabase/tests/006_learning_completion.sql:308: NOTICE:  PASS: Sprint4 8.2 C03: returned feedback does not emit a completion event
+psql:supabase/tests/006_learning_completion.sql:317: NOTICE:  PASS: Sprint4 8.2 C04: returned-to-completed edit emits one event at the completion edit time
+psql:supabase/tests/006_learning_completion.sql:322: NOTICE:  PASS: Sprint4 8.2 C05: repeated completed-feedback edits retain exactly one event
+psql:supabase/tests/006_learning_completion.sql:326: NOTICE:  PASS: Sprint4 8.2 C06: later feedback edits do not rewrite completion history
+psql:supabase/tests/006_learning_completion.sql:343: NOTICE:  PASS: Sprint4 8.1 C06: tutor cancellation persists a reason and retains submitted work and feedback
+psql:supabase/tests/006_learning_completion.sql:347: NOTICE:  PASS: Sprint4 8.1 C07: repeated cancellation is idempotent and preserves the original reason
+psql:supabase/tests/006_learning_completion.sql:349: NOTICE:  PASS: Sprint4 8.1 C08: blank cancellation reason is refused
+psql:supabase/tests/006_learning_completion.sql:351: NOTICE:  PASS: Sprint4 8.1 C09: oversized cancellation reason is refused
+psql:supabase/tests/006_learning_completion.sql:354: NOTICE:  PASS: Sprint4 8.1 C10: unrelated tutor cannot cancel the task
+psql:supabase/tests/006_learning_completion.sql:357: NOTICE:  PASS: Sprint4 8.1 C11: student cannot cancel the task
+psql:supabase/tests/006_learning_completion.sql:360: NOTICE:  PASS: Sprint4 8.1 C12: completed work cannot be cancelled
+psql:supabase/tests/006_learning_completion.sql:365: NOTICE:  PASS: Sprint4 13.1 C01: new goal without baseline is rejected
+psql:supabase/tests/006_learning_completion.sql:371: NOTICE:  PASS: Sprint4 13.1 C02: resource link for another subject is rejected
+psql:supabase/tests/006_learning_completion.sql:378: NOTICE:  PASS: Sprint4 13.1 C03: link to another learner assessment is rejected
+psql:supabase/tests/006_learning_completion.sql:393: NOTICE:  PASS: Sprint4 13.1 C04: ordered milestone stores validated resource, assignment and assessment links
+psql:supabase/tests/006_learning_completion.sql:399: NOTICE:  PASS: Sprint4 13.1 C05: milestone order and state are persisted
+psql:supabase/tests/006_learning_completion.sql:408: NOTICE:  PASS: Sprint4 13.2 C01: unconfirmed tutor proposal leaves the missed canonical date unchanged
+psql:supabase/tests/006_learning_completion.sql:411: NOTICE:  PASS: Sprint4 13.2 C02: student cannot reschedule without confirming a tutor proposal
+psql:supabase/tests/006_learning_completion.sql:421: NOTICE:  PASS: Sprint4 13.2 C03: student confirmation preserves old/new dates, reason, author and time
+psql:supabase/tests/006_learning_completion.sql:427: NOTICE:  PASS: Sprint4 13.2 C04: confirmed reschedule creates a student-authored current revision
+psql:supabase/tests/006_learning_completion.sql:430: NOTICE:  PASS: Sprint4 13.2 C05: stale plan revision is rejected
+psql:supabase/tests/006_learning_completion.sql:436: NOTICE:  PASS: Sprint4 14.1 C01: tutor receives dated evidence candidates for the selected relationship
+psql:supabase/tests/006_learning_completion.sql:445: NOTICE:  PASS: Sprint4 5.2/14.1 C02: human mastery label retains explicit date, author and scored source
+psql:supabase/tests/006_learning_completion.sql:449: NOTICE:  PASS: Sprint4 14.1 C03: unrelated tutor cannot enumerate learner evidence
+psql:supabase/tests/006_learning_completion.sql:451: NOTICE:  PASS: Sprint4 14.1 C04: unrelated tutor cannot author mastery
+psql:supabase/tests/006_learning_completion.sql:458: NOTICE:  PASS: Sprint4 14.2 C01: owner has one optional reflection before deletion
+psql:supabase/tests/006_learning_completion.sql:460: NOTICE:  PASS: Sprint4 14.2 C02: only the reflection owner can delete the optional reflection
+psql:supabase/tests/006_learning_completion.sql:463: NOTICE:  PASS: Sprint4 14.2 C03: deleted reflection is removed
+psql:supabase/tests/006_learning_completion.sql:469: NOTICE:  PASS: Sprint4 14.2 C04: assessment, payment, booking and audit evidence remain after optional reflection deletion
+psql:supabase/tests/007_admin_baseline.sql:63: NOTICE:  PASS: fixture payment boundary creates an eligible confirmed tutoring relationship
+psql:supabase/tests/007_admin_baseline.sql:76: NOTICE:  PASS: template creation retains admin actor/action/reason audit
+psql:supabase/tests/007_admin_baseline.sql:80: NOTICE:  PASS: template validator refuses answer keys outside listed choices
+psql:supabase/tests/007_admin_baseline.sql:83: NOTICE:  PASS: Student cannot use admin template reader or access answer keys
+psql:supabase/tests/007_admin_baseline.sql:85: NOTICE:  PASS: Student cannot read the restricted template source table
+psql:supabase/tests/007_admin_baseline.sql:89: NOTICE:  PASS: booking-owning Tutor reads the approved template and key for reuse
+psql:supabase/tests/007_admin_baseline.sql:91: NOTICE:  PASS: Tutor cannot inspect templates through an unrelated booking
+psql:supabase/tests/007_admin_baseline.sql:94: NOTICE:  PASS: Student cannot invoke the Tutor answer-key reader
+psql:supabase/tests/007_admin_baseline.sql:103: NOTICE:  PASS: stale admin template edits are rejected
+psql:supabase/tests/007_admin_baseline.sql:108: NOTICE:  PASS: Tutor creates a draft with server-derived relationship and pinned template version
+psql:supabase/tests/007_admin_baseline.sql:121: NOTICE:  PASS: later template edits do not mutate an existing assessment copy
+psql:supabase/tests/007_admin_baseline.sql:123: NOTICE:  PASS: assessment template provenance cannot be rewritten
+psql:supabase/tests/007_admin_baseline.sql:128: NOTICE:  PASS: assigned assessment definition snapshot pins the exact copied answer key
+psql:supabase/tests/007_admin_baseline.sql:139: NOTICE:  PASS: badge policy rejects facts outside the public reputation whitelist
+psql:supabase/tests/007_admin_baseline.sql:142: NOTICE:  PASS: stale badge policy revisions are rejected
+psql:supabase/tests/007_admin_baseline.sql:144: NOTICE:  PASS: current badge policy exposes its version and supported facts only
+psql:supabase/tests/007_admin_baseline.sql:148: NOTICE:  PASS: Tutor progress reads canonical counters and the published policy version
+psql:supabase/tests/007_admin_baseline.sql:153: NOTICE:  PASS: public badge DTO has current policy version and no unsupported badge when thresholds are unmet
+psql:supabase/tests/007_admin_baseline.sql:157: NOTICE:  PASS: public saved-tutor cards can fetch only bounded public subject/rate fields in one batch
+psql:supabase/tests/007_admin_baseline.sql:160: NOTICE:  PASS: public batch offering read refuses more than fifty tutor IDs
+psql:supabase/tests/007_admin_baseline.sql:169: NOTICE:  PASS: Student saves a current listing idempotently
+psql:supabase/tests/007_admin_baseline.sql:172: NOTICE:  PASS: unrelated Student cannot read another account saved tutors
+psql:supabase/tests/007_admin_baseline.sql:178: NOTICE:  PASS: Tutor cannot save their own public listing even with Student capability
+psql:supabase/tests/007_admin_baseline.sql:184: NOTICE:  PASS: Administrator without Student role cannot write saved tutor state
+psql:supabase/tests/007_admin_baseline.sql:194: NOTICE:  PASS: unrelated Student cannot report a known assistant request
+psql:supabase/tests/007_admin_baseline.sql:196: NOTICE:  PASS: Student cannot read the admin assistant-report queue
+psql:supabase/tests/007_admin_baseline.sql:200: NOTICE:  PASS: Admin reads a bounded report DTO linked only to request identity and report metadata
+psql:supabase/tests/007_admin_baseline.sql:204: NOTICE:  PASS: Admin report resolution is confirmed and attributed
+psql:supabase/tests/007_admin_baseline.sql:207: NOTICE:  PASS: assistant report storage has no prompt, selected-context or answer columns
+psql:supabase/tests/007_admin_baseline.sql:211: NOTICE:  PASS: assistant report moderation retains reason and actor audit
+psql:supabase/tests/007_admin_baseline.sql:218: NOTICE:  PASS: operational event rejects an out-of-range duration
+psql:supabase/tests/007_admin_baseline.sql:220: NOTICE:  PASS: Student cannot read operational aggregates
+psql:supabase/tests/007_admin_baseline.sql:224: NOTICE:  PASS: Admin health read returns privacy-safe 24-hour aggregate counts
+psql:supabase/tests/007_admin_baseline.sql:227: NOTICE:  PASS: current backlog metric is not mislabeled as a 24-hour count
+psql:supabase/tests/007_admin_baseline.sql:257: NOTICE:  PASS: outbox completion v2 reports canonical attempt 1 state pending/retrying
+psql:supabase/tests/007_admin_baseline.sql:257: NOTICE:  PASS: outbox completion v2 reports canonical attempt 2 state pending/retrying
+psql:supabase/tests/007_admin_baseline.sql:257: NOTICE:  PASS: outbox completion v2 reports canonical attempt 3 state pending/retrying
+psql:supabase/tests/007_admin_baseline.sql:257: NOTICE:  PASS: outbox completion v2 reports canonical attempt 4 state pending/retrying
+psql:supabase/tests/007_admin_baseline.sql:257: NOTICE:  PASS: outbox completion v2 reports canonical attempt 5 state failed/failed
+psql:supabase/tests/007_admin_baseline.sql:262: NOTICE:  PASS: fifth provider retry exhaustion preserves the in-app notice and reports truthful failed delivery

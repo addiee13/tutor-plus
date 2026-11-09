@@ -1,0 +1,66 @@
+{
+  "fullCheck": {
+    "command": "npm run check",
+    "typecheck": "passed",
+    "eslint": "passed",
+    "formatCheck": "failed",
+    "unitStage": "not reached because format check failed",
+    "formatWarnings": [
+      "scripts/render_section10_concise_sprint4.mjs",
+      "src/domains/bookings/service.ts",
+      "src/domains/learning/service.ts",
+      "src/domains/marketplace/types.ts",
+      "src/domains/sessions/validation.ts",
+      "tests/unit/learning.test.ts",
+      "tests/unit/progress-filters.test.ts"
+    ]
+  },
+  "correction": "Formatted only the six in-scope source/test files. Preserved the unrelated historical report script.",
+  "fullUnitRerun": {
+    "command": "npm test",
+    "files": 15,
+    "tests": 218,
+    "result": "passed after currency correction and explicit-USD default expectation update"
+  },
+  "scopedFormat": {
+    "command": "npx prettier --check src tests next.config.ts tsconfig.json and the in-scope verification scripts",
+    "result": "passed",
+    "unrelatedScriptPreserved": "scripts/render_section10_concise_sprint4.mjs"
+  },
+  "externalProvidersInvoked": false,
+  "buildAttemptLimitation": "One superseded production attempt failed because .next/dev/types/validator.ts contained malformed generated syntax during a dev writer restart. Final verification uses documented typescript.tsconfigPath with all src/tests and its own isolated route validators; ignoreBuildErrors remains false.",
+  "finalBuild": {
+    "startedAt": "2026-11-08T23:11:59.274Z",
+    "finishedAt": "2026-11-08T23:12:07.032Z",
+    "sourceSha256": "9b0abd1f57aaa95a93be5b47add29c35c1d9f12b7fe4004fd7d22eef2de708bf",
+    "buildId": "LsAzehHAIZUFP9UgElinP",
+    "mode": "production build for local demo only",
+    "command": "node node_modules/next/dist/bin/next build",
+    "distDir": ".next/verifier-production",
+    "tsconfig": "tsconfig.verification.json (all app/test TypeScript and isolated route validators)",
+    "target": "http://localhost:3018",
+    "dataOrigin": "http://127.0.0.1:55448",
+    "externalAdaptersConfigured": false,
+    "revisionScope": "User requested a final critical-fix build/read smoke; exhaustive performance and provider extras deferred."
+  },
+  "finalScope": "User-directed critical local-demo finish; no exhaustive benchmark/provider extras or further matrices.",
+  "finalReadSmoke": {
+    "scope": "final critical local-demo read smoke, not production-readiness or performance certification",
+    "sourceSha256": "9b0abd1f57aaa95a93be5b47add29c35c1d9f12b7fe4004fd7d22eef2de708bf",
+    "buildId": "LsAzehHAIZUFP9UgElinP",
+    "target": "http://localhost:3018",
+    "passed": true,
+    "observations": [
+      "Real local login and dashboard read",
+      "Booking workspace and canonical feasible slot read; no reservation submitted",
+      "USD-budget filtered discovery returns the eligible USD fixture",
+      "Positive matching result and factual factor version after currency eligibility",
+      "Dated progress workspace read",
+      "Truthful adapter-disabled assistant state",
+      "Anonymous phone discovery rendered without horizontal overflow"
+    ],
+    "externalProviderRequests": 0,
+    "bookingWrites": 0,
+    "screenshot": "docs/evidence/screenshots/sprint4/final-demo/phone-discovery.png"
+  }
+}

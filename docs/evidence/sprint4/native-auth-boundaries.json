@@ -1,0 +1,30 @@
+{
+  "externalEmailSent": false,
+  "clockFixture": "Only sent-at fields on freshly created example.test identities are backdated one day; real provider verifies actual SMTP tokens.",
+  "results": [
+    {
+      "caseId": "1.5/1.7",
+      "observation": "Expired actual SMTP signup token is refused; pending identity stays unverified and password login establishes no session",
+      "layer": "native GoTrue/SMTP/PostgreSQL clock fixture",
+      "status": "pass"
+    },
+    {
+      "caseId": "1.3",
+      "observation": "Two real duplicate signups preserve one identity/profile and original Student capability without adding requested Tutor capability",
+      "layer": "native GoTrue/SMTP/PostgreSQL clock fixture",
+      "status": "pass"
+    },
+    {
+      "caseId": "1.9",
+      "observation": "Expired actual SMTP recovery link is refused without changing the original password",
+      "layer": "native GoTrue/SMTP/PostgreSQL clock fixture",
+      "status": "pass"
+    },
+    {
+      "caseId": "1.11",
+      "observation": "Expired actual provider-issued numeric SMTP code is refused with no new session",
+      "layer": "native GoTrue/SMTP/PostgreSQL clock fixture",
+      "status": "pass"
+    }
+  ]
+}

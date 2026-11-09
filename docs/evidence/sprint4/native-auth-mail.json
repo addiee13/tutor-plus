@@ -1,0 +1,41 @@
+{
+  "emailFixtureId": "abe49f98-aa75-40a8-939c-fd90a2e4e532",
+  "results": [
+    {
+      "caseId": "1.1",
+      "observation": "pending identity has one linked adult profile and Student capability without a session",
+      "status": "pass",
+      "layer": "native Auth/SMTP/REST"
+    },
+    {
+      "caseId": "1.4",
+      "observation": "actual SMTP verification link works once and replay creates no new session",
+      "status": "pass",
+      "layer": "native Auth/SMTP/REST"
+    },
+    {
+      "caseId": "1.6",
+      "observation": "real token refresh preserves the trusted original session start",
+      "status": "pass",
+      "layer": "native Auth/SMTP/REST"
+    },
+    {
+      "caseId": "1.9",
+      "observation": "actual recovery mail changes only intended credentials; old password and reused link are denied",
+      "status": "pass",
+      "layer": "native Auth/SMTP/REST"
+    },
+    {
+      "caseId": "1.8",
+      "observation": "logout invalidates the authoritative session and stale access JWT cannot read private profile",
+      "status": "pass",
+      "layer": "native Auth/SMTP/REST"
+    },
+    {
+      "caseId": "1.11",
+      "observation": "actual SMTP numeric code verifies once; wrong and reused codes cannot create sessions",
+      "status": "pass",
+      "layer": "native Auth/SMTP/REST"
+    }
+  ]
+}

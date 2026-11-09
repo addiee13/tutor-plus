@@ -1,0 +1,14 @@
+{
+  "startedAt": "2026-11-08T23:11:59.274Z",
+  "finishedAt": "2026-11-08T23:12:07.032Z",
+  "sourceSha256": "9b0abd1f57aaa95a93be5b47add29c35c1d9f12b7fe4004fd7d22eef2de708bf",
+  "buildId": "LsAzehHAIZUFP9UgElinP",
+  "mode": "production build for local demo only",
+  "command": "node node_modules/next/dist/bin/next build",
+  "distDir": ".next/verifier-production",
+  "tsconfig": "tsconfig.verification.json (all app/test TypeScript and isolated route validators)",
+  "target": "http://localhost:3018",
+  "dataOrigin": "http://127.0.0.1:55448",
+  "externalAdaptersConfigured": false,
+  "revisionScope": "User requested a final critical-fix build/read smoke; exhaustive performance and provider extras deferred."
+}

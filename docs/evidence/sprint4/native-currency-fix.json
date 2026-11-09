@@ -1,0 +1,23 @@
+{
+  "layer": "populated native PostgreSQL, rolled-back regression fixtures",
+  "migration": "supabase/migrations/202611080024_marketplace_currency.sql",
+  "sha256": "6335bfbd6c49f21d343a167b10de1653db63101f8e18608bfd60c6cac28ae7a5",
+  "applied": true,
+  "before": {
+    "usdBudgetMinor": 3000,
+    "eurListingMinor": 3000,
+    "incorrectReturnedRows": 1
+  },
+  "after": {
+    "usdBudgetMinor": 3000,
+    "eurListingMinor": 3000,
+    "returnedRows": 0
+  },
+  "observations": [
+    "USD 3000 budget selects the USD 3000 tutor and excludes the equal-minor-unit EUR listing before pagination",
+    "an explicitly EUR-denominated budget compares only EUR minor units",
+    "unpriced discovery still returns the EUR listing with its currency label",
+    "legacy v2 rate-bound calls retain an explicit USD interpretation"
+  ],
+  "scope": "Targeted024/008 check; prior37-migration334-observation replay remains separate."
+}

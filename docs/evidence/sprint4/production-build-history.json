@@ -1,0 +1,30 @@
+[
+  {
+    "startedAt": "2026-11-08T22:28:11.141Z",
+    "finishedAt": "2026-11-08T22:30:52.331Z",
+    "sourceSha256": "dbc1fc982a18224e2b326dc8e85cd2490a47030615b143368c1e9b783da432b9",
+    "buildId": "PGPfaIPZt3uIlNhjmiRkV",
+    "mode": "production",
+    "command": "node node_modules/next/dist/bin/next build",
+    "distDir": ".next/verifier-production",
+    "target": "http://localhost:3018",
+    "dataOrigin": "http://127.0.0.1:55448",
+    "externalAdaptersConfigured": false,
+    "accepted": false,
+    "reason": "Later formatting of in-scope runtime files changed the source digest; this build is superseded and is not performance or final browser evidence."
+  },
+  {
+    "startedAt": "2026-11-08T22:32:51.180Z",
+    "finishedAt": "2026-11-08T22:35:05.445Z",
+    "sourceSha256": "a680acb8fa1161eea97cbe8647b0af0632c5553ec3498674497990cd42ff8e5b",
+    "buildId": "NFGWUd3o7w1Jn6LYqDv6E",
+    "mode": "production",
+    "command": "node node_modules/next/dist/bin/next build",
+    "distDir": ".next/verifier-production",
+    "target": "http://localhost:3018",
+    "dataOrigin": "http://127.0.0.1:55448",
+    "externalAdaptersConfigured": false,
+    "accepted": false,
+    "reason": "Superseded by final development-browser-log privacy configuration; not final browser/performance evidence."
+  }
+]

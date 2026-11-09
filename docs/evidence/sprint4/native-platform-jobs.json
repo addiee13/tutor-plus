@@ -1,0 +1,47 @@
+{
+  "layer": "native HTTP/REST/PostgreSQL",
+  "externalEmailSent": false,
+  "explicitLocalQueueFixture": true,
+  "observations": [
+    {
+      "path": "/api/jobs/booking-reminders",
+      "variant": "missing token",
+      "status": 403
+    },
+    {
+      "path": "/api/jobs/booking-reminders",
+      "variant": "wrong token",
+      "status": 403
+    },
+    {
+      "path": "/api/jobs/notification-outbox",
+      "variant": "missing token",
+      "status": 403
+    },
+    {
+      "path": "/api/jobs/notification-outbox",
+      "variant": "wrong token",
+      "status": 403
+    },
+    {
+      "path": "/api/jobs/booking-reminders",
+      "variant": "authorized local reminders",
+      "status": 200,
+      "body": {
+        "queued": 20
+      }
+    },
+    {
+      "path": "/api/jobs/notification-outbox",
+      "variant": "authorized email-disabled local dispatch",
+      "status": 200,
+      "body": {
+        "claimed": 38,
+        "accepted": 0,
+        "notConfigured": 15,
+        "retrying": 0,
+        "exhausted": 0
+      }
+    }
+  ]
+}

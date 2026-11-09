@@ -1,0 +1,11 @@
+{
+  "layer": "isolated signed HTTP/REST/PostgreSQL fixture",
+  "externalEmailSent": false,
+  "observations": [
+    "Oversized fixed-length and chunked payloads rejected at the 64000-byte route cap",
+    "Invalid signature denied without delivery-state mutation",
+    "Stale signed request denied without mutation",
+    "Valid signed fixture persisted; replay retained one event",
+    "Delayed sent event did not regress delivered state"
+  ]
+}
