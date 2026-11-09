@@ -1424,7 +1424,7 @@ export async function askLearningAssistant(
       headers: {
         Authorization: `Bearer ${config.key}`,
         "Content-Type": "application/json",
-        "User-Agent": "codex_cli_rs/1.0",
+        "User-Agent": "TutorPlus/1.0",
       },
       body: JSON.stringify({
         model: config.model,

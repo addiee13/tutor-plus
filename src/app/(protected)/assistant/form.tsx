@@ -38,6 +38,9 @@ function AssistantFormContent({
   const [state, action, pending] = useActionState(askAssistantAction, initial);
   const [submitted, setSubmitted] = useState<FormData | null>(null);
   const failed = !!state.message && !state.success;
+  const contextErrors = ["context", "resourceIds", "bookingId", "planId"]
+    .map((field) => state.fields?.[field])
+    .filter(Boolean);
   const retained = (key: string) => (failed ? String(submitted?.get(key) ?? "") : "");
   const response = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -69,8 +72,18 @@ function AssistantFormContent({
                 `Ask for an explanation, a practice approach or help understanding selected material. Up to ${promptLimit} characters with the current configuration.`}
             </span>
           </div>
-          <details className="workspace-details">
-            <summary>Add learning context</summary>
+          <p id="assistant-context-help" className="hint">
+            Select at least one session, study plan or resource below to ground your question in your learning.
+          </p>
+          <details className="workspace-details" open={contextErrors.length > 0}>
+            <summary>Choose learning context (at least one required)</summary>
+            {contextErrors.length > 0 && (
+              <div id="assistant-context-error" className="field-error" role="alert">
+                {contextErrors.map((message, index) => (
+                  <p key={index}>{message}</p>
+                ))}
+              </div>
+            )}
             <div className="workflow-fields">
               <div className="field">
                 <label htmlFor="assistant-booking">Session (optional)</label>
@@ -79,6 +92,8 @@ function AssistantFormContent({
                   name="bookingId"
                   key={`booking:${retained("bookingId")}`}
                   defaultValue={retained("bookingId")}
+                  aria-invalid={!!state.fields?.bookingId}
+                  aria-describedby={state.fields?.bookingId ? "assistant-context-error" : "assistant-context-help"}
                 >
                   <option value="">No session context</option>
                   {relationships.map((row) => (
@@ -96,6 +111,8 @@ function AssistantFormContent({
                   name="planId"
                   key={`plan:${retained("planId")}`}
                   defaultValue={retained("planId")}
+                  aria-invalid={!!state.fields?.planId}
+                  aria-describedby={state.fields?.planId ? "assistant-context-error" : "assistant-context-help"}
                 >
                   <option value="">No study plan context</option>
                   {plans.map((plan) => (
@@ -106,7 +123,11 @@ function AssistantFormContent({
                 </select>
               </div>
             </div>
-            <fieldset className="workflow-choices">
+            <fieldset
+              className="workflow-choices"
+              aria-invalid={!!state.fields?.resourceIds}
+              aria-describedby={state.fields?.resourceIds ? "assistant-context-error" : "assistant-context-help"}
+            >
               <legend>Resources to discuss (optional)</legend>
               {resources.slice(0, 20).map((resource) => (
                 <label key={resource.id} className="checkbox">
