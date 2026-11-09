@@ -1,6 +1,6 @@
 # Sprint 4 runtime setup
 
-This implementation extends the existing Next.js/Supabase application. Payments remain excluded. The implementation tracker and acceptance register record which behavior has actually been verified; this setup guide does not claim a deployment or external delivery.
+This implementation extends the existing Next.js/Supabase application. Payments remain excluded. The November 9 hosted release and its observed limits are recorded in [live release verification](../evidence/SPRINT4_LIVE_RELEASE.md). Earlier local evidence remains historical evidence.
 
 ## Database and application
 
@@ -47,12 +47,14 @@ Set a high-entropy server-only `PLATFORM_JOB_SECRET`. An external scheduler must
 1. `/api/jobs/booking-reminders` enqueues currently feasible reminders (and the implemented learning reminder work).
 2. `/api/jobs/notification-outbox` claims due work, persists recipient feed rows, and attempts eligible email dispatch.
 
-Both accept GET or POST and return no-store JSON. Prefer POST for a scheduler under your control. A one-minute schedule for each is a starting operational configuration; monitor queue depth and retry exhaustion before changing batch frequency. No scheduler is provisioned by this guide or by merely adding these routes. Keep the scheduler secret out of public URLs and query strings.
+Both accept GET or POST and return no-store JSON. The hosted release uses `.github/workflows/notifications.yml` every five minutes and on manual dispatch. It invokes reminder enqueueing before outbox processing, with `TUTORPLUS_PLATFORM_JOB_SECRET` stored as a private GitHub Actions secret. GitHub scheduled jobs can be delayed; this is not an exact-minute delivery guarantee. A manual hosted dispatch passed on November 9. Keep the scheduler secret out of public URLs and query strings.
 
 Repeated invocations use deduplicated domain identities. The database rechecks booking version/status and cancels obsolete reminders after a move/cancellation. A reminder whose intended notification time is already past is not invented retroactively. The worker's `accepted`, `notConfigured`, `retrying` and `exhausted` counters are different outcomes; do not relabel any of them as delivered.
 
 ## Local verification boundary
 
-The current integration environment uses isolated native PostgreSQL, GoTrue, PostgREST, Storage and Mailpit on loopback, with private credentials under `/tmp/tutorplus-native-runtime`. It is disposable test infrastructure, not deployment configuration. Existing hosted configuration was not changed. Fixture confirmations unlock learning tests through an explicitly labeled test boundary; no payment provider or charge is involved. Do not copy those fixture credentials or local JWTs into hosted settings.
+The earlier integration environment uses isolated native PostgreSQL, GoTrue, PostgREST, Storage and Mailpit on loopback, with private credentials under `/tmp/tutorplus-native-runtime`. It is disposable test infrastructure, not deployment configuration. The November 9 hosted release separately applies the full migration chain and provider settings to the linked TutorPlus project. Fixture confirmations unlock learning tests through an explicitly labeled test boundary; no payment provider or charge is involved. Do not copy local fixture credentials or JWTs into hosted settings.
+
+Assignments and preparation attachments upload directly to private Supabase Storage using a user-scoped, single-object signed URL. Only metadata and the final registration cross the application function, so the 10 MiB contract works within Vercel's request limit. Registration verifies ownership, path, actual stored MIME/size and current relationship/state. Migration `202611080025` permits the signed-URL preflight; `202611090001` restores the read-policy predicate permission. Auth session cookies remain HttpOnly.
 
 For the running local demo, account details are in the private `/tmp/tutorplus-native-runtime/fixtures.json` file. Local verification emails are captured in Mailpit at `http://127.0.0.1:55446`; they are not sent to external inboxes.

@@ -1,0 +1,12 @@
+{
+  "url": "https://tutor-plus.me/assistant",
+  "commit": "c2d4ccc",
+  "providerStatus": 401,
+  "providerError": "unauthorized_client_error",
+  "uiMessage": "We couldn’t complete that right now. Please try again shortly.",
+  "contextValidationVisible": true,
+  "explicitContextSelected": true,
+  "phoneOverflow": false,
+  "timestamp": "2026-11-09T06:36:51.147Z",
+  "realAIResponse": false
+}

@@ -1,0 +1,467 @@
+{
+  "url": "https://tutor-plus.me",
+  "commit": "e152228",
+  "timestamp": "2026-11-09T06:32:30.245Z",
+  "observations": [
+    {
+      "viewport": "desktop",
+      "route": "/",
+      "label": "public home",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/tutors",
+      "label": "public directory",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/dashboard",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/profile",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/bookings",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/bookings/6931889d-cf0c-41a5-82f4-309ee568e73a",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/sessions/6931889d-cf0c-41a5-82f4-309ee568e73a",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/reviews",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/assessments",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/assignments",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/study-plans",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/progress",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/learning",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/notifications",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/resources",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/assistant",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/support",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/saved-tutors",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/matching",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "label": "refresh and logout protected-route denial",
+      "passed": true
+    },
+    {
+      "viewport": "desktop",
+      "route": "/tutor-studio",
+      "label": "tutor studio",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/assessments",
+      "label": "tutor learning workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/assignments",
+      "label": "tutor learning workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/study-plans",
+      "label": "tutor learning workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/sessions/6931889d-cf0c-41a5-82f4-309ee568e73a",
+      "label": "tutor learning workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/accounts",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/safety",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/templates",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/matching",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/assessment-templates",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/badges",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/operations",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/",
+      "label": "public home",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/tutors",
+      "label": "public directory",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/dashboard",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/profile",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/bookings",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/bookings/6931889d-cf0c-41a5-82f4-309ee568e73a",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/sessions/6931889d-cf0c-41a5-82f4-309ee568e73a",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/reviews",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/assessments",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/assignments",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/study-plans",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/progress",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/learning",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/notifications",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/resources",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/assistant",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/support",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/saved-tutors",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/matching",
+      "label": "student workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "label": "refresh and logout protected-route denial",
+      "passed": true
+    },
+    {
+      "viewport": "phone",
+      "route": "/tutor-studio",
+      "label": "tutor studio",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/assessments",
+      "label": "tutor learning workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/assignments",
+      "label": "tutor learning workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/study-plans",
+      "label": "tutor learning workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/sessions/6931889d-cf0c-41a5-82f4-309ee568e73a",
+      "label": "tutor learning workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/admin",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/admin/accounts",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/admin/safety",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/admin/templates",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/admin/matching",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/admin/assessment-templates",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/admin/badges",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "viewport": "phone",
+      "route": "/admin/operations",
+      "label": "administrator workspace",
+      "status": 200,
+      "overflow": false
+    }
+  ],
+  "pageErrors": [],
+  "fixtures": "Explicit deployment test accounts; verification links generated through owned Auth admin API, no external emails; no-charge relationship fixture, no provider charge."
+}

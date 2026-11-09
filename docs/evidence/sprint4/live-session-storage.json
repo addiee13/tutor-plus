@@ -1,0 +1,13 @@
+{
+  "url": "https://tutor-plus.me",
+  "timestamp": "2026-11-09T06:28:38.933Z",
+  "passed": [
+    "Student preparation persists",
+    "Signed private upload persists",
+    "Tutor denied before approval HTTP403",
+    "Tutor approval persists after refresh",
+    "Approved private download bytes match",
+    "Phone no horizontal overflow"
+  ],
+  "payment": "Explicit no-charge deployment fixture; no payment provider."
+}
