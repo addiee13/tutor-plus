@@ -1,6 +1,8 @@
 import { EvidenceCharts } from "./evidence-charts";
 import { ProgressFilterForm } from "./filter-form";
 import { readProgressFilters } from "./filters";
+import { ProgressSummaryForm } from "./summary-form";
+import { readAssistantStatus } from "@/domains/platform/service";
 import { InputError } from "@/domains/shared/errors";
 import { TopicRecords } from "./topic-records";
 import Link from "next/link";
@@ -27,6 +29,10 @@ import { WorkflowForm } from "@/components/workspace/workflow-form";
 import type { LearningProgressOverview } from "@/domains/learning/types";
 import { masteryAction } from "../learning/actions";
 const labels = { needs_work: "Needs Work", improving: "Improving", confident: "Confident" };
+
+// Allow the configured AI provider deadline plus authorization and context loading.
+export const maxDuration = 90;
+
 export default async function ProgressPage({
   searchParams,
 }: {
@@ -98,6 +104,8 @@ export default async function ProgressPage({
     );
   const { students, selectedId, progress, subjects, evidence, filters } = loaded.value;
   const tutorView = selectedId !== actor.id && hasRole(actor, "tutor");
+  const ownStudentView = selectedId === actor.id && hasRole(actor, "student");
+  const assistantStatus = ownStudentView ? await readAssistantStatus() : null;
   return (
     <>
       <WorkspaceHeading
@@ -148,6 +156,13 @@ export default async function ProgressPage({
           studentId={selectedId}
           subjects={subjects}
         />
+      )}
+      {progress && ownStudentView && (
+        <div style={{ marginTop: "1.5rem" }}>
+          <Section title="AI learning progress summary" eyebrow="Reflect on the evidence">
+            <ProgressSummaryForm filters={filters} configured={assistantStatus?.configured ?? false} />
+          </Section>
+        </div>
       )}
       {!progress ? (
         <EmptyState title="A learning relationship starts the record">

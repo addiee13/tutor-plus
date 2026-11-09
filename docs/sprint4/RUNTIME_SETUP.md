@@ -18,10 +18,10 @@ Run `npm run check`, `npm run build`, then `npm start -- --hostname 127.0.0.1 --
 | --- | --- |
 | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Enable notification email submission. An accepted provider request is distinct from observed delivery. Missing configuration leaves truthful `not_configured` email state and preserves the in-app notice. |
 | `RESEND_WEBHOOK_SECRET` | Resend/Svix signing secret for `/api/webhooks/resend`. The handler verifies the raw-body signature and timestamp before recording supported delivery events. Configure the provider to deliver its email lifecycle events to this route. |
-| `OPENAI_API_KEY`, `OPENAI_MODEL` | Enable the learning assistant through the Responses API. Missing either yields the configuration state. Responses are human-reviewed drafts and do not directly change grades, mastery, bookings or administrative decisions. |
+| `OPENAI_API_KEY`, `OPENAI_MODEL` | Enable the learning assistant and AI learning progress summaries through the same Responses API adapter. Missing either yields the configuration state. Responses are human-reviewed drafts and do not directly change grades, mastery, bookings or administrative decisions. |
 | `OPENAI_BASE_URL` | Optional trusted server-only Responses API base; defaults to `https://api.openai.com/v1`. Keep the default for OpenAI. A loopback deterministic adapter may be used for explicitly labeled integration fixtures; those responses do not prove live AI behavior. |
 | `ASSISTANT_PROMPT_LIMIT` | Prompt character limit; defaults to 100, with supported configured range 1–10000. The database enforces the supplied bounded limit as well as the service. |
-| `ASSISTANT_DAILY_QUOTA` | Per-user daily request limit; defaults to 2, supported range 1–100. Failed/refused requests are recorded with truthful outcomes. |
+| `ASSISTANT_DAILY_QUOTA` | Shared per-user daily request limit across both AI features; defaults to 2, supported range 1–100. Failed/refused requests are recorded with truthful outcomes. |
 | `MAPBOX_ACCESS_TOKEN` | Enables manual city/postal-code geocoding. Without configuration or on failure, location-dependent filtering reports failure and retains the requested radius. Virtual search needs no location. |
 
 Provider configuration is a separate deployment step. Local signed-event fixtures prove the webhook boundary without proving an actual Resend message or inbox receipt. Deterministic assistant tests prove adapter behavior without claiming a live model response.
@@ -60,3 +60,9 @@ The earlier integration environment uses isolated native PostgreSQL, GoTrue, Pos
 Assignments and preparation attachments upload directly to private Supabase Storage using a user-scoped, single-object signed URL. Only metadata and the final registration cross the application function, so the 10 MiB contract works within Vercel's request limit. Registration verifies ownership, path, actual stored MIME/size and current relationship/state. Migration `202611080025` permits the signed-URL preflight; `202611090001` restores the read-policy predicate permission. Auth session cookies remain HttpOnly.
 
 For the running local demo, account details are in the private `/tmp/tutorplus-native-runtime/fixtures.json` file. Local verification emails are captured in Mailpit at `http://127.0.0.1:55446`; they are not sent to external inboxes.
+
+### AI learning progress summary
+
+Students open `/progress` and choose **Generate AI progress summary**. The action always resolves the student from the current authenticated actor, reuses the page filters, and reads through user-scoped learning/session services. It sends bounded filtered topic evidence and current goals to the configured provider after the student requests generation. Broader sidebar collections are not included. Empty evidence/goal selections return guidance without consuming a provider request. Goals describe intentions; recaps and scores do not establish mastery or improvement by themselves.
+
+The response is transient, includes trusted source links and a generation timestamp, and can be cleared or regenerated. It never writes progress or mastery. Both AI features share the existing atomic database quota and outcome accounting. No new migration or provider key is required. Free inference can take a minute; errors preserve the source records and allow retry.

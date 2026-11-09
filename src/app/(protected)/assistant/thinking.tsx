@@ -9,7 +9,7 @@ import styles from "./thinking.module.css";
  * https://github.com/ibelick/motion-primitives/blob/main/components/core/text-shimmer.tsx
  * Copyright (c) 2024 ibelick. See licenses/motion-primitives.txt.
  */
-function ThinkingText() {
+function ThinkingText({ children }: { children: string }) {
   const reducedMotion = useReducedMotion();
   return (
     <motion.span
@@ -19,13 +19,21 @@ function ThinkingText() {
       animate={reducedMotion ? undefined : { backgroundPosition: "0% center" }}
       transition={{ repeat: Infinity, duration: 3.2, ease: "linear" }}
     >
-      Thinking it through
+      {children}
     </motion.span>
   );
 }
 
-/** Mounted only while the assistant's real Server Action is pending. */
-export function AssistantThinking() {
+/** Mounted only while an AI Server Action is pending. */
+export function AssistantThinking({
+  heading = "Thinking it through",
+  description = "Working on a clear explanation using the context you chose.",
+  reassurance = "This can take about a minute. Your question is still here.",
+}: {
+  heading?: string;
+  description?: string;
+  reassurance?: string;
+} = {}) {
   const [longWait, setLongWait] = useState(false);
   const card = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -61,11 +69,11 @@ export function AssistantThinking() {
       </div>
       <div className={styles.content}>
         <h3 className={styles.heading}>
-          <span className="visually-hidden">Thinking it through</span>
-          <ThinkingText />
+          <span className="visually-hidden">{heading}</span>
+          <ThinkingText>{heading}</ThinkingText>
         </h3>
-        <p className={styles.description}>Working on a clear explanation using the context you chose.</p>
-        {longWait && <p className={styles.reassurance}>This can take about a minute. Your question is still here.</p>}
+        <p className={styles.description}>{description}</p>
+        {longWait && <p className={styles.reassurance}>{reassurance}</p>}
       </div>
     </section>
   );
