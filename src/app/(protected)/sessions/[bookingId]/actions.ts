@@ -13,6 +13,7 @@ import {
 } from "@/domains/sessions/service";
 import type { SessionActionState } from "@/domains/sessions/types";
 import { readValues } from "@/domains/shared/form";
+import type { PreparedPrivateUpload } from "@/domains/shared/uploads";
 
 function refresh(form: FormData) {
   const booking = form.get("booking");
@@ -133,12 +134,42 @@ export async function saveAgendaLinksAction(_previous: ActionState, form: FormDa
   }
 }
 
+export async function prepareSessionAttachmentUploadAction(
+  form: FormData,
+): Promise<ActionState & { upload?: PreparedPrivateUpload }> {
+  try {
+    const { prepareSessionAttachmentUpload } = await import("@/domains/sessions/service");
+    const upload = await prepareSessionAttachmentUpload(
+      await createUserClient(),
+      String(form.get("booking") ?? ""),
+      form.get("fileMime"),
+      Number(form.get("fileSize")),
+    );
+    return { message: "", upload };
+  } catch (error) {
+    return actionFailure(error);
+  }
+}
+
 export async function uploadSessionAttachmentAction(_previous: ActionState, form: FormData): Promise<ActionState> {
   try {
-    const file = form.get("file");
-    if (!(file instanceof File) || !file.size) throw new InputError({ file: "Choose a session preparation file." });
-    const { uploadSessionAttachment } = await import("@/domains/sessions/service");
-    await uploadSessionAttachment(await createUserClient(), String(form.get("booking") ?? ""), file);
+    const client = await createUserClient();
+    const booking = String(form.get("booking") ?? "");
+    if (form.has("filePath")) {
+      const { registerUploadedSessionAttachment } = await import("@/domains/sessions/service");
+      await registerUploadedSessionAttachment(
+        client,
+        booking,
+        form.get("filePath"),
+        form.get("fileMime"),
+        Number(form.get("fileSize")),
+      );
+    } else {
+      const file = form.get("file");
+      if (!(file instanceof File) || !file.size) throw new InputError({ file: "Choose a session preparation file." });
+      const { uploadSessionAttachment } = await import("@/domains/sessions/service");
+      await uploadSessionAttachment(client, booking, file);
+    }
     refresh(form);
     return { success: true, message: "Your private preparation file was uploaded. Its review is pending." };
   } catch (error) {

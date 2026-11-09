@@ -685,7 +685,7 @@ begin
     execute $bucket$insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types)
       values('session-plan-attachments','session-plan-attachments',false,10485760,array['application/pdf','image/png','image/jpeg','text/plain'])
       on conflict(id) do update set public=false,file_size_limit=10485760,allowed_mime_types=excluded.allowed_mime_types$bucket$;
-    execute 'alter table storage.objects enable row level security';
+    -- Managed Storage already enables RLS; its table owner is Supabase, not the migration role.
     execute 'drop policy if exists session_plan_attachments_upload on storage.objects';
     execute 'drop policy if exists session_plan_attachments_read on storage.objects';
     execute 'drop policy if exists session_plan_attachments_orphan_cleanup on storage.objects';

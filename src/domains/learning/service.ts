@@ -6,6 +6,12 @@ import { hasRole, requireRole, type Actor } from "../auth/policy";
 import { DomainError, InputError } from "../shared/errors";
 import { PgErrorCode } from "../shared/postgres";
 import {
+  parsePrivateUploadMetadata,
+  parsePrivateUploadPath,
+  privateUploadExtension,
+  type PreparedPrivateUpload,
+} from "../shared/uploads";
+import {
   parseAssignmentFeedback,
   parseAssignmentCancellationReason,
   parseAssignmentDraft,
@@ -753,6 +759,72 @@ export async function assignAssignment(client: SupabaseClient, assignmentId: unk
 
 function fileExtension(mime: string): string {
   return { "application/pdf": ".pdf", "image/png": ".png", "image/jpeg": ".jpg", "text/plain": ".txt" }[mime] ?? "";
+}
+
+async function requireFileAssignment(client: SupabaseClient, assignmentId: unknown) {
+  const id = parseRecordId(assignmentId, "assignmentId");
+  const actor = await getActor(client);
+  requireRole(actor, "student");
+  const { assignment } = await getAssignment(client, id);
+  if (assignment.student_id !== actor.id) throw new DomainError("forbidden");
+  if (
+    assignment.submission_type !== "file" ||
+    assignment.submissions_closed_at ||
+    !["assigned", "returned"].includes(assignment.status) ||
+    (!assignment.accepts_late && Date.parse(assignment.due_at) <= Date.now())
+  )
+    throw new InputError({ file: "This assignment is no longer accepting files." });
+  return { id, actor };
+}
+
+export async function prepareAssignmentUpload(
+  client: SupabaseClient,
+  assignmentId: unknown,
+  mime: unknown,
+  bytes: unknown,
+): Promise<PreparedPrivateUpload> {
+  const metadata = parsePrivateUploadMetadata(mime, bytes);
+  const { id, actor } = await requireFileAssignment(client, assignmentId);
+  const path = `${id}/${actor.id}/${randomUUID()}${privateUploadExtension(metadata.mime)}`;
+  const { data, error } = await client.storage.from(BUCKET).createSignedUploadUrl(path, { upsert: false });
+  if (error || !data?.token) throw new DomainError("unavailable");
+  return { bucket: BUCKET, path, token: data.token };
+}
+
+/** Register an already uploaded object through the existing owner/metadata/state-checked SQL transaction. */
+export async function submitUploadedAssignment(
+  client: SupabaseClient,
+  assignmentId: unknown,
+  uploadedPath: unknown,
+  mime: unknown,
+  bytes: unknown,
+): Promise<AssignmentSubmission> {
+  const metadata = parsePrivateUploadMetadata(mime, bytes);
+  const { id, actor } = await requireFileAssignment(client, assignmentId);
+  const path = parsePrivateUploadPath(uploadedPath, id, actor.id, metadata.mime);
+  const { data: submissionId, error } = await client.rpc("submit_assignment_with_file", {
+    assignment: id,
+    body: null,
+    link_url: null,
+    file_path: path,
+    file_mime: metadata.mime,
+    file_size_bytes: metadata.bytes,
+  });
+  if (error) {
+    await client.storage
+      .from(BUCKET)
+      .remove([path])
+      .catch(() => undefined);
+    databaseFailure(error, "file");
+  }
+  if (typeof submissionId !== "string") throw new DomainError("unavailable");
+  const { data, error: readError } = await client
+    .from("assignment_submissions")
+    .select(SUBMISSION_FIELDS)
+    .eq("id", submissionId)
+    .single<AssignmentSubmission>();
+  if (readError || !data) throw new DomainError("unavailable");
+  return data;
 }
 
 export async function submitAssignment(

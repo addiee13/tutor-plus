@@ -6,7 +6,12 @@ import { safeMessage } from "@/domains/shared/errors";
 import { loadWorkspace } from "@/components/workspace/load";
 import { Section, Status, formatInstant, formatFileSize } from "@/components/workspace/ui";
 import { WorkflowForm } from "@/components/workspace/workflow-form";
-import { saveAgendaLinksAction, uploadSessionAttachmentAction, reviewSessionAttachmentAction } from "./actions";
+import {
+  saveAgendaLinksAction,
+  uploadSessionAttachmentAction,
+  reviewSessionAttachmentAction,
+  prepareSessionAttachmentUploadAction,
+} from "./actions";
 
 function linkValue(link: SessionAgendaLinkInput): string {
   return link.kind === "milestone" ? `milestone:${link.studyPlanId}:${link.milestoneId}` : `${link.kind}:${link.id}`;
@@ -77,6 +82,7 @@ export function SessionAttachments({ workspace }: { workspace: SessionWorkspace 
         <WorkflowForm
           title="Upload preparation file"
           action={uploadSessionAttachmentAction}
+          prepareUpload={prepareSessionAttachmentUploadAction}
           hidden={{ booking: workspace.booking.id }}
           submit="Upload preparation file"
           fields={[

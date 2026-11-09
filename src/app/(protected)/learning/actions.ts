@@ -15,6 +15,8 @@ import {
   updateAssignment,
   assignAssignment,
   submitAssignment,
+  prepareAssignmentUpload,
+  submitUploadedAssignment,
   giveAssignmentFeedback,
   createStudyPlan,
   reviseStudyPlan,
@@ -28,6 +30,7 @@ import type {
   StudyMilestoneStatus,
   StudyMilestoneLink,
 } from "@/domains/learning/types";
+import type { PreparedPrivateUpload } from "@/domains/shared/uploads";
 
 function text(form: FormData, key: string) {
   return String(form.get(key) ?? "").trim();
@@ -202,14 +205,41 @@ export async function assignAssignmentAction(_previous: ActionState, form: FormD
     return actionFailure(error);
   }
 }
+export async function prepareAssignmentUploadAction(
+  form: FormData,
+): Promise<ActionState & { upload?: PreparedPrivateUpload }> {
+  try {
+    const upload = await prepareAssignmentUpload(
+      await createUserClient(),
+      text(form, "assignmentId"),
+      form.get("fileMime"),
+      Number(form.get("fileSize")),
+    );
+    return { message: "", upload };
+  } catch (error) {
+    return actionFailure(error);
+  }
+}
+
 export async function submitAssignmentAction(_previous: ActionState, form: FormData): Promise<ActionState> {
   try {
-    const file = form.get("file");
-    await submitAssignment(await createUserClient(), text(form, "assignmentId"), {
-      body: text(form, "body") || null,
-      linkUrl: text(form, "linkUrl") || null,
-      file: file instanceof File && file.size ? file : null,
-    });
+    const client = await createUserClient();
+    if (form.has("filePath")) {
+      await submitUploadedAssignment(
+        client,
+        text(form, "assignmentId"),
+        form.get("filePath"),
+        form.get("fileMime"),
+        Number(form.get("fileSize")),
+      );
+    } else {
+      const file = form.get("file");
+      await submitAssignment(client, text(form, "assignmentId"), {
+        body: text(form, "body") || null,
+        linkUrl: text(form, "linkUrl") || null,
+        file: file instanceof File && file.size ? file : null,
+      });
+    }
     return { success: true, message: "Your work was submitted and saved for tutor review." };
   } catch (error) {
     return actionFailure(error, values(form));

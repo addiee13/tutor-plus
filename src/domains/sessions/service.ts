@@ -8,6 +8,12 @@ import { parseBookingId } from "../bookings/validation";
 import type { Booking } from "../bookings/types";
 import { DomainError, InputError, isDomainError } from "../shared/errors";
 import { PgErrorCode } from "../shared/postgres";
+import {
+  parsePrivateUploadMetadata,
+  parsePrivateUploadPath,
+  privateUploadExtension,
+  type PreparedPrivateUpload,
+} from "../shared/uploads";
 import { requireSessionPermission, resolveSessionRole, sessionPermissions, sessionPhase } from "./policy";
 import {
   parseRecap,
@@ -515,6 +521,59 @@ export async function publishStructuredRecap(client: SupabaseClient, input: unkn
 
 function sessionFileExtension(mime: string): string {
   return { "application/pdf": ".pdf", "image/png": ".png", "image/jpeg": ".jpg", "text/plain": ".txt" }[mime] ?? "";
+}
+
+export async function prepareSessionAttachmentUpload(
+  client: SupabaseClient,
+  bookingId: string,
+  mime: unknown,
+  bytes: unknown,
+): Promise<PreparedPrivateUpload> {
+  const metadata = parsePrivateUploadMetadata(mime, bytes);
+  const id = parseBookingId(bookingId);
+  const { actor, role, can } = await loadContext(client, id);
+  requireSessionPermission(can, "uploadAttachment");
+  if (role !== "student") throw new DomainError("forbidden");
+  const path = `${id}/${actor.id}/${randomUUID()}${privateUploadExtension(metadata.mime)}`;
+  const { data, error } = await client.storage.from(SESSION_ATTACHMENT_BUCKET).createSignedUploadUrl(path, {
+    upsert: false,
+  });
+  if (error || !data?.token) throw new DomainError("unavailable");
+  return { bucket: SESSION_ATTACHMENT_BUCKET, path, token: data.token };
+}
+
+export async function registerUploadedSessionAttachment(
+  client: SupabaseClient,
+  bookingId: string,
+  uploadedPath: unknown,
+  mime: unknown,
+  bytes: unknown,
+): Promise<SessionAttachment> {
+  const metadata = parsePrivateUploadMetadata(mime, bytes);
+  const id = parseBookingId(bookingId);
+  const { actor, role, can } = await loadContext(client, id);
+  requireSessionPermission(can, "uploadAttachment");
+  if (role !== "student") throw new DomainError("forbidden");
+  const path = parsePrivateUploadPath(uploadedPath, id, actor.id, metadata.mime);
+  const storage = client.storage.from(SESSION_ATTACHMENT_BUCKET);
+  const { data: attachmentId, error } = await client.rpc("register_session_plan_attachment", {
+    booking: id,
+    path,
+    mime: metadata.mime,
+    bytes: metadata.bytes,
+  });
+  if (error || typeof attachmentId !== "string") {
+    await storage.remove([path]).catch(() => undefined);
+    if (error) databaseFailure(error, "file", "This session is no longer open for an attachment.");
+    throw new DomainError("unavailable");
+  }
+  const { data, error: readError } = await client
+    .from("session_plan_attachments")
+    .select(ATTACHMENT_FIELDS)
+    .eq("id", attachmentId)
+    .single<SessionAttachment>();
+  if (readError || !data) throw new DomainError("unavailable");
+  return data;
 }
 
 export async function uploadSessionAttachment(

@@ -839,7 +839,7 @@ begin
       on conflict (id) do update set public = false, file_size_limit = 10485760,
         allowed_mime_types = array['application/pdf', 'image/png', 'image/jpeg', 'text/plain']::text[]
     $bucket$;
-    execute 'alter table storage.objects enable row level security';
+    -- Managed Storage already enables RLS; its table owner is Supabase, not the migration role.
     execute 'drop policy if exists assignment_submissions_upload on storage.objects';
     execute 'drop policy if exists assignment_submissions_read on storage.objects';
     execute 'drop policy if exists assignment_submissions_orphan_cleanup on storage.objects';

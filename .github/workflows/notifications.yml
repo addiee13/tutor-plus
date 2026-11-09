@@ -1,0 +1,26 @@
+name: Process TutorPlus notifications
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: tutorplus-notifications
+  cancel-in-progress: false
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Enqueue reminders and process due notices
+        env:
+          JOB_SECRET: ${{ secrets.TUTORPLUS_PLATFORM_JOB_SECRET }}
+        run: |
+          set -euo pipefail
+          test -n "$JOB_SECRET"
+          curl --fail-with-body --silent --show-error --max-time 75 --request POST \
+            --header "Authorization: Bearer $JOB_SECRET" \
+            https://tutor-plus.me/api/jobs/booking-reminders
+          curl --fail-with-body --silent --show-error --max-time 75 --request POST \
+            --header "Authorization: Bearer $JOB_SECRET" \
+            https://tutor-plus.me/api/jobs/notification-outbox

@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import type { ActionState } from "@/domains/shared/errors";
 import { FormResult } from "@/components/form-controls";
 import { DateTimeField } from "@/components/date-time-field";
+import { actionFailure } from "@/lib/action-state";
+import type { PreparedPrivateUpload } from "@/domains/shared/uploads";
+import { InputError } from "@/domains/shared/errors";
 
 export type WorkflowField = {
   name: string;
@@ -28,6 +31,7 @@ export type WorkflowField = {
 };
 
 export type WorkflowAction = (state: ActionState, form: FormData) => Promise<ActionState>;
+export type PrepareUploadAction = (form: FormData) => Promise<ActionState & { upload?: PreparedPrivateUpload }>;
 
 /** Small, labelled forms share a pending state, retained inputs, and a focused validation summary. */
 export function WorkflowForm({
@@ -40,6 +44,7 @@ export function WorkflowForm({
   refresh = true,
   footer,
   onFieldChange,
+  prepareUpload,
 }: {
   action: WorkflowAction;
   fields?: readonly WorkflowField[];
@@ -50,8 +55,31 @@ export function WorkflowForm({
   refresh?: boolean;
   footer?: ReactNode;
   onFieldChange?: (name: string, value: string) => void;
+  prepareUpload?: PrepareUploadAction;
 }) {
-  const [state, dispatch, pending] = useActionState(action, { message: "" });
+  const [state, dispatch, pending] = useActionState(
+    async (previous: ActionState, form: FormData) => {
+      if (!prepareUpload) return action(previous, form);
+      try {
+        const file = form.get("file");
+        if (!(file instanceof File) || !file.size) throw new InputError({ file: "Choose a file." });
+        // File bytes go straight to Storage. Only metadata reaches the two Server Actions.
+        const metadata = new FormData();
+        for (const [name, value] of form) if (typeof value === "string") metadata.append(name, value);
+        metadata.set("fileMime", file.type);
+        metadata.set("fileSize", String(file.size));
+        const prepared = await prepareUpload(metadata);
+        if (!prepared.upload) return prepared;
+        const { uploadPrivateFile } = await import("@/lib/private-upload");
+        await uploadPrivateFile(prepared.upload, file);
+        metadata.set("filePath", prepared.upload.path);
+        return action(previous, metadata);
+      } catch (error) {
+        return actionFailure(error);
+      }
+    },
+    { message: "" },
+  );
   const id = useId();
   const summary = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -77,6 +105,7 @@ export function WorkflowForm({
       }}
       className="form workflow-form"
       aria-label={title}
+      aria-busy={pending}
     >
       {Object.entries(hidden).map(([name, value]) => (
         <input key={name} type="hidden" name={name} value={value} />
@@ -190,7 +219,7 @@ export function WorkflowForm({
         </div>
         {footer}
         <button className="button primary" type="submit" disabled={disabled || pending}>
-          {pending ? "Saving…" : submit}
+          {pending ? (prepareUpload ? "Uploading and saving…" : "Saving…") : submit}
           <span aria-hidden="true">→</span>
         </button>
       </fieldset>

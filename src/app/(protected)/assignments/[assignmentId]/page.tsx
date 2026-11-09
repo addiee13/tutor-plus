@@ -19,6 +19,7 @@ import { AssignmentEditor } from "../../learning/editors";
 import {
   assignAssignmentAction,
   submitAssignmentAction,
+  prepareAssignmentUploadAction,
   feedbackAssignmentAction,
   closeAssignmentAction,
   cancelAssignmentAction,
@@ -204,6 +205,7 @@ export default async function AssignmentPage({ params }: { params: Promise<{ ass
               <WorkflowForm
                 title="Submit assignment"
                 action={submitAssignmentAction}
+                prepareUpload={prepareAssignmentUploadAction}
                 hidden={{ assignmentId }}
                 submit="Submit work"
                 fields={submissionFields}
