@@ -1,0 +1,114 @@
+{
+  "appCommit": "51b2a8a5988722979a25c6d9770ea9ed9cfacb01",
+  "implementationCommits": [
+    "adb2a99c7fdfc85c033dd72de1e5889bcb4caf8b",
+    "51b2a8a5988722979a25c6d9770ea9ed9cfacb01"
+  ],
+  "deployment": {
+    "id": "dpl_8zYFNLNGqjGSETDaE61aXiaDn4G4",
+    "status": "Ready",
+    "url": "https://tutorplus-8o2b67jme-adams-projects-c67ba2f3.vercel.app",
+    "canonical": "https://tutor-plus.me"
+  },
+  "quality": {
+    "unitTests": 251,
+    "unitFiles": 19,
+    "typecheck": "passed",
+    "eslint": "passed",
+    "changedSourceFormatting": "passed",
+    "githubQualityRun": 42596770534,
+    "githubQualityJob": "success",
+    "vercelOptimizedBuild": "passed"
+  },
+  "local": {
+    "base": "http://127.0.0.1:3020",
+    "at": "2026-11-09T09:53:28.916Z",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "checks": [
+      "tutor disclosure closed geometry zero/open interactive/reclosed",
+      "no empty pagination nav",
+      "invalid login error above fields/focused/aria-invalid",
+      "password sign-in resumes selected tutor booking",
+      "matching/assistant disclosures do not overlap",
+      "resource filter desktop row fills panel",
+      "empty charts show grid and no invented data",
+      "filter transition shows status/disables inputs and recovers",
+      "clear filters resets previously edited fields",
+      "authenticated navigation retains header/footer while RSC is held with prior view",
+      "assistant pending card and all controls disabled; validation recovery",
+      "real same-browser magic-link callback resumes booking and consumes return cookie (no email sent)",
+      "admin account disclosures hidden without spill"
+    ],
+    "noPageErrors": true,
+    "phoneSpecificChanges": false
+  },
+  "production": {
+    "base": "https://tutor-plus.me",
+    "at": "2026-11-09T09:54:04.222Z",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "checks": [
+      "tutor disclosure closed geometry zero/open interactive/reclosed",
+      "no empty pagination nav",
+      "invalid login error above fields/focused/aria-invalid",
+      "password sign-in resumes selected tutor booking",
+      "matching/assistant disclosures do not overlap",
+      "resource filter desktop row fills panel",
+      "empty charts show grid and no invented data",
+      "filter transition shows status/disables inputs and recovers",
+      "clear filters resets previously edited fields",
+      "authenticated navigation retains header/footer while RSC is held with loading skeleton",
+      "assistant pending card and all controls disabled; validation recovery",
+      "real same-browser magic-link callback resumes booking and consumes return cookie (no email sent)",
+      "admin account disclosures hidden without spill"
+    ],
+    "noPageErrors": true,
+    "phoneSpecificChanges": false
+  },
+  "disclosureBaselineAndInjectedCSSComparison": {
+    "url": "https://tutor-plus.me",
+    "at": "2026-11-09T09:45:56.943Z",
+    "method": "Live read-only baseline with source-equivalent CSS/DOM class injected for targeted before/after layout checks.",
+    "closedBefore": {
+      "height": 48,
+      "visible": false,
+      "focused": false
+    },
+    "closedAfter": {
+      "height": 0,
+      "visible": false,
+      "focused": false
+    },
+    "openAfter": true,
+    "reclosedAfter": true,
+    "emptyPaginationBaseline": true,
+    "resourcesBefore": {
+      "formWidth": 1134,
+      "queryWidth": 358,
+      "selectWidth": 179,
+      "columns": "358px 179px 179px 179px 179px 0px"
+    },
+    "resourcesAfter": {
+      "formWidth": 1134,
+      "queryWidth": 663.59375,
+      "selectWidth": 331.8125,
+      "columns": "663.594px 331.812px 114.594px"
+    },
+    "resourcesFillPanel": true
+  },
+  "notes": [
+    "Desktop1440x1000 only; phone-specific findings intentionally deferred by user.",
+    "Closed disclosure controls had phantom geometry in Chrome but were already invisible, unfocusable and not hit-testable. Explicit hiding removes that geometry.",
+    "Assistant pending-state disabling/loading was already implemented; actual pending submission was held then released to real missing-context validation without calling the AI provider.",
+    "RSC navigation was held then released to actual server response to inspect persistent shell and loading state. No synthetic server response was substituted.",
+    "Full password booking-return flow and real admin-generated magic-link callback with return-cookie consumption were verified. No email was sent; external OAuth consent/code-email delivery were not exercised.",
+    "One initial production assistant page navigation exceeded30s; the final complete run passed with a60s navigation deadline.",
+    "Filter clearing initially retained dirty input values after transition; a form key tied to committed filters fixed it and the local/live regression passed.",
+    "Big Shoulders uses font-display:optional to avoid late font replacement. No numerical CLS benchmark is claimed."
+  ]
+}
