@@ -1,0 +1,53 @@
+{
+  "type": "database-only shared learning catalog seed",
+  "project": "TutorPlus",
+  "deploymentRequired": false,
+  "resourcesBySubject": {
+    "Math": 6,
+    "Science": 3,
+    "Reading/Writing": 3
+  },
+  "firstRun": {
+    "mode": "apply",
+    "resourcesCreated": 12,
+    "templatesCreated": 3,
+    "resourcesSkipped": 0,
+    "templatesSkipped": 0
+  },
+  "idempotentRepeat": {
+    "mode": "apply",
+    "resourcesCreated": 0,
+    "templatesCreated": 0,
+    "resourcesSkipped": 12,
+    "templatesSkipped": 3
+  },
+  "browser": {
+    "url": "https://tutor-plus.me/resources",
+    "verifiedAt": "2026-11-09T10:03:28.536Z",
+    "resourceCards": 12,
+    "scienceFilterCards": 3,
+    "chainRuleSearchCards": 2,
+    "assistantSelectableResources": 12,
+    "adminTemplates": 3,
+    "tutorTemplates": 3,
+    "questionsPerTemplate": 5,
+    "noPageErrors": true,
+    "noAssessmentAssigned": true
+  },
+  "database": {
+    "activeResources": 12,
+    "activeTemplates": 3,
+    "templateQuestions": 15,
+    "auditedCatalogWrites": 15
+  },
+  "publisherLinksVerifiedAt": "2026-11-09",
+  "sourceManifest": "scripts/seed-data/learning-catalog.json",
+  "notes": [
+    "Catalog writes used the existing authenticated administrator RPCs; no privileged direct table writes.",
+    "The service key was used only to create an ephemeral verification session for an existing verified administrator. No email was sent or password changed.",
+    "No learner bookings, attempts, scores, assignments, progress or reviews were created.",
+    "The three assessment templates contain original TutorPlus practice questions.",
+    "Live desktop resources screenshot visually inspected; search/filter and assistant selection verified without invoking inference.",
+    "No Vercel rebuild or schema migration required."
+  ]
+}

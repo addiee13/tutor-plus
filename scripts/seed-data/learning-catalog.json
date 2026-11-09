@@ -1,0 +1,257 @@
+{
+  "verifiedAt": "2026-11-09",
+  "resources": [
+    {
+      "subject": "Math",
+      "title": "Calculus: understanding limits",
+      "url": "https://openstax.org/books/calculus-volume-1/pages/2-2-the-limit-of-a-function",
+      "description": "Read graphs and tables to reason about limits, one-sided behavior and points where a function is undefined. Start here before differentiation.",
+      "attribution": "OpenStax, Calculus Volume 1",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Math",
+      "title": "Calculus: continuity and discontinuities",
+      "url": "https://openstax.org/books/calculus-volume-1/pages/2-4-continuity",
+      "description": "Review continuity at a point and recognize removable, jump and infinite discontinuities. Connect the value of a function with its limit.",
+      "attribution": "OpenStax, Calculus Volume 1",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Math",
+      "title": "Calculus: power, product and quotient rules",
+      "url": "https://openstax.org/books/calculus-volume-1/pages/3-3-differentiation-rules",
+      "description": "Choose a differentiation rule for polynomials, products and quotients. Use the worked examples and section exercises to practise selecting a method.",
+      "attribution": "OpenStax, Calculus Volume 1",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Math",
+      "title": "Calculus: the chain rule",
+      "url": "https://openstax.org/books/calculus-volume-1/pages/3-6-the-chain-rule",
+      "description": "Identify inner and outer functions and include the inner derivative when differentiating a composition. Useful alongside the calculus session recap.",
+      "attribution": "OpenStax, Calculus Volume 1",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Math",
+      "title": "Calculus: the Fundamental Theorem",
+      "url": "https://openstax.org/books/calculus-volume-1/pages/5-3-the-fundamental-theorem-of-calculus",
+      "description": "Connect antiderivatives with definite integrals and evaluate an integral using its bounds. Compare accumulation with differentiation.",
+      "attribution": "OpenStax, Calculus Volume 1",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Math",
+      "title": "Calculus: integration by substitution",
+      "url": "https://openstax.org/books/calculus-volume-1/pages/5-5-substitution",
+      "description": "Recognize an integrand that reverses the chain rule. Practise choosing a substitution and changing variables for indefinite and definite integrals.",
+      "attribution": "OpenStax, Calculus Volume 1",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Science",
+      "title": "Biology: cells and microscopy",
+      "url": "https://openstax.org/books/biology-2e/pages/4-1-studying-cells",
+      "description": "Explore how cells are studied, compare microscopy methods and review cell theory. A starting point for introductory biology.",
+      "attribution": "OpenStax, Biology 2e",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Science",
+      "title": "Chemistry: atomic theory and subatomic particles",
+      "url": "https://openstax.org/books/chemistry-2e/pages/2-2-evolution-of-atomic-theory",
+      "description": "Follow experimental evidence for atomic models and review protons, neutrons, electrons and isotopes.",
+      "attribution": "OpenStax, Chemistry 2e",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Science",
+      "title": "Physics: Newton’s second law",
+      "url": "https://openstax.org/books/college-physics-2e/pages/4-3-newtons-second-law-of-motion-concept-of-a-system",
+      "description": "Relate net force, mass and acceleration. Practise defining a system before applying Newton’s second law to a problem.",
+      "attribution": "OpenStax, College Physics 2e",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Reading/Writing",
+      "title": "Writing: build a focused thesis statement",
+      "url": "https://owl.purdue.edu/owl/general_writing/the_writing_process/thesis_statement_tips.html",
+      "description": "Use this guide when planning an analytical, explanatory or argumentative essay. Review the examples, then draft a thesis for your own topic.",
+      "attribution": "Purdue University, Purdue OWL",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Reading/Writing",
+      "title": "Writing: organize effective paragraphs",
+      "url": "https://owl.purdue.edu/owl/general_writing/academic_writing/paragraphs_and_paragraphing/index.html",
+      "description": "Review paragraph focus, development and transitions. Use the guide to revise how the ideas in an essay fit together.",
+      "attribution": "Purdue University, Purdue OWL",
+      "resourceType": "article"
+    },
+    {
+      "subject": "Reading/Writing",
+      "title": "Writing: quotations, paraphrases and summaries",
+      "url": "https://owl.purdue.edu/owl/research_and_citation/using_research/quoting_paraphrasing_and_summarizing/index.html",
+      "description": "Compare three ways of incorporating source material into your writing and review when attribution is needed.",
+      "attribution": "Purdue University, Purdue OWL",
+      "resourceType": "article"
+    }
+  ],
+  "assessmentTemplates": [
+    {
+      "title": "Calculus starter: limits and continuity",
+      "purpose": "pre_session",
+      "questions": [
+        {
+          "prompt": "What is lim x->2 of (x^2 - 4)/(x - 2)?",
+          "topic": "Limits and continuity",
+          "kind": "single_choice",
+          "choices": ["0", "2", "4", "The limit does not exist"],
+          "correct_choice": "4",
+          "points": 1
+        },
+        {
+          "prompt": "A function is undefined at x = 2. Which statement about its limit at 2 is correct?",
+          "topic": "Limits and continuity",
+          "kind": "single_choice",
+          "choices": [
+            "The limit must be zero",
+            "The limit may still exist",
+            "The limit must be infinite",
+            "The limit equals f(2)"
+          ],
+          "correct_choice": "The limit may still exist",
+          "points": 1
+        },
+        {
+          "prompt": "Which condition is required for continuity at x = a?",
+          "topic": "Limits and continuity",
+          "kind": "single_choice",
+          "choices": [
+            "f(a) is defined and lim x->a f(x) = f(a)",
+            "f(a) must be zero",
+            "The derivative at a must be zero",
+            "Only the right-hand limit must exist"
+          ],
+          "correct_choice": "f(a) is defined and lim x->a f(x) = f(a)",
+          "points": 1
+        },
+        {
+          "prompt": "For x != 3, (x^2 - 9)/(x - 3) simplifies to which expression?",
+          "topic": "Limits and continuity",
+          "kind": "single_choice",
+          "choices": ["x - 3", "x + 3", "x^2 + 3", "3"],
+          "correct_choice": "x + 3",
+          "points": 1
+        },
+        {
+          "prompt": "If both one-sided limits at a exist but are different, what happens to the two-sided limit?",
+          "topic": "Limits and continuity",
+          "kind": "single_choice",
+          "choices": ["It is their average", "It equals the left-hand limit", "It equals zero", "It does not exist"],
+          "correct_choice": "It does not exist",
+          "points": 1
+        }
+      ],
+      "subject": "Math",
+      "description": "Original TutorPlus starter practice, five one-point questions. A tutor can copy this into a learner assessment and review it before publishing. This template is not an assigned assessment or evidence of a completed attempt."
+    },
+    {
+      "title": "Calculus starter: chain and product rules",
+      "purpose": "post_session",
+      "questions": [
+        {
+          "prompt": "Differentiate (3x^2 + 1)^4.",
+          "topic": "Chain rule",
+          "kind": "single_choice",
+          "choices": ["4(3x^2 + 1)^3", "24x(3x^2 + 1)^3", "24x(3x^2 + 1)^4", "12x(3x^2 + 1)^3"],
+          "correct_choice": "24x(3x^2 + 1)^3",
+          "points": 1
+        },
+        {
+          "prompt": "Differentiate x^2 sin(x).",
+          "topic": "Product rule",
+          "kind": "single_choice",
+          "choices": ["2x cos(x)", "x^2 cos(x)", "2x sin(x) + x^2 cos(x)", "2x sin(x) - x^2 cos(x)"],
+          "correct_choice": "2x sin(x) + x^2 cos(x)",
+          "points": 1
+        },
+        {
+          "prompt": "Differentiate (2x^3 - 1)^5.",
+          "topic": "Chain rule",
+          "kind": "single_choice",
+          "choices": ["10x^2(2x^3 - 1)^4", "30x^2(2x^3 - 1)^4", "5(2x^3 - 1)^4", "30x^2(2x^3 - 1)^5"],
+          "correct_choice": "30x^2(2x^3 - 1)^4",
+          "points": 1
+        },
+        {
+          "prompt": "Differentiate x cos(x).",
+          "topic": "Product rule",
+          "kind": "single_choice",
+          "choices": ["cos(x) - x sin(x)", "-sin(x)", "cos(x) + x sin(x)", "-x sin(x)"],
+          "correct_choice": "cos(x) - x sin(x)",
+          "points": 1
+        },
+        {
+          "prompt": "What is the derivative of the constant function f(x) = 7?",
+          "topic": "Differentiation rules",
+          "kind": "single_choice",
+          "choices": ["7", "1", "0", "7x"],
+          "correct_choice": "0",
+          "points": 1
+        }
+      ],
+      "subject": "Math",
+      "description": "Original TutorPlus starter practice, five one-point questions. A tutor can copy this into a learner assessment and review it before publishing. This template is not an assigned assessment or evidence of a completed attempt."
+    },
+    {
+      "title": "Calculus starter: antiderivatives and definite integrals",
+      "purpose": "post_session",
+      "questions": [
+        {
+          "prompt": "Find the general antiderivative of 6x + 4.",
+          "topic": "Antiderivatives",
+          "kind": "single_choice",
+          "choices": ["6x^2 + 4x + C", "3x^2 + 4x + C", "3x^2 + C", "6 + C"],
+          "correct_choice": "3x^2 + 4x + C",
+          "points": 1
+        },
+        {
+          "prompt": "Evaluate the definite integral from 0 to 2 of 3x^2 dx.",
+          "topic": "Fundamental Theorem of Calculus",
+          "kind": "single_choice",
+          "choices": ["4", "6", "8", "12"],
+          "correct_choice": "8",
+          "points": 1
+        },
+        {
+          "prompt": "Evaluate the definite integral from 1 to 3 of 2x dx.",
+          "topic": "Fundamental Theorem of Calculus",
+          "kind": "single_choice",
+          "choices": ["2", "4", "6", "8"],
+          "correct_choice": "8",
+          "points": 1
+        },
+        {
+          "prompt": "Find the general antiderivative of 4x^3 - 2x.",
+          "topic": "Antiderivatives",
+          "kind": "single_choice",
+          "choices": ["x^4 - x^2 + C", "12x^2 - 2 + C", "x^4 - 2x^2 + C", "4x^4 - x^2 + C"],
+          "correct_choice": "x^4 - x^2 + C",
+          "points": 1
+        },
+        {
+          "prompt": "For the substitution u = x^2 + 1, which expression is du?",
+          "topic": "Integration by substitution",
+          "kind": "single_choice",
+          "choices": ["x dx", "2x dx", "2 dx", "(x^2 + 1) dx"],
+          "correct_choice": "2x dx",
+          "points": 1
+        }
+      ],
+      "subject": "Math",
+      "description": "Original TutorPlus starter practice, five one-point questions. A tutor can copy this into a learner assessment and review it before publishing. This template is not an assigned assessment or evidence of a completed attempt."
+    }
+  ]
+}
