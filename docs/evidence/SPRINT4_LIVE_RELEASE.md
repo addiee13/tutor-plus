@@ -1,6 +1,6 @@
 # Sprint 4 hosted release — November 9, 2026
 
-Live application: **https://tutor-plus.me**. Latest Vercel deployment `dpl_DLye6jUAQ968atsZj42csPSow1Gr` is Ready; aliases include `tutorplus-one.vercel.app` and `www.tutor-plus.me`. Latest application source is commit `0ee9778`; the database permission correction is commit `92f0d2c`. Both are on `main` and pushed to `origin/main`. The 66 core browser observations and upload workflows ran on the preceding `e152228` deployment; the final release adds assistant validation clarity and truthful application identification, followed by a targeted live assistant check.
+Live application: **https://tutor-plus.me**. Latest Vercel deployment `dpl_AjcNTudGFqPDPGzmCK6LwNvhQ4ut` is Ready; aliases include `tutorplus-one.vercel.app` and `www.tutor-plus.me`. Latest application source is commit `ec735f5`; the database permission correction is commit `92f0d2c`. Both are on `main` and pushed to `origin/main`. The 66 core browser observations and upload workflows ran on the preceding `e152228` deployment; the final release adds assistant validation clarity and truthful application identification, followed by a targeted live assistant check.
 
 ## Changes delivered
 
@@ -39,3 +39,9 @@ Historical initial provider finding: the supplied AgentRouter key was tried agai
 Payments remain excluded from the authorized implementation scope. Ordinary new reservations remain payment pending and create no charge. Hosted browser tests use two explicitly labelled deployment accounts and a no-provider/no-charge fixture relationship; these do not prove a payment integration. Their credentials remain in a private local file, outside Git. Administrator browser access was verified through a one-time provider verification link for the verified owner; no owner password was changed and no external verification email was sent by the test.
 
 Unrelated pre-existing report, diagram, generated typing and local Supabase configuration changes were preserved outside these commits. Exhaustive performance benchmarking and every historical acceptance variant were not rerun for this release; the earlier acceptance register retains its evidence and limits.
+
+## Assistant thinking state
+
+The live assistant now shows a Motion Primitives text shimmer adapted to TutorPlus styling, a restrained activity indicator, and a 15-second longer-wait message. The state follows the actual Server Action, hides stale output, disables repeat submission, and remains readable without animation when reduced motion is requested. MIT attribution is preserved in `licenses/motion-primitives.txt`.
+
+Desktop, phone and reduced-motion checks passed locally and live. Browser interception held real Server Action requests to inspect initial/long-wait states, then continued them to actual context validation; these controlled delays are not provider timing measurements. Separate real free-model responses verified success cleanup and suppression of old answers during a new request. Full-card viewport visibility and no horizontal overflow passed. Local TypeScript/lint and the [clean GitHub quality build](https://github.com/addiee13/tutor-plus/actions/runs/42579762163) passed. See [actual observations](sprint4/assistant-loading.json) and [screenshots](screenshots/sprint4/assistant-loading/).

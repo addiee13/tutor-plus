@@ -1,0 +1,138 @@
+{
+  "applicationCommit": "ec735f5",
+  "deployment": "dpl_AjcNTudGFqPDPGzmCK6LwNvhQ4ut",
+  "source": "https://motion-primitives.com/docs/text-shimmer",
+  "license": "MIT; licenses/motion-primitives.txt",
+  "checks": {
+    "local": {
+      "controlled": {
+        "url": "http://127.0.0.1:3020",
+        "timestamp": "2026-11-09T07:29:56.186Z",
+        "method": "Actual Server Action POST held by browser interception to inspect waiting states, then continued to real context validation. No provider response simulated.",
+        "results": [
+          {
+            "viewport": "phone",
+            "initialPending": true,
+            "longWaitCopy": true,
+            "duplicateSubmissionDisabled": true,
+            "clearsOnValidationFailure": true,
+            "outsideBusyContainer": true,
+            "overflow": false,
+            "animation": {
+              "orbit": "thinking-module__oY44ga__orbit",
+              "shimmerBackground": "linear-gradient(90deg, rgba(0, 0, 0, 0) calc(50% - 28px), rgb(101, 119, 91), rgba(0, 0, 0, 0) calc(50% + 28px)), linear-gradient(rgb(29, 74, 54), rgb(29, 74, 54))",
+              "shimmerColor": "rgba(0, 0, 0, 0)"
+            },
+            "initialCardY": 486.03125
+          },
+          {
+            "viewport": "phone-reduced",
+            "initialPending": true,
+            "longWaitCopy": true,
+            "duplicateSubmissionDisabled": true,
+            "clearsOnValidationFailure": true,
+            "outsideBusyContainer": true,
+            "overflow": false,
+            "animation": {
+              "orbit": "none",
+              "shimmerBackground": "none",
+              "shimmerColor": "rgb(29, 74, 54)"
+            },
+            "initialCardY": 486.03125
+          },
+          {
+            "viewport": "desktop",
+            "initialPending": true,
+            "longWaitCopy": true,
+            "duplicateSubmissionDisabled": true,
+            "clearsOnValidationFailure": true,
+            "outsideBusyContainer": true,
+            "overflow": false,
+            "animation": {
+              "orbit": "thinking-module__oY44ga__orbit",
+              "shimmerBackground": "linear-gradient(90deg, rgba(0, 0, 0, 0) calc(50% - 28px), rgb(101, 119, 91), rgba(0, 0, 0, 0) calc(50% + 28px)), linear-gradient(rgb(29, 74, 54), rgb(29, 74, 54))",
+              "shimmerColor": "rgba(0, 0, 0, 0)"
+            },
+            "initialCardY": 598.390625
+          }
+        ]
+      },
+      "realProvider": {
+        "url": "http://127.0.0.1:3020",
+        "timestamp": "2026-11-09T07:29:47.618Z",
+        "realProviderResponse": true,
+        "loaderVisibleDuringRealRequest": true,
+        "clearsOnSuccess": true,
+        "previousAnswerHiddenDuringNewRequest": true,
+        "previousSuccessHiddenDuringNewRequest": true,
+        "clearsOnValidationFailure": true,
+        "phoneFullyVisible": true
+      }
+    },
+    "live": {
+      "controlled": {
+        "url": "https://tutor-plus.me",
+        "timestamp": "2026-11-09T07:31:44.268Z",
+        "method": "Actual Server Action POST held by browser interception to inspect waiting states, then continued to real context validation. No provider response simulated.",
+        "results": [
+          {
+            "viewport": "phone",
+            "initialPending": true,
+            "longWaitCopy": true,
+            "duplicateSubmissionDisabled": true,
+            "clearsOnValidationFailure": true,
+            "outsideBusyContainer": true,
+            "overflow": false,
+            "animation": {
+              "orbit": "thinking-module__oY44ga__orbit",
+              "shimmerBackground": "linear-gradient(90deg, rgba(0, 0, 0, 0) calc(50% - 28px), rgb(101, 119, 91), rgba(0, 0, 0, 0) calc(50% + 28px)), linear-gradient(rgb(29, 74, 54), rgb(29, 74, 54))",
+              "shimmerColor": "rgba(0, 0, 0, 0)"
+            },
+            "initialCardY": 486.03125
+          },
+          {
+            "viewport": "phone-reduced",
+            "initialPending": true,
+            "longWaitCopy": true,
+            "duplicateSubmissionDisabled": true,
+            "clearsOnValidationFailure": true,
+            "outsideBusyContainer": true,
+            "overflow": false,
+            "animation": {
+              "orbit": "none",
+              "shimmerBackground": "none",
+              "shimmerColor": "rgb(29, 74, 54)"
+            },
+            "initialCardY": 486.03125
+          },
+          {
+            "viewport": "desktop",
+            "initialPending": true,
+            "longWaitCopy": true,
+            "duplicateSubmissionDisabled": true,
+            "clearsOnValidationFailure": true,
+            "outsideBusyContainer": true,
+            "overflow": false,
+            "animation": {
+              "orbit": "thinking-module__oY44ga__orbit",
+              "shimmerBackground": "linear-gradient(90deg, rgba(0, 0, 0, 0) calc(50% - 28px), rgb(101, 119, 91), rgba(0, 0, 0, 0) calc(50% + 28px)), linear-gradient(rgb(29, 74, 54), rgb(29, 74, 54))",
+              "shimmerColor": "rgba(0, 0, 0, 0)"
+            },
+            "initialCardY": 765.390625
+          }
+        ]
+      },
+      "realProvider": {
+        "url": "https://tutor-plus.me",
+        "timestamp": "2026-11-09T07:31:42.628Z",
+        "realProviderResponse": true,
+        "loaderVisibleDuringRealRequest": true,
+        "clearsOnSuccess": true,
+        "previousAnswerHiddenDuringNewRequest": true,
+        "previousSuccessHiddenDuringNewRequest": true,
+        "clearsOnValidationFailure": true,
+        "phoneFullyVisible": true
+      }
+    }
+  }
+}
