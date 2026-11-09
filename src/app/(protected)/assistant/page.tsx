@@ -6,6 +6,10 @@ import { listLearningRelationships, listStudyPlans } from "@/domains/learning/se
 import { WorkspaceHeading, WorkspaceError, Section } from "@/components/workspace/ui";
 import { loadWorkspace } from "@/components/workspace/load";
 import { AssistantForm } from "./form";
+
+// Allow the configured provider deadline plus authorization and persistence overhead.
+export const maxDuration = 90;
+
 export default async function AssistantPage() {
   if (!publicConfig()) return null;
   const { client, actor } = await protectedContext();

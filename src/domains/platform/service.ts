@@ -1452,7 +1452,7 @@ export async function askLearningAssistant(
           },
         ],
       }),
-      signal: AbortSignal.timeout(20000),
+      signal: AbortSignal.timeout(boundedEnvInteger("ASSISTANT_TIMEOUT_MS", 20000, 1000, 60000)),
     });
   } catch {
     await finish("failed", null, null);
