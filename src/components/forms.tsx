@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   codeRequestAction,
@@ -17,6 +17,7 @@ import {
   signupAction,
   statusAction,
 } from "@/app/actions";
+import { withAuthReturn } from "@/lib/auth-return";
 import { initialActionState as initial } from "@/lib/action-state";
 import { MailIcon, ProviderLogo } from "@/components/brand-icons";
 import type { OAuthProvider } from "@/domains/auth/validation";
@@ -34,6 +35,7 @@ const DEFAULT_TIME_ZONE = "America/New_York";
 const providerNames: Record<OAuthProvider, string> = { github: "GitHub", google: "Google" };
 
 type ConfiguredProps = { configured: boolean };
+type SignInProps = ConfiguredProps & { returnTo?: string };
 
 export function SignupForm({ configured }: ConfiguredProps) {
   const [state, action, pending] = useActionState(signupAction, initial);
@@ -72,10 +74,20 @@ export function SignupForm({ configured }: ConfiguredProps) {
   );
 }
 
-export function LoginForm({ configured }: ConfiguredProps) {
+export function LoginForm({ configured, returnTo }: SignInProps) {
   const [state, action, pending] = useActionState(loginAction, initial);
+  const errorSummary = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (state.message && !state.success && !pending) errorSummary.current?.focus();
+  }, [state, pending]);
   return (
     <form action={action} className="form">
+      <input type="hidden" name="next" value={returnTo ?? ""} />
+      {state.message && (
+        <div ref={errorSummary} tabIndex={-1}>
+          <FormResult state={state} />
+        </div>
+      )}
       <fieldset disabled={!configured || pending} className="form-fields">
         <Field label="Email address" name="email" type="email" autoComplete="email" error={state.fields?.email} />
         <Field
@@ -91,7 +103,6 @@ export function LoginForm({ configured }: ConfiguredProps) {
         </Link>
         <SubmitButton pending={pending}>Sign in</SubmitButton>
       </fieldset>
-      <FormResult state={state} />
       <p className="form-footer">
         New to Tutor Plus? <Link href="/signup">Create an account</Link>
       </p>
@@ -102,9 +113,9 @@ export function LoginForm({ configured }: ConfiguredProps) {
   );
 }
 
-type AltSignInProps = ConfiguredProps & { providers: readonly OAuthProvider[]; showCode?: boolean };
+type AltSignInProps = SignInProps & { providers: readonly OAuthProvider[]; showCode?: boolean };
 
-export function AltSignIn({ configured, providers, showCode = true }: AltSignInProps) {
+export function AltSignIn({ configured, providers, showCode = true, returnTo }: AltSignInProps) {
   const [state, action, pending] = useActionState(oauthAction, initial);
   if (!providers.length && !showCode) return null;
   return (
@@ -113,6 +124,7 @@ export function AltSignIn({ configured, providers, showCode = true }: AltSignInP
         <span>Or continue with</span>
       </p>
       <form action={action} className="form">
+        <input type="hidden" name="next" value={returnTo ?? ""} />
         <fieldset disabled={!configured || pending} className="form-fields alt-buttons">
           {providers.map((provider) => (
             <button key={provider} className="social-button" type="submit" name="provider" value={provider}>
@@ -121,7 +133,7 @@ export function AltSignIn({ configured, providers, showCode = true }: AltSignInP
             </button>
           ))}
           {showCode && (
-            <Link className="social-button" href="/login?method=code">
+            <Link className="social-button" href={withAuthReturn("/login?method=code", returnTo)}>
               <MailIcon />
               <span>Email me a code</span>
             </Link>
@@ -134,7 +146,7 @@ export function AltSignIn({ configured, providers, showCode = true }: AltSignInP
 }
 
 /** Two steps: request a one-time code for an email, then verify the code for that same email. */
-export function CodeSignInForm({ configured }: ConfiguredProps) {
+export function CodeSignInForm({ configured, returnTo }: SignInProps) {
   const [sent, request, requesting] = useActionState(codeRequestAction, initial);
   const [verified, verify, verifying] = useActionState(codeVerifyAction, initial);
   const email = sent.values?.email ?? "";
@@ -142,6 +154,7 @@ export function CodeSignInForm({ configured }: ConfiguredProps) {
   if (!sent.success) {
     return (
       <form action={request} className="form">
+        <input type="hidden" name="next" value={returnTo ?? ""} />
         <fieldset disabled={!configured || requesting} className="form-fields">
           <Field
             label="Email address"
@@ -156,7 +169,7 @@ export function CodeSignInForm({ configured }: ConfiguredProps) {
         </fieldset>
         <FormResult state={sent} />
         <p className="form-footer">
-          <Link href="/login">Sign in with a password instead</Link>
+          <Link href={withAuthReturn("/login", returnTo)}>Sign in with a password instead</Link>
         </p>
         <p className="hint">
           New to Tutor Plus? <Link href="/signup">Create an account</Link>
@@ -167,6 +180,7 @@ export function CodeSignInForm({ configured }: ConfiguredProps) {
 
   return (
     <form action={verify} className="form">
+      <input type="hidden" name="next" value={returnTo ?? ""} />
       <FormResult state={sent} />
       <input type="hidden" name="email" value={email} />
       <fieldset disabled={!configured || verifying} className="form-fields">
@@ -186,16 +200,17 @@ export function CodeSignInForm({ configured }: ConfiguredProps) {
       <FormResult state={verified} />
       <p className="form-footer">
         {/* A full navigation resets both action states, returning to the request step. */}
-        <a href="/login?method=code">Use a different email</a>
+        <a href={withAuthReturn("/login?method=code", returnTo)}>Use a different email</a>
       </p>
     </form>
   );
 }
 
-export function OnboardingForm({ suggestedName }: { suggestedName: string }) {
+export function OnboardingForm({ suggestedName, returnTo }: { suggestedName: string; returnTo?: string }) {
   const [state, action, pending] = useActionState(onboardingAction, initial);
   return (
     <form action={action} className="form">
+      <input type="hidden" name="next" value={returnTo ?? ""} />
       <fieldset disabled={pending} className="form-fields">
         <Field
           label="Display name"

@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createUserClient, type UserClient } from "@/lib/supabase/server";
 import { publicConfig, siteUrl } from "@/lib/supabase/config";
+import { admittedDestination, safeAuthReturn, AUTH_RETURN_COOKIE } from "@/lib/auth-return";
 import { actionFailure } from "@/lib/action-state";
 import {
   changeAccountStatus,
@@ -25,6 +27,24 @@ import { saveOwnProfile } from "@/domains/profiles/service";
 
 // `redirect()` works by throwing, so every action resolves its destination inside `try` and redirects after it.
 
+/** Bridges templates that use a fixed callback URL; destinations are validated again when consumed. */
+async function rememberAuthReturn(form: FormData) {
+  const store = await cookies();
+  const next = safeAuthReturn(form.get("next"));
+  if (next)
+    store.set(AUTH_RETURN_COOKIE, next, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 3600,
+    });
+  else store.delete(AUTH_RETURN_COOKIE);
+}
+async function clearAuthReturn() {
+  (await cookies()).delete(AUTH_RETURN_COOKIE);
+}
+
 /** Every completed sign-in passes the same getActor gate; un-onboarded identities keep their session for /welcome. */
 async function admit(client: UserClient): Promise<"/dashboard" | "/welcome"> {
   try {
@@ -39,6 +59,7 @@ async function admit(client: UserClient): Promise<"/dashboard" | "/welcome"> {
 
 export async function signupAction(_previous: ActionState, form: FormData): Promise<ActionState> {
   try {
+    await clearAuthReturn();
     await register(await createUserClient(), form, siteUrl());
   } catch (error) {
     return actionFailure(error);
@@ -49,13 +70,20 @@ export async function signupAction(_previous: ActionState, form: FormData): Prom
 export async function loginAction(_previous: ActionState, form: FormData): Promise<ActionState> {
   let destination: string;
   try {
+    await clearAuthReturn();
     const email = parseEmail(form);
     const password = parsePassword(form, false);
     const client = await createUserClient();
     const { error } = await client.auth.signInWithPassword({ email, password });
     if (error) throw new DomainError("credentials");
-    destination = await admit(client);
+    destination = admittedDestination(await admit(client), form.get("next"));
   } catch (error) {
+    if (isDomainError(error, "credentials")) {
+      return {
+        message: error.message,
+        fields: { email: "Check your email and password.", password: "Check your email and password." },
+      };
+    }
     return actionFailure(error);
   }
   redirect(destination);
@@ -64,9 +92,11 @@ export async function loginAction(_previous: ActionState, form: FormData): Promi
 export async function oauthAction(_previous: ActionState, form: FormData): Promise<ActionState> {
   let url: string;
   try {
+    await rememberAuthReturn(form);
     const providers = await enabledProviders(publicConfig());
     url = await startOAuth(await createUserClient(), form, siteUrl(), providers);
   } catch (error) {
+    await clearAuthReturn();
     return actionFailure(error);
   }
   redirect(url);
@@ -74,6 +104,7 @@ export async function oauthAction(_previous: ActionState, form: FormData): Promi
 
 export async function codeRequestAction(_previous: ActionState, form: FormData): Promise<ActionState> {
   try {
+    await rememberAuthReturn(form);
     const email = await requestEmailCode(await createUserClient(), form, siteUrl());
     return {
       success: true,
@@ -81,6 +112,7 @@ export async function codeRequestAction(_previous: ActionState, form: FormData):
       values: { email },
     };
   } catch (error) {
+    await clearAuthReturn();
     return actionFailure(error);
   }
 }
@@ -88,9 +120,10 @@ export async function codeRequestAction(_previous: ActionState, form: FormData):
 export async function codeVerifyAction(_previous: ActionState, form: FormData): Promise<ActionState> {
   let destination: string;
   try {
+    await clearAuthReturn();
     const client = await createUserClient();
     await verifyEmailCode(client, form);
-    destination = await admit(client);
+    destination = admittedDestination(await admit(client), form.get("next"));
   } catch (error) {
     return actionFailure(error, readValues(form, ["email"]));
   }
@@ -106,11 +139,12 @@ export async function onboardingAction(_previous: ActionState, form: FormData): 
   } catch (error) {
     return actionFailure(error, readValues(form, ["display_name", "timezone", "role_intent"]));
   }
-  redirect("/dashboard");
+  redirect(safeAuthReturn(form.get("next")) ?? "/dashboard");
 }
 
 export async function logoutAction(): Promise<ActionState> {
   try {
+    await clearAuthReturn();
     const client = await createUserClient();
     const { error } = await client.auth.signOut({ scope: "local" });
     if (error) throw new DomainError("unavailable");

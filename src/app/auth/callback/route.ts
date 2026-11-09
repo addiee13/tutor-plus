@@ -1,6 +1,8 @@
+import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createUserClient, type UserClient } from "@/lib/supabase/server";
+import { admittedDestination, withAuthReturn, safeAuthReturn, AUTH_RETURN_COOKIE } from "@/lib/auth-return";
 import { siteUrl } from "@/lib/supabase/config";
 import { getActor } from "@/domains/auth/service";
 import { isDomainError } from "@/domains/shared/errors";
@@ -43,7 +45,14 @@ export async function GET(request: NextRequest) {
   } catch {
     return NextResponse.json({ message: "Account services are not connected yet." }, { status: 503 });
   }
-  const redirectTo = (path: string) => NextResponse.redirect(`${origin}${path}`);
+  const store = await cookies();
+  const returnTo =
+    safeAuthReturn(request.nextUrl.searchParams.get("next")) ?? safeAuthReturn(store.get(AUTH_RETURN_COOKIE)?.value);
+  const redirectTo = (path: string) => {
+    // A callback consumes its return cookie on both success and failure; failures keep safe context in the login URL.
+    store.delete(AUTH_RETURN_COOKIE);
+    return NextResponse.redirect(`${origin}${path.startsWith("/login") ? withAuthReturn(path, returnTo) : path}`);
+  };
 
   const params = request.nextUrl.searchParams;
   const code = params.get("code");
@@ -63,7 +72,7 @@ export async function GET(request: NextRequest) {
     }
     if (!result || result.error) return redirectTo("/login?notice=link-invalid");
     if (recovery) return redirectTo("/update-password");
-    return redirectTo(await destinationAfterSignIn(client));
+    return redirectTo(admittedDestination(await destinationAfterSignIn(client), returnTo));
   } catch {
     return redirectTo("/login?notice=link-invalid");
   }

@@ -1,4 +1,5 @@
 import "server-only";
+import { withAuthReturn } from "../../lib/auth-return";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { DomainError, providerError } from "../shared/errors";
 import { PgErrorCode } from "../shared/postgres";
@@ -145,7 +146,10 @@ export async function startOAuth(
   if (!enabled.includes(provider)) throw new DomainError("unavailable");
   const { data, error } = await client.auth.signInWithOAuth({
     provider,
-    options: { redirectTo: callbackUrl(origin), skipBrowserRedirect: true },
+    options: {
+      redirectTo: `${origin}${withAuthReturn("/auth/callback", form.get("next"))}`,
+      skipBrowserRedirect: true,
+    },
   });
   if (error || !data.url) throw new DomainError("unavailable");
   return data.url;
@@ -158,7 +162,10 @@ export async function requestEmailCode(client: SupabaseClient, form: FormData, o
   const email = parseEmail(form);
   const { error } = await client.auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: false, emailRedirectTo: callbackUrl(origin) },
+    options: {
+      shouldCreateUser: false,
+      emailRedirectTo: `${origin}${withAuthReturn("/auth/callback", form.get("next"))}`,
+    },
   });
   if (error && error.status !== 422 && !NON_ENUMERATING_OTP_ERRORS.has(error.code ?? "")) {
     throw providerError(error);

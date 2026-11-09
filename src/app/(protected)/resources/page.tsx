@@ -33,7 +33,7 @@ export default async function ResourcesPage({
         description="Explore curated reading, practice and reference material. Attribution stays with each resource."
       />
       <Section title="Find a resource">
-        <form method="get" action="/resources" className="discovery-filters">
+        <form method="get" action="/resources" className="discovery-filters resource-filters">
           <div className="field">
             <label htmlFor="resource-query">Search resources</label>
             <input id="resource-query" name="q" defaultValue={q} maxLength={100} />

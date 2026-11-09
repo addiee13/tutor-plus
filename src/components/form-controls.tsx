@@ -56,8 +56,7 @@ export function FormResult({ state }: { state: Pick<ActionState, "message" | "su
 export function SubmitButton({ pending, children }: { pending: boolean; children: ReactNode }) {
   return (
     <button className="button primary" disabled={pending} type="submit">
-      {pending ? "Please wait…" : children}
-      <span aria-hidden="true">→</span>
+      {pending ? "Please wait…" : children} <span aria-hidden="true">→</span>
     </button>
   );
 }

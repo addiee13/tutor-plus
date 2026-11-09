@@ -300,18 +300,20 @@ export default async function TutorsPage({ searchParams }: { searchParams: Promi
                       here.
                     </EmptyState>
                   )}
-                  <nav className="workspace-actions" aria-label="Tutor result pages" style={{ marginTop: "2rem" }}>
-                    {results.page > 1 && (
-                      <Link className="button secondary" href={pageLink(results.page - 1)}>
-                        Previous page
-                      </Link>
-                    )}
-                    {results.hasMore && (
-                      <Link className="button secondary" href={pageLink(results.page + 1)}>
-                        Next page →
-                      </Link>
-                    )}
-                  </nav>
+                  {(results.page > 1 || results.hasMore) && (
+                    <nav className="workspace-actions" aria-label="Tutor result pages" style={{ marginTop: "2rem" }}>
+                      {results.page > 1 && (
+                        <Link className="button secondary" href={pageLink(results.page - 1)}>
+                          Previous page
+                        </Link>
+                      )}
+                      {results.hasMore && (
+                        <Link className="button secondary" href={pageLink(results.page + 1)}>
+                          Next page →
+                        </Link>
+                      )}
+                    </nav>
+                  )}
                 </>
               )
             )}

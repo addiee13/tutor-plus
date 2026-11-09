@@ -219,8 +219,7 @@ export function WorkflowForm({
         </div>
         {footer}
         <button className="button primary" type="submit" disabled={disabled || pending}>
-          {pending ? (prepareUpload ? "Uploading and saving…" : "Saving…") : submit}
-          <span aria-hidden="true">→</span>
+          {pending ? (prepareUpload ? "Uploading and saving…" : "Saving…") : submit} <span aria-hidden="true">→</span>
         </button>
       </fieldset>
       {state.success && (

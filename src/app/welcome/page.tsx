@@ -1,3 +1,4 @@
+import { safeAuthReturn, withAuthReturn } from "@/lib/auth-return";
 import { redirect } from "next/navigation";
 import { AuthShell, SetupNotice } from "@/components/shell";
 import { LogoutForm, OnboardingForm } from "@/components/forms";
@@ -8,7 +9,8 @@ import { authRedirectFor } from "@/lib/protected-context";
 
 export const dynamic = "force-dynamic";
 
-export default async function Welcome() {
+export default async function Welcome({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+  const returnTo = safeAuthReturn((await searchParams).next);
   if (!publicConfig())
     return (
       <AuthShell
@@ -24,9 +26,9 @@ export default async function Welcome() {
   try {
     status = await onboardingStatus(await createUserClient());
   } catch (error) {
-    redirect(authRedirectFor(error) ?? "/login");
+    redirect(withAuthReturn(authRedirectFor(error) ?? "/login", returnTo));
   }
-  if (status.state === "complete") redirect("/dashboard");
+  if (status.state === "complete") redirect(returnTo ?? "/dashboard");
   if (status.state === "inactive")
     return (
       <AuthShell
@@ -45,7 +47,7 @@ export default async function Welcome() {
       step={3}
       description="Tell us how you’ll use Tutor Plus. You can change your name and time zone later; administrator access is only ever granted by an administrator."
     >
-      <OnboardingForm suggestedName={status.suggestedName} />
+      <OnboardingForm suggestedName={status.suggestedName} returnTo={returnTo} />
       <div className="auth-switch">
         <span>Signed in with the wrong account?</span>
         <LogoutForm />

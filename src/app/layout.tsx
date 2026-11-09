@@ -7,7 +7,8 @@ const display = Big_Shoulders({
   subsets: ["latin"],
   axes: ["opsz"],
   variable: "--font-display",
-  display: "swap",
+  // Avoid a late font swap shifting the condensed wordmark on slow connections.
+  display: "optional",
   // No metric overrides exist for this family; use a condensed system fallback instead.
   adjustFontFallback: false,
   fallback: ["Arial Narrow", "Impact", "sans-serif"],

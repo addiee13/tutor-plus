@@ -1,6 +1,7 @@
 import { AuthShell, SetupNotice } from "@/components/shell";
 import { AltSignIn, CodeSignInForm, LoginForm } from "@/components/forms";
 import { publicConfig } from "@/lib/supabase/config";
+import { safeAuthReturn } from "@/lib/auth-return";
 import { enabledProviders } from "@/domains/auth/service";
 
 const notices: Record<string, string> = {
@@ -15,8 +16,13 @@ const notices: Record<string, string> = {
   "access-denied": "This account can’t sign in right now. If you think this is a mistake, contact an administrator.",
 };
 
-export default async function Login({ searchParams }: { searchParams: Promise<{ notice?: string; method?: string }> }) {
-  const { notice, method } = await searchParams;
+export default async function Login({
+  searchParams,
+}: {
+  searchParams: Promise<{ notice?: string; method?: string; next?: string }>;
+}) {
+  const { notice, method, next } = await searchParams;
+  const returnTo = safeAuthReturn(next);
   const config = publicConfig();
   const configured = !!config;
   const providers = await enabledProviders(config);
@@ -36,8 +42,12 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
         </div>
       )}
       {!configured && <SetupNotice />}
-      {code ? <CodeSignInForm configured={configured} /> : <LoginForm configured={configured} />}
-      <AltSignIn configured={configured} providers={providers} showCode={!code} />
+      {code ? (
+        <CodeSignInForm configured={configured} returnTo={returnTo} />
+      ) : (
+        <LoginForm configured={configured} returnTo={returnTo} />
+      )}
+      <AltSignIn configured={configured} providers={providers} showCode={!code} returnTo={returnTo} />
     </AuthShell>
   );
 }

@@ -178,7 +178,33 @@ function DatedPlot({
           <h3>{title}</h3>
           <p>{description}</p>
         </figcaption>
-        <p className="workspace-empty">No dated records match this chart’s current view.</p>
+        <div className="evidence-chart-scroll" aria-hidden="true">
+          <svg className="evidence-plot" viewBox="0 0 650 250">
+            {levels.map((level) => (
+              <g key={level.value}>
+                <line
+                  x1={105}
+                  x2={620}
+                  y1={190 - (level.value / max) * 150}
+                  y2={190 - (level.value / max) * 150}
+                  stroke="var(--line)"
+                  strokeDasharray="3 5"
+                />
+                <text x={96} y={195 - (level.value / max) * 150} textAnchor="end" fill="var(--muted)" fontSize={13}>
+                  {level.label}
+                </text>
+              </g>
+            ))}
+            <line x1={105} x2={620} y1={200} y2={200} stroke="var(--muted)" />
+            <text x={360} y={125} textAnchor="middle" fill="var(--muted)" fontSize={15}>
+              Awaiting dated evidence
+            </text>
+          </svg>
+        </div>
+        <p className="workspace-empty">
+          No dated records match this chart’s current view. Add a scored assessment or a tutor observation, or widen
+          your filters.
+        </p>
       </figure>
     );
   const instants = ordered.map((point) => Date.parse(point.at));

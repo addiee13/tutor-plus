@@ -1,5 +1,7 @@
 import "server-only";
 import { cache } from "react";
+import { headers } from "next/headers";
+import { AUTH_PATH_HEADER, withAuthReturn } from "./auth-return";
 import { redirect } from "next/navigation";
 import { createUserClient } from "./supabase/server";
 import { getActor } from "@/domains/auth/service";
@@ -24,7 +26,14 @@ export const protectedContext = cache(async () => {
     return { client, actor: await getActor(client) };
   } catch (error) {
     const destination = authRedirectFor(error);
-    if (destination) redirect(destination);
+    if (destination) {
+      const requested = (await headers()).get(AUTH_PATH_HEADER);
+      redirect(
+        destination.startsWith("/login") || destination === "/welcome"
+          ? withAuthReturn(destination, requested)
+          : destination,
+      );
+    }
     throw error;
   }
 });

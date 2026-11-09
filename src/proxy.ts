@@ -1,9 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { AUTH_PATH_HEADER } from "@/lib/auth-return";
 import { authCookieOptions, publicConfig } from "@/lib/supabase/config";
 
 function nextResponse(request: NextRequest): NextResponse {
-  const response = NextResponse.next({ request });
+  const headers = new Headers(request.headers);
+  // Overwrite any client-supplied value: only this request URL defines the return destination.
+  headers.set(AUTH_PATH_HEADER, `${request.nextUrl.pathname}${request.nextUrl.search}`);
+  const response = NextResponse.next({ request: { headers } });
   response.headers.set("Cache-Control", "private, no-store");
   return response;
 }
@@ -44,6 +48,16 @@ export const config = {
     "/bookings/:path*",
     "/sessions/:path*",
     "/reviews/:path*",
+    "/study-plans/:path*",
+    "/assessments/:path*",
+    "/assignments/:path*",
+    "/progress/:path*",
+    "/matching/:path*",
+    "/resources/:path*",
+    "/assistant/:path*",
+    "/notifications/:path*",
+    "/support/:path*",
+    "/tutor-studio/:path*",
     "/auth/:path*",
     "/login",
     "/signup",
